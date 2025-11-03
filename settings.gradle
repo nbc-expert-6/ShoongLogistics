@@ -1,0 +1,5 @@
+rootProject.name = 'shoong-logistics'
+include 'flight-service'
+include 'payment-service'
+include 'notification-service'
+include 'reservation-service'
