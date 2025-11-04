@@ -6,7 +6,7 @@ import com.shoonglogitics.orderservice.delivery.infrastructure.repository.JpaDel
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration("deliveryRepositoryConfig")
 public class RepositoryConfig {
     @Bean
     public DeliveryRepository deliveryRepository(

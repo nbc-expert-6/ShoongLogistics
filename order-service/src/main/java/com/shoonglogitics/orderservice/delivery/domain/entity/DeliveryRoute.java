@@ -12,7 +12,7 @@ import org.hibernate.annotations.Where;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_delivery")
+@Table(name = "p_delivery_route")
 @Where(clause = "deleted_at IS NULL")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -6,7 +6,7 @@ import com.shoonglogitics.orderservice.order.infrastructure.repository.OrderRepo
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration("orderRepositoryConfig")
 public class RepositoryConfig {
 
     @Bean
