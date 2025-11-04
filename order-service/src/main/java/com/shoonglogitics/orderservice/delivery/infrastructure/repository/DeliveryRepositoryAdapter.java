@@ -1,4 +1,11 @@
 package com.shoonglogitics.orderservice.delivery.infrastructure.repository;
 
-public class DeliveryRepositoryAdapter {
+import com.shoonglogitics.orderservice.delivery.domain.repository.DeliveryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class DeliveryRepositoryAdapter implements DeliveryRepository {
+    private final JpaDeliveryRepository jpaDeliveryRepository;
 }
