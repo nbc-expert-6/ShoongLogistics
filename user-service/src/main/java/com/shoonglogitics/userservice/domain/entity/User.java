@@ -1,9 +1,5 @@
 package com.shoonglogitics.userservice.domain.entity;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.springframework.data.domain.AbstractAggregateRoot;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,17 +7,21 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "p_user")
 @Getter
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends AbstractAggregateRoot<User> {
+@SuperBuilder
+public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,21 +34,43 @@ public class User extends AbstractAggregateRoot<User> {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
 	@Column(name = "user_role", nullable = false)
 	private UserRole userRole;
 
 	@Enumerated(EnumType.STRING)
-	@JdbcTypeCode(SqlTypes.NAMED_ENUM)
 	@Column(name = "signup_status", nullable = false)
 	private SignupStatus signupStatus;
 
-	@Builder
-	public User(String userName, String password, UserRole userRole, SignupStatus signupStatus) {
+	protected User(String userName, String password, UserRole userRole, SignupStatus signupStatus) {
 		this.userName = userName;
 		this.password = password;
 		this.userRole = userRole;
 		this.signupStatus = signupStatus;
+	}
+
+	public static User create(String userName, String password, UserRole userRole) {
+		validateUserName(userName);
+		validatePassword(password);
+
+		return new User(userName, password, userRole, SignupStatus.PENDING);
+	}
+
+	private static void validateUserName(String userName) {
+		if (userName == null || userName.isEmpty()) {
+			throw new IllegalArgumentException("아이디 값은 필수입니다.");
+		}
+		if (userName.length() < 4 || userName.length() > 10) {
+			throw new IllegalArgumentException("아이디는 4자 이상 10자 이하이어야 합니다.");
+		}
+	}
+
+	private static void validatePassword(String password) {
+		if (password == null || password.isEmpty()) {
+			throw new IllegalArgumentException("비밀번호 값은 필수입니다.");
+		}
+		if (password.length() < 8 || password.length() > 15) {
+			throw new IllegalArgumentException("비밀번호는 8자 이상 15자 이하이어야 합니다.");
+		}
 	}
 
 }
