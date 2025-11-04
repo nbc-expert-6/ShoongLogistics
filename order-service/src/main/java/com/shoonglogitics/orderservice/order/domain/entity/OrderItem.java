@@ -4,7 +4,10 @@ import com.shoonglogitics.orderservice.common.entity.BaseEntity;
 import com.shoonglogitics.orderservice.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.order.domain.vo.Quentity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
 import java.util.UUID;
@@ -13,14 +16,12 @@ import java.util.UUID;
 @Table(name = "p_order_item")
 @Where(clause = "deleted_at IS NULL")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
+    @Column(name = "id",columnDefinition = "uuid")
     private UUID id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
 
     @Embedded
     @AttributeOverrides({

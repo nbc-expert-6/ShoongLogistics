@@ -6,20 +6,31 @@ import com.shoonglogitics.orderservice.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.order.domain.vo.OrderStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 import org.locationtech.jts.geom.Point;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "p_order")
 @Where(clause = "deleted_at IS NULL")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseAggregateRoot<Order> {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
+    @Column(name = "id",columnDefinition = "uuid")
     private UUID id;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Embedded
     @AttributeOverrides({
