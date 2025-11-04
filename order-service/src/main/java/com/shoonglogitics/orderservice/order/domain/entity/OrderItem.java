@@ -18,6 +18,10 @@ public class OrderItem extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "productId", column = @Column(name = "product_id")),
