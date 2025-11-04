@@ -43,7 +43,7 @@ public class SecurityConfig {
 			.formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable())
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/**").permitAll()
+				.requestMatchers("/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users").permitAll()
 				.anyRequest().authenticated()
 			);
 		return http.build();

@@ -1,10 +1,16 @@
 package com.shoonglogitics.userservice.presentation.controller;
 
+import java.util.UUID;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.userservice.application.command.CompanyManagerSignUpCommand;
@@ -12,6 +18,7 @@ import com.shoonglogitics.userservice.application.command.HubManagerSignUpComman
 import com.shoonglogitics.userservice.application.command.MasterSignUpCommand;
 import com.shoonglogitics.userservice.application.command.ShipperSignUpCommand;
 import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
+import com.shoonglogitics.userservice.application.dto.PageResponse;
 import com.shoonglogitics.userservice.application.service.UserService;
 import com.shoonglogitics.userservice.domain.entity.ShipperType;
 import com.shoonglogitics.userservice.domain.vo.CompanyId;
@@ -101,6 +108,13 @@ public class UserController {
 			.build();
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@GetMapping
+	public PageResponse<?> getUsers(@RequestParam String role,
+		@RequestParam(required = false) UUID hubId,
+		@PageableDefault(size = 10) Pageable pageable) {
+		return userService.getUsers(role, pageable, hubId);
 	}
 
 }

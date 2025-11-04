@@ -1,0 +1,25 @@
+package com.shoonglogitics.userservice.application.strategy.view;
+
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.shoonglogitics.userservice.application.dto.ShipperViewResponseDto;
+import com.shoonglogitics.userservice.domain.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ShipperViewStrategy implements UserViewStrategy<ShipperViewResponseDto> {
+
+	private final UserRepository userRepository;
+
+	@Override
+	public Page<ShipperViewResponseDto> findUsers(Pageable pageable, UUID hubId) {
+		return userRepository.findShippers(hubId, pageable);
+	}
+
+}

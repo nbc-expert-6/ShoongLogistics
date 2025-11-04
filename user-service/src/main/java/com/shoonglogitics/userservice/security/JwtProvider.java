@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-	@Value("${jwt.secret}")
-	private String jwtSecret;
-
-	@Value("${jwt.expiration}")
-	private long jwtExpirationInMs;
+	private final Environment env;
 
 	private final RedisTemplate<String, Object> redisTemplate;
 
@@ -39,8 +35,8 @@ public class JwtProvider {
 			.setClaims(claims)
 			.setSubject(userId.toString())
 			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-			.signWith(SignatureAlgorithm.HS256, jwtSecret)
+			.setExpiration(new Date(System.currentTimeMillis() + env.getProperty("jwt.expiration")))
+			.signWith(SignatureAlgorithm.HS256, env.getProperty("jwt.secret"))
 			.compact();
 
 		Map<String, String> tokenData = new HashMap<>();
@@ -56,7 +52,7 @@ public class JwtProvider {
 	public boolean validateToken(String token) {
 		try {
 			// Jwt 토큰 서명용 Key
-			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(jwtSecret));
+			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(env.getProperty("jwt.secret")));
 			// Jwt 토큰 파싱을 통해 서명이 유효한지 확인
 			Claims claims = Jwts.parser()
 				.setSigningKey(key)
@@ -69,7 +65,7 @@ public class JwtProvider {
 
 	// Jwt 토큰에서 Claims 추출 메소드
 	private Claims getAllClaimsFromToken(String token) {
-		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(jwtSecret));
+		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(env.getProperty("jwt.secret")));
 		Claims claims = Jwts.parser().setSigningKey(key)
 			.build().parseClaimsJws(token).getBody();
 
