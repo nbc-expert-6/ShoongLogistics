@@ -33,21 +33,25 @@ jobs:
       - name: Set matrix dynamically
         id: set-matrix
         run: |
+          # 전체 changes 출력(JSON 형태)
           changes_json='${{ toJson(steps.changes.outputs) }}'
           echo "🔍 Detected changes: $changes_json"
-
+          
+          # 변경된 서비스 목록 초기화
           changed=()
 
+          # 변경된 service 찾기
           for service in user-service company-service order-service hub-service notification-service; do
-            # 그대로 검색 (언더스코어 변환 ❌)
             if echo "$changes_json" | grep -q "\"$service\": \"true\""; then
               changed+=("\"$service\"")
             fi
           done
 
+          # 변경사항이 없는 경우
           if [ ${#changed[@]} -eq 0 ]; then
-            echo "No services changed. Skipping tests."
+            echo "🚫No services changed. Skipping tests."
             echo "matrix={\"service\":[]}" >> $GITHUB_OUTPUT
+          # 변경사항이 있는 경우
           else
             matrix_json="{\"service\":[${changed[*]}]}"
             echo "✅ Matrix = $matrix_json"
