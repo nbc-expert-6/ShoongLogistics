@@ -40,7 +40,6 @@ jobs:
           changed=()
 
           for service in user-service company-service order-service hub-service notification-service; do
-            output_name=$(echo "$service" | tr '-' '_')
             if echo "$changes_json" | grep -q "\"$output_name\":\"true\""; then
               changed+=("\"$service\"")
             fi
