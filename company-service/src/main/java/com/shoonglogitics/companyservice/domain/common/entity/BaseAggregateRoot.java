@@ -44,12 +44,6 @@ public abstract class BaseAggregateRoot<A extends BaseAggregateRoot<A>>
 	private Long deletedBy;
 
 	@Override
-	public void update(Long userId) {
-		this.updatedAt = LocalDateTime.now();
-		this.updatedBy = userId;
-	}
-
-	@Override
 	public void softDelete(Long userId) {
 		this.deletedAt = LocalDateTime.now();
 		this.deletedBy = userId;
