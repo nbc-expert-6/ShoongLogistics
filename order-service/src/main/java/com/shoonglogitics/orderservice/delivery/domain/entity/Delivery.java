@@ -58,4 +58,21 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
     @JoinColumn(name = "delivery_id")
     private List<DeliveryRoute> deliveryRoutes = new ArrayList<>();
 
+    //Todo 생성시 검증 로직 추가
+    public static Delivery create(
+            Address address,
+            ShipperInfo shipperInfo,
+            HubId departureHubId,
+            HubId destinationHubId,
+            String request
+    ) {
+        Delivery delivery = new Delivery();
+        delivery.status = DeliveryStatus.HUB_WAITING;
+        delivery.address = address;
+        delivery.shipperInfo = shipperInfo;
+        delivery.departureHubId = departureHubId;
+        delivery.destinationHubId = destinationHubId;
+        delivery.request = request;
+        return delivery;
+    }
 }
