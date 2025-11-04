@@ -1,5 +1,8 @@
 package com.shoonglogitics.orderservice.order.domain.vo;
 
+import lombok.Getter;
+
+@Getter
 public enum OrderStatus {
     PAYMENT_PENDING("결제 대기중"),
     PAYMENT_COMPLETED("결제 완료"),
@@ -13,9 +16,5 @@ public enum OrderStatus {
 
     OrderStatus(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }
