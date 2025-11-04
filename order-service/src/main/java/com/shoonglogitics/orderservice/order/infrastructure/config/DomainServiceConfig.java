@@ -5,7 +5,7 @@ import com.shoonglogitics.orderservice.order.domain.service.OrderDomainService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration("orderDomainServiceConfig")
 public class DomainServiceConfig {
 
     @Bean
