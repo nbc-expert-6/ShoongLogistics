@@ -1,20 +1,22 @@
 package com.shoonglogitics.orderservice.order.domain.entity;
 
-import com.shoonglogitics.orderservice.common.entity.BaseTimeEntity;
+import com.shoonglogitics.orderservice.common.entity.BaseAggregateRoot;
 import com.shoonglogitics.orderservice.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.order.domain.vo.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.Where;
 import org.locationtech.jts.geom.Point;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "p_order")
+@Where(clause = "deleted_at IS NULL")
 @Getter
-public class Order extends BaseTimeEntity {
+public class Order extends BaseAggregateRoot<Order> {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -33,19 +35,18 @@ public class Order extends BaseTimeEntity {
     })
     private CompanyInfo supplier;
 
+    @Column(name = "request")
     private String request;
 
     @Embedded
-    @AttributeOverride(name = "amount", column = @Column(name = "total_price",nullable = false))
     private Money totalPrice;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @Embedded
     private Address address;
 
-    @Column(columnDefinition = "geometry(Point, 4326)", nullable = false)
-    private Point location;
+
 }

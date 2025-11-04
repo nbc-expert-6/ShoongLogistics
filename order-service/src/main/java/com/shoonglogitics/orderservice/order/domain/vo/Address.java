@@ -1,17 +1,27 @@
 package com.shoonglogitics.orderservice.order.domain.vo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Embeddable
 public class Address {
+    @Column(name = "address", nullable = false)
     private String address;
+
+    @Column(name = "address_detail", nullable = false)
     private String addressDetail;
+
+    @Column(name = "zip_code", nullable = false)
     private String zipCode;
+
+    @Column(columnDefinition = "geometry(Point, 4326)", nullable = false)
+    private Point location;
 }

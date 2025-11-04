@@ -1,17 +1,19 @@
 package com.shoonglogitics.orderservice.order.domain.entity;
 
-import com.shoonglogitics.orderservice.common.entity.BaseTimeEntity;
+import com.shoonglogitics.orderservice.common.entity.BaseEntity;
 import com.shoonglogitics.orderservice.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.order.domain.vo.Quentity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.Where;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "p_order_item")
+@Where(clause = "deleted_at IS NULL")
 @Getter
-public class OrderItem extends BaseTimeEntity {
+public class OrderItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
