@@ -33,14 +33,14 @@ jobs:
       - name: Set matrix dynamically
         id: set-matrix
         run: |
-          # paths-filter 결과 전체를 JSON으로 가져옴
           changes_json='${{ toJson(steps.changes.outputs) }}'
           echo "🔍 Detected changes: $changes_json"
 
           changed=()
 
           for service in user-service company-service order-service hub-service notification-service; do
-            if echo "$changes_json" | grep -q "\"$output_name\":\"true\""; then
+            # 그대로 검색 (언더스코어 변환 ❌)
+            if echo "$changes_json" | grep -q "\"$service\": \"true\""; then
               changed+=("\"$service\"")
             fi
           done
