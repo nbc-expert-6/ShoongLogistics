@@ -1,4 +1,4 @@
-package com.shoonglogitics.userservice.application.strategy;
+package com.shoonglogitics.userservice.application.strategy.signup;
 
 import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
 

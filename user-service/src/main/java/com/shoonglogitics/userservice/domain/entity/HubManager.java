@@ -10,9 +10,6 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,17 +23,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HubManager extends User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	@Embedded
 	@AttributeOverride(name = "id", column = @Column(name = "hub_id"))
 	private HubId hubId;
-
-	/*@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "p_user_id", nullable = false)
-	private User user;*/
 
 	@Embedded
 	@AttributeOverride(name = "value", column = @Column(name = "email"))
