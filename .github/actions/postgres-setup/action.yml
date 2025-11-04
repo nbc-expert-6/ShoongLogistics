@@ -1,0 +1,31 @@
+name: 'PostgisDB setup'
+
+description: 'Sets up a PostgisDB with multiple databases'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build Custom Postgis Image
+      run: |
+        docker build -t test-postgis ./.github/actions/postgres-setup
+      shell: bash
+
+    - name: Run Postgis Container
+      run: |
+        docker run -d \
+          --name test-postgis-container \
+          -p 5432:5432 \
+          -e POSTGRES_DB=postgres \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_PASSWORD=qwer1234! \
+          test-postgis
+      shell: bash
+
+    - name: Wait for PostgreSQL
+      run: |
+        until docker exec test-postgis-container pg_isready -U postgres; do
+          echo "Waiting for Postgres..."
+          sleep 3
+        done
+        echo "PostgreSQL is ready!"
+      shell: bash
