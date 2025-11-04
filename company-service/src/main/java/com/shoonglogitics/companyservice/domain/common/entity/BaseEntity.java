@@ -26,8 +26,8 @@ public abstract class BaseEntity implements BaseAuditEntity {
 	@Column(name = "created_by", updatable = false)
 	private Long createdBy;
 
-	@Column(name = "updated_at")
 	@LastModifiedDate
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
 	@LastModifiedBy

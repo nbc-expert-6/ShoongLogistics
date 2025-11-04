@@ -7,7 +7,7 @@ public enum UserRoleType {
 	MASTER(Authority.MASTER),
 	HUB_MANAGER(Authority.HUB_MANAGER),
 	DELIVERY_MANAGER(Authority.DELIVERY_MANAGER),
-	SUPPLIER_MANAGER(Authority.SUPPLIER_MANAGER);
+	COMPANY_MANAGER(Authority.COMPANY_MANAGER);
 
 	private final String authority;
 
@@ -19,6 +19,6 @@ public enum UserRoleType {
 		public static final String MASTER = "ROLE_MASTER";
 		public static final String HUB_MANAGER = "ROLE_HUB_MANAGER";
 		public static final String DELIVERY_MANAGER = "ROLE_DELIVERY_MANAGER";
-		public static final String SUPPLIER_MANAGER = "ROLE_SUPPLIER_MANAGER";
+		public static final String COMPANY_MANAGER = "ROLE_COMPANY_MANAGER";
 	}
 }
