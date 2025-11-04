@@ -33,21 +33,26 @@ jobs:
       - name: Set matrix dynamically
         id: set-matrix
         run: |
+          # paths-filter 결과 전체를 JSON으로 가져옴
+          changes_json='${{ toJson(steps.changes.outputs) }}'
+          echo "🔍 Detected changes: $changes_json"
+
           changed=()
+
           for service in user-service company-service order-service hub-service notification-service; do
-            if [[ "${{ steps.changes.outputs[$service] }}" == "true" ]]; then
+            output_name=$(echo "$service" | tr '-' '_')
+            if echo "$changes_json" | grep -q "\"$output_name\":\"true\""; then
               changed+=("\"$service\"")
             fi
           done
 
-          # 변경 없으면 기본적으로 빈 배열 반환
           if [ ${#changed[@]} -eq 0 ]; then
             echo "No services changed. Skipping tests."
-            echo "matrix=[]" >> $GITHUB_OUTPUT
+            echo "matrix={\"service\":[]}" >> $GITHUB_OUTPUT
           else
             matrix_json="{\"service\":[${changed[*]}]}"
-            echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
             echo "✅ Matrix = $matrix_json"
+            echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
           fi
         shell: bash
 
