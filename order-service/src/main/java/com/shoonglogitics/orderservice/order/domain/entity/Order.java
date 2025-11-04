@@ -59,5 +59,21 @@ public class Order extends BaseAggregateRoot<Order> {
     @Embedded
     private Address address;
 
-
+    //Todo 생성시 검증 로직 추가
+    public static Order create(CompanyInfo receiver,
+                               CompanyInfo supplier,
+                               String request,
+                               Money totalPrice,
+                               Address address,
+                               List<OrderItem> orderItems) {
+        Order order = new Order();
+        order.receiver = receiver;
+        order.supplier = supplier;
+        order.request = request;
+        order.totalPrice = totalPrice;
+        order.address = address;
+        order.status = OrderStatus.PAYMENT_PENDING;
+        order.orderItems = orderItems != null ? new ArrayList<>(orderItems) : new ArrayList<>();
+        return order;
+    }
 }

@@ -42,6 +42,21 @@ public class DeliveryRoute {
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
 
+    //Todo 생성시 검증 로직 추가
+    public static DeliveryRoute create(
+            ShipperInfo shipperInfo,
+            HubId departureHubId,
+            HubId arrivalHubId,
+            Integer sequence
+    ) {
+        DeliveryRoute route = new DeliveryRoute();
+        route.shipperInfo = shipperInfo;
+        route.departureHubId = departureHubId;
+        route.arrivalHubId = arrivalHubId;
+        route.sequence = sequence;
+        return route;
+    }
+
 
 
 }
