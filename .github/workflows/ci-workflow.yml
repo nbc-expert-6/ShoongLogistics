@@ -5,20 +5,61 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  test:
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
 
+      - name: Detect changed services
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            user-service:
+              - 'user-service/**'
+            company-service:
+              - 'company-service/**'
+            order-service:
+              - 'order-service/**'
+            hub-service:
+              - 'hub-service/**'
+            notification-service:
+              - 'notification-service/**'
+
+      - name: Set matrix dynamically
+        id: set-matrix
+        run: |
+          changed=()
+          for service in user-service company-service order-service hub-service notification-service; do
+            if [[ "${{ steps.changes.outputs[$service] }}" == "true" ]]; then
+              changed+=("\"$service\"")
+            fi
+          done
+
+          # 변경 없으면 기본적으로 빈 배열 반환
+          if [ ${#changed[@]} -eq 0 ]; then
+            echo "No services changed. Skipping tests."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            matrix_json="{\"service\":[${changed[*]}]}"
+            echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
+            echo "✅ Matrix = $matrix_json"
+          fi
+        shell: bash
+
+  test:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.matrix && needs.detect-changes.outputs.matrix != '{"service":[]}' }}
+    runs-on: ubuntu-latest
     strategy:
-      matrix:
-        service: [ user-service, company-service, order-service, hub-service, notification-service ]
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Setup PostgreSQL with PostGIS
         uses: ./.github/actions/postgres-setup
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -26,30 +67,16 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permission
         run: chmod +x gradlew
 
       - name: Test ${{ matrix.service }}
         run: |
-          # 하이픈(-)을 언더스코어(_)로 바꿔서 DB 이름으로 사용
           DB_NAME=${{ matrix.service }}
           DB_NAME=${DB_NAME//-/_}
-          
           echo "🧪 Running tests for ${{ matrix.service }} (DB: $DB_NAME)"
-          
-          # 환경변수 설정 후 테스트 실행
           SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/$DB_NAME \
           SPRING_DATASOURCE_USERNAME=postgres \
           SPRING_DATASOURCE_PASSWORD=qwer1234! \
           ./gradlew :${{ matrix.service }}:test
         shell: bash
-
-      - name: Upload test results for ${{ matrix.service }}
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ matrix.service }}
-          path: |
-            ${{ matrix.service }}/build/test-results/test/*.xml
-            ${{ matrix.service }}/build/reports/tests/test/
-          retention-days: 1
