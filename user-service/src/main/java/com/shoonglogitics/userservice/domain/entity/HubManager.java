@@ -7,27 +7,24 @@ import com.shoonglogitics.userservice.domain.vo.PhoneNumber;
 import com.shoonglogitics.userservice.domain.vo.SlackId;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @Table(name = "p_hub_manager")
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HubManager {
+public class HubManager extends User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +34,9 @@ public class HubManager {
 	@AttributeOverride(name = "id", column = @Column(name = "hub_id"))
 	private HubId hubId;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	/*@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "p_user_id", nullable = false)
-	private User user;
+	private User user;*/
 
 	@Embedded
 	@AttributeOverride(name = "value", column = @Column(name = "email"))
@@ -57,15 +54,43 @@ public class HubManager {
 	@AttributeOverride(name = "value", column = @Column(name = "phone_number"))
 	private PhoneNumber phoneNumber;
 
-	@Builder
-	public HubManager(HubId hubId, User user, Email email, Name name,
-		SlackId slackId, PhoneNumber phoneNumber) {
-		this.hubId = hubId;
-		this.user = user;
+	public HubManager(String userName, String password,
+		Email email, Name name, SlackId slackId,
+		PhoneNumber phoneNumber, HubId hubId) {
+		super(userName, password, UserRole.HUB_MANAGER, SignupStatus.PENDING);
 		this.email = email;
 		this.name = name;
 		this.slackId = slackId;
 		this.phoneNumber = phoneNumber;
+		this.hubId = hubId;
 	}
 
+	// 정적 팩토리 메서드
+	public static HubManager create(String userName, String password,
+		Email email, Name name, SlackId slackId,
+		PhoneNumber phoneNumber, HubId hubId) {
+		validateVO(email, name, slackId, phoneNumber);
+		return HubManager.builder()
+			.userName(userName)
+			.password(password)
+			.signupStatus(SignupStatus.PENDING)
+			.userRole(UserRole.HUB_MANAGER)
+			.hubId(hubId)
+			.email(email)
+			.name(name)
+			.slackId(slackId)
+			.phoneNumber(phoneNumber)
+			.build();
+	}
+
+	private static void validateVO(Email email, Name name, SlackId slackId, PhoneNumber phoneNumber) {
+		if (email == null)
+			throw new IllegalArgumentException("이메일은 필수 값입니다.");
+		if (name == null)
+			throw new IllegalArgumentException("이름은 필수 값입니다.");
+		if (slackId == null)
+			throw new IllegalArgumentException("Slack ID는 필수 값입니다.");
+		if (phoneNumber == null)
+			throw new IllegalArgumentException("전화번호는 필수 값입니다.");
+	}
 }
