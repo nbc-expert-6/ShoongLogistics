@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @Embeddable
 public class CompanyInfo {
 
