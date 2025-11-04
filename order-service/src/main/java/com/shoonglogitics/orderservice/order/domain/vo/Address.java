@@ -10,7 +10,7 @@ import org.locationtech.jts.geom.Point;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @Embeddable
 public class Address {
     @Column(name = "address", nullable = false)
