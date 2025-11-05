@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.userservice.application.dto.CompanyManagerViewResponseDto;
@@ -85,5 +86,58 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
 		    from CompanyManager c
 		""")
 	Page<CompanyManagerViewResponseDto> findCompanyManagers(Pageable pageable);
+
+	@Query("""
+		    select new com.shoonglogitics.userservice.application.dto.MasterViewResponseDto(
+		        m.id,
+		        m.name.value,
+		        m.email.value,
+		        m.phoneNumber.value,
+		        m.slackId.value
+		    )
+		    from Master m
+		    where m.id = :id
+		""")
+	Optional<MasterViewResponseDto> findMasterById(@Param("id") Long id);
+
+	@Query("""
+		    select new com.shoonglogitics.userservice.application.dto.HubManagerViewResponseDto(
+		        h.id,
+		        h.name.value,
+		        h.email.value,
+		        h.phoneNumber.value,
+		        h.slackId.value,
+		        h.hubId.id
+		    )
+		    from HubManager h
+				    where h.id = :id
+		""")
+	Optional<HubManagerViewResponseDto> findHubManagerById(@Param("id") Long id);
+
+	@Query("""
+		    select new com.shoonglogitics.userservice.application.dto.ShipperViewResponseDto(
+		        s.id,
+		        s.name.value,
+		        s.email.value,
+		        s.slackId.value,
+		        s.phoneNumber.value,
+		        s.hubId.id, s.shipperType, s.order, s.isShippingAvailable
+		    )
+		    from Shipper s where s.id = :id
+		""")
+	Optional<ShipperViewResponseDto> findShipperById(@Param("id") Long id);
+
+	@Query("""
+		    select new com.shoonglogitics.userservice.application.dto.CompanyManagerViewResponseDto(
+		        c.id,
+		        c.name.value,
+		        c.email.value,
+		        c.slackId.value,
+		        c.phoneNumber.value,
+		        c.companyId.id
+		    )
+		    from CompanyManager c where c.id = :id
+		""")
+	Optional<CompanyManagerViewResponseDto> findCompanyManagerById(@Param("id") Long id);
 
 }

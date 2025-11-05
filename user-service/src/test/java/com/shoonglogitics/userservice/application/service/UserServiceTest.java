@@ -19,6 +19,7 @@ import com.shoonglogitics.userservice.domain.entity.HubManager;
 import com.shoonglogitics.userservice.domain.entity.Master;
 import com.shoonglogitics.userservice.domain.entity.Shipper;
 import com.shoonglogitics.userservice.domain.entity.ShipperType;
+import com.shoonglogitics.userservice.domain.entity.SignupStatus;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.domain.entity.UserRole;
 import com.shoonglogitics.userservice.domain.repository.UserRepository;
@@ -187,5 +188,33 @@ class UserServiceTest {
 		assertThatThrownBy(() -> userService.signUp(command))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("허브 배송 담당자는 허브 ID가 없어야 합니다.");
+	}
+
+	@Test
+	void approveSignup_pendingUser_dbPersists() {
+		// given
+		MasterSignUpCommand command = MasterSignUpCommand.builder()
+			.userName("master1")
+			.password("12345678")
+			.email(new Email("master@gmail.com"))
+			.name(new Name("이수현"))
+			.slackId(new SlackId("Slack1"))
+			.phoneNumber(new PhoneNumber("010-1111-2222"))
+			.build();
+
+		userService.signUp(command);
+
+		em.flush();
+		em.clear();
+
+		User user = userRepository.findByUsername("master1").orElseThrow();
+
+		userService.updateSignupStatus(user.getId(), "APPROVED");
+
+		em.flush();
+		em.clear();
+
+		User updatedUser = userRepository.findByUsername("master1").orElseThrow();
+		assertThat(updatedUser.getSignupStatus()).isEqualTo(SignupStatus.APPROVED);
 	}
 }

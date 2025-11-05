@@ -19,6 +19,8 @@ public interface UserRepository {
 
 	User save(User user);
 
+	Optional<User> findById(Long id);
+
 	Page<MasterViewResponseDto> findMasters(Pageable pageable);
 
 	Page<HubManagerViewResponseDto> findHubManagers(Pageable pageable);
@@ -26,4 +28,12 @@ public interface UserRepository {
 	Page<ShipperViewResponseDto> findShippers(UUID hubId, Pageable pageable);
 
 	Page<CompanyManagerViewResponseDto> findCompanyManagers(Pageable pageable);
+
+	Optional<MasterViewResponseDto> findMasterById(Long id);
+
+	Optional<HubManagerViewResponseDto> findHubManagerById(Long id);
+
+	Optional<ShipperViewResponseDto> findShipperById(Long id);
+
+	Optional<CompanyManagerViewResponseDto> findCompanyManagerById(Long id);
 }

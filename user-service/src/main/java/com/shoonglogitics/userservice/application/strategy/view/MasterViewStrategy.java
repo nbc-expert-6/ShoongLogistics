@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.application.strategy.view;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +21,11 @@ public class MasterViewStrategy implements UserViewStrategy<MasterViewResponseDt
 	@Override
 	public Page<MasterViewResponseDto> findUsers(Pageable pageable, UUID hubId) {
 		return userRepository.findMasters(pageable);
+	}
+
+	@Override
+	public Optional<MasterViewResponseDto> findUserById(Long id) {
+		return userRepository.findMasterById(id);
 	}
 
 }
