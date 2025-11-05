@@ -3,18 +3,30 @@ package com.shoonglogitics.orderservice.delivery.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(staticName = "of")
 @Embeddable
 public class DeliveryActual {
     @Column(name = "actual_distance")
     private Long distance;
     @Column(name = "actual_duration")
     private Integer duration;
+
+    public static DeliveryActual of(Long distance, Integer duration) {
+        if (distance < 0) {
+            throw new IllegalArgumentException("거리는 0 이상이어야 합니다. 단위: 미터");
+        }
+        if (duration < 0) {
+            throw new IllegalArgumentException("소요시간은 0 이상이어야 합니다. 단위: 분");
+        }
+
+        DeliveryActual actual = new DeliveryActual();
+        actual.distance = distance;
+        actual.duration = duration;
+        return actual;
+    }
 
 }
