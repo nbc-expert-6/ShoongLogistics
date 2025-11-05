@@ -28,7 +28,9 @@ import com.shoonglogitics.userservice.presentation.dto.request.LoginRequestDto;
 import com.shoonglogitics.userservice.presentation.dto.request.SignUpRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateSignupStatusRequest;
 import com.shoonglogitics.userservice.presentation.dto.response.SignUpResponse;
+import com.shoonglogitics.userservice.security.JwtProvider;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
+	private final JwtProvider jwtProvider;
 
 	// 회원가입
 	@PostMapping("/signup")
@@ -56,11 +59,14 @@ public class UserController {
 
 	// 로그인
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<LoginUserResponseDto>> loginUser(@RequestBody LoginRequestDto dto) {
+	public ResponseEntity<ApiResponse<Void>> loginUser(@RequestBody LoginRequestDto dto,
+		HttpServletResponse response) {
 		LoginUserCommand from = LoginUserCommand.from(dto);
 		LoginUserResponseDto responseDto = userService.loginUser(from);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
+		response.setHeader("Authorization", "Bearer " + responseDto.accessToken());
+
+		return ResponseEntity.ok(ApiResponse.success("로그인이 성공적으로 진행되었습니다."));
 	}
 
 	// 회원 목록 조회
