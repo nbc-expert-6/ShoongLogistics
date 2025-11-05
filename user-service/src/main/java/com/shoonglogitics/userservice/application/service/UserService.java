@@ -44,6 +44,7 @@ public class UserService {
 		ShipperViewStrategy shipperViewStrategy,
 		CompanyManagerViewStrategy companyManagerViewStrategy,
 		Map<String, SignUpStrategy> signUpStrategyMap, JwtProvider jwtProvider
+
 	) {
 		this.userRepository = userRepository;
 		this.signUpStrategyMap = signUpStrategyMap;

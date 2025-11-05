@@ -9,17 +9,19 @@ import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.userservice.domain.entity.UserRole;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @Getter
 public class JwtProvider {
 
 	private final SecretKey secretKey;
+	public static final String REFRESH_TOKEN_COOKIE = "refreshToken";
 
 	@Value("${jwt.expiration}")
 	private Long accessTokenExpiration;
@@ -37,36 +39,6 @@ public class JwtProvider {
 			.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
 			.signWith(secretKey)
 			.compact();
-	}
-
-	public Boolean validateToken(String token) {
-		try {
-			Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	public Long getUserIdFromToken(String token) {
-		Claims claims = Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
-		return claims.get("userId", Long.class);
-	}
-
-	public UserRole getUserRoleFromToken(String token) {
-		Claims claims = Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
-		return claims.get("userRole", UserRole.class);
 	}
 
 }
