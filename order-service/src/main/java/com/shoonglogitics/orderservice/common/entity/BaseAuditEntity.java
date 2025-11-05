@@ -11,7 +11,6 @@ public interface BaseAuditEntity {
     LocalDateTime getDeletedAt();
     Long getDeletedBy();
 
-    void update(Long userId);
     void softDelete(Long userId);
     boolean isDeleted();
 }
