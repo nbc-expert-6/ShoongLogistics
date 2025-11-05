@@ -39,61 +39,6 @@ public class UserController {
 	public ResponseEntity<ApiResponse<SignUpResponse>> createUser(@RequestBody SignUpRequest request) {
 		SignUpUserCommand command;
 
-		/*switch (request.getUserType()) {
-			case "MASTER":
-				command = MasterSignUpCommand.builder()
-					.userName(request.getUserName())
-					.password(request.getPassword())
-					.email(new Email(request.getEmail()))
-					.name(new Name(request.getName()))
-					.slackId(new SlackId(request.getSlackId()))
-					.phoneNumber(new PhoneNumber(request.getPhoneNumber()))
-					.build();
-				break;
-
-			case "HUB_MANAGER":
-				command = HubManagerSignUpCommand.builder()
-					.userName(request.getUserName())
-					.password(request.getPassword())
-					.email(new Email(request.getEmail()))
-					.name(new Name(request.getName()))
-					.slackId(new SlackId(request.getSlackId()))
-					.phoneNumber(new PhoneNumber(request.getPhoneNumber()))
-					.hubId(new HubId(request.getHubId()))
-					.build();
-				break;
-
-			case "COMPANY_MANAGER":
-				command = CompanyManagerSignUpCommand.builder()
-					.userName(request.getUserName())
-					.password(request.getPassword())
-					.email(new Email(request.getEmail()))
-					.name(new Name(request.getName()))
-					.slackId(new SlackId(request.getSlackId()))
-					.phoneNumber(new PhoneNumber(request.getPhoneNumber()))
-					.companyId(new CompanyId(request.getCompanyId()))
-					.build();
-				break;
-
-			case "SHIPPER":
-				command = ShipperSignUpCommand.builder()
-					.userName(request.getUserName())
-					.password(request.getPassword())
-					.email(new Email(request.getEmail()))
-					.name(new Name(request.getName()))
-					.slackId(new SlackId(request.getSlackId()))
-					.phoneNumber(new PhoneNumber(request.getPhoneNumber()))
-					.hubId(request.getHubId() != null ? new HubId(request.getHubId()) : null)
-					.shipperType(ShipperType.valueOf(request.getShipperType()))
-					.order(request.getOrder())
-					.isShippingAvailable(request.getIsShippingAvailable())
-					.build();
-				break;
-
-			default:
-				throw new IllegalArgumentException("지원하지 않는 회원 유형입니다.");
-		}*/
-
 		userService.signUp(request.toCommand());
 
 		SignUpResponse response = SignUpResponse.builder()
