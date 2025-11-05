@@ -35,7 +35,7 @@ public class Stock extends BaseAggregateRoot<Stock> {
 	private Integer amount;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "p_stock_id")
+	@JoinColumn(name = "stock_id")
 	private List<StockHistory> stockHistories = new ArrayList<>();
 
 	private Stock(Integer initialAmount) {

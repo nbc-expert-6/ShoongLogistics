@@ -17,7 +17,7 @@ import com.shoonglogitics.companyservice.infrastructure.repository.StockReposito
 public class RepositoryConfig {
 
 	@Bean
-	public CompanyRepository orderRepository(JpaCompanyRepository jpaCompanyRepository) {
+	public CompanyRepository companyRepository(JpaCompanyRepository jpaCompanyRepository) {
 		return new CompanyRepositoryAdapter(jpaCompanyRepository);
 	}
 

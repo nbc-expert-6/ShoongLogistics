@@ -1,5 +1,8 @@
 package com.shoonglogitics.companyservice.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
@@ -15,5 +18,10 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 	@Override
 	public Company save(Company company) {
 		return jpaCompanyRepository.save(company);
+	}
+
+	@Override
+	public Optional<Company> findById(UUID id) {
+		return jpaCompanyRepository.findById(id);
 	}
 }
