@@ -2,7 +2,7 @@ package com.shoonglogitics.orderservice.delivery.domain.entity;
 
 import com.shoonglogitics.orderservice.common.entity.BaseAggregateRoot;
 import com.shoonglogitics.orderservice.delivery.domain.vo.DeliveryStatus;
-import com.shoonglogitics.orderservice.delivery.domain.vo.HubId;
+import com.shoonglogitics.orderservice.delivery.domain.vo.HubInfo;
 import com.shoonglogitics.orderservice.delivery.domain.vo.ShipperInfo;
 import com.shoonglogitics.orderservice.order.domain.vo.Address;
 import jakarta.persistence.*;
@@ -48,11 +48,11 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 
     @Embedded
     @AttributeOverride(name = "hubId", column = @Column(name = "departure_hub_id"))
-    private HubId departureHubId;
+    private HubInfo departureHubId;
 
     @Embedded
     @AttributeOverride(name = "hubId", column = @Column(name = "destination_hub_id"))
-    private HubId destinationHubId;
+    private HubInfo destinationHubId;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id")
@@ -62,8 +62,8 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
     public static Delivery create(
             Address address,
             ShipperInfo shipperInfo,
-            HubId departureHubId,
-            HubId destinationHubId,
+            HubInfo departureHubId,
+            HubInfo destinationHubId,
             String request
     ) {
         Delivery delivery = new Delivery();

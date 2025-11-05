@@ -1,6 +1,6 @@
 package com.shoonglogitics.orderservice.delivery.domain.entity;
 
-import com.shoonglogitics.orderservice.delivery.domain.vo.HubId;
+import com.shoonglogitics.orderservice.delivery.domain.vo.HubInfo;
 import com.shoonglogitics.orderservice.delivery.domain.vo.ShipperInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -33,11 +33,11 @@ public class DeliveryRoute {
 
     @Embedded
     @AttributeOverride(name = "hubId", column = @Column(name = "departure_hub_id"))
-    private HubId departureHubId;
+    private HubInfo departureHubId;
 
     @Embedded
     @AttributeOverride(name = "hubId", column = @Column(name = "arrival_hub_id"))
-    private HubId arrivalHubId;
+    private HubInfo arrivalHubId;
 
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
@@ -45,8 +45,8 @@ public class DeliveryRoute {
     //Todo 생성시 검증 로직 추가
     public static DeliveryRoute create(
             ShipperInfo shipperInfo,
-            HubId departureHubId,
-            HubId arrivalHubId,
+            HubInfo departureHubId,
+            HubInfo arrivalHubId,
             Integer sequence
     ) {
         DeliveryRoute route = new DeliveryRoute();

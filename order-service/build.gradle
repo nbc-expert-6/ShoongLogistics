@@ -36,7 +36,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     //postgre(with postGIS)
-    implementation 'org.hibernate:hibernate-spatial'
     implementation 'org.locationtech.jts:jts-core:1.19.0'
     runtimeOnly 'org.postgresql:postgresql'
 

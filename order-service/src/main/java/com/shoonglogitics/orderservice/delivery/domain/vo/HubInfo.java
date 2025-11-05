@@ -2,7 +2,6 @@ package com.shoonglogitics.orderservice.delivery.domain.vo;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +9,14 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(staticName = "of")
 @Embeddable
-public class HubId {
+public class HubInfo {
 
     private UUID hubId;
+
+    public static HubInfo of(UUID hubId) {
+        HubInfo hub = new HubInfo();
+        hub.hubId = hubId;
+        return hub;
+    }
 }
