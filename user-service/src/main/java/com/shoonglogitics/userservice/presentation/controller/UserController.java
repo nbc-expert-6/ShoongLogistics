@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,8 +74,9 @@ public class UserController {
 	}
 
 	// 회원 단건 조회
-	@GetMapping("/{role}/{id}")
-	public ResponseEntity<ApiResponse<?>> getUser(@PathVariable String role, @PathVariable Long id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponse<?>> getUser(@RequestHeader("X-User-Role") String role,
+		@PathVariable Long id) {
 		Optional<?> user = userService.getUser(role, id);
 
 		if (user.isPresent()) {
