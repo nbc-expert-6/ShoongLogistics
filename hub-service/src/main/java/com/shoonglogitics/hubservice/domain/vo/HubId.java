@@ -1,6 +1,5 @@
 package com.shoonglogitics.hubservice.domain.vo;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -14,17 +13,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HubId {
 
-    @Column(name = "hub_id")
-    private UUID id;
+    private UUID value;
 
-    private HubId(UUID id) {
-        if(id == null) {
-            throw new IllegalArgumentException("유효하지 않은 허브 id 입니다");
+    private HubId(UUID value) {
+        if (value == null) {
+            throw new IllegalArgumentException("유효하지 않은 허브 value 입니다");
         }
-        this.id = id;
+        this.value = value;
     }
 
-    public static HubId of(UUID id){
+    public static HubId of(UUID id) {
         return new HubId(id);
     }
 

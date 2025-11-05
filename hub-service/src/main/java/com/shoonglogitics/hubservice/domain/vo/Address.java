@@ -1,6 +1,5 @@
 package com.shoonglogitics.hubservice.domain.vo;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -15,25 +14,24 @@ public class Address {
 
     private static final int ADDRESS_MAX_LENGTH = 100;
 
-    @Column(name = "address", nullable = false, length = 500)
     private String value;
 
 
-    private Address(String value){
+    private Address(String value) {
         validateAddress(value);
         this.value = value;
     }
 
-    private void validateAddress(String value){
-        if(value == null || value.isEmpty()){
+    private void validateAddress(String value) {
+        if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("주소는 필수입니다");
         }
-        if (value.length() > ADDRESS_MAX_LENGTH){
+        if (value.length() > ADDRESS_MAX_LENGTH) {
             throw new IllegalArgumentException("주소는 500자를 초과할 수 없습니다");
         }
     }
 
-    public static Address of(String value){
+    public static Address of(String value) {
         return new Address(value);
     }
 }
