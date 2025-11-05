@@ -33,6 +33,11 @@ public class UserRepositoryAdapter implements UserRepository {
 	}
 
 	@Override
+	public Optional<User> findById(Long id) {
+		return jpaUserRepository.findById(id);
+	}
+
+	@Override
 	public Page<MasterViewResponseDto> findMasters(Pageable pageable) {
 		return jpaUserRepository.findMasters(pageable);
 	}
@@ -54,6 +59,26 @@ public class UserRepositoryAdapter implements UserRepository {
 	@Override
 	public Page<CompanyManagerViewResponseDto> findCompanyManagers(Pageable pageable) {
 		return jpaUserRepository.findCompanyManagers(pageable);
+	}
+
+	@Override
+	public Optional<MasterViewResponseDto> findMasterById(Long id) {
+		return jpaUserRepository.findMasterById(id);
+	}
+
+	@Override
+	public Optional<HubManagerViewResponseDto> findHubManagerById(Long id) {
+		return jpaUserRepository.findHubManagerById(id);
+	}
+
+	@Override
+	public Optional<ShipperViewResponseDto> findShipperById(Long id) {
+		return jpaUserRepository.findShipperById(id);
+	}
+
+	@Override
+	public Optional<CompanyManagerViewResponseDto> findCompanyManagerById(Long id) {
+		return jpaUserRepository.findCompanyManagerById(id);
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.application.strategy.view;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +21,11 @@ public class HubManagerViewStrategy implements UserViewStrategy<HubManagerViewRe
 	@Override
 	public Page<HubManagerViewResponseDto> findUsers(Pageable pageable, UUID hubId) {
 		return userRepository.findHubManagers(pageable);
+	}
+
+	@Override
+	public Optional<HubManagerViewResponseDto> findUserById(Long id) {
+		return userRepository.findHubManagerById(id);
 	}
 
 }

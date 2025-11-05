@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.application.strategy.view;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +21,11 @@ public class CompanyManagerViewStrategy implements UserViewStrategy<CompanyManag
 	@Override
 	public Page<CompanyManagerViewResponseDto> findUsers(Pageable pageable, UUID hubId) {
 		return userRepository.findCompanyManagers(pageable);
+	}
+
+	@Override
+	public Optional<CompanyManagerViewResponseDto> findUserById(Long id) {
+		return userRepository.findCompanyManagerById(id);
 	}
 
 }

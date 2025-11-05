@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.application.strategy.view;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +21,11 @@ public class ShipperViewStrategy implements UserViewStrategy<ShipperViewResponse
 	@Override
 	public Page<ShipperViewResponseDto> findUsers(Pageable pageable, UUID hubId) {
 		return userRepository.findShippers(hubId, pageable);
+	}
+
+	@Override
+	public Optional<ShipperViewResponseDto> findUserById(Long id) {
+		return userRepository.findShipperById(id);
 	}
 
 }

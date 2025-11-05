@@ -1,6 +1,7 @@
 package com.shoonglogitics.userservice.application.service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import com.shoonglogitics.userservice.application.strategy.view.HubManagerViewSt
 import com.shoonglogitics.userservice.application.strategy.view.MasterViewStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.ShipperViewStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.UserViewStrategy;
+import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.domain.repository.UserRepository;
 
 @Service
@@ -74,6 +76,39 @@ public class UserService {
 
 		Page<T> users = strategy.findUsers(pageable, hubId);
 		return PageResponse.of(users);
+	}
+
+	@Transactional(readOnly = true)
+	public <T> Optional<T> getUser(String roleKey, Long userId) {
+		UserViewStrategy<T> strategy = (UserViewStrategy<T>)userViewStrategyMap.get(roleKey);
+		if (strategy == null) {
+			throw new IllegalArgumentException("지원하지 않는 역할입니다 : " + roleKey);
+		}
+
+		return strategy.findUserById(userId);
+	}
+
+	@Transactional(readOnly = true)
+	public User findUser(Long id) {
+		return userRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("해당 User를 찾을 수 없습니다."));
+	}
+
+	@Transactional
+	public void updateSignupStatus(Long id, String status) {
+		User user = userRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("해당 User를 찾을 수 없습니다."));
+
+		if ("APPROVED".equalsIgnoreCase(status)) {
+			user.approveSignup();
+			;
+		} else if ("REJECTED".equalsIgnoreCase(status)) {
+			user.rejectSignup();
+		} else {
+			throw new IllegalArgumentException("지원하지 않는 상태값입니다 : " + status);
+		}
+
+		userRepository.save(user);
 	}
 
 }
