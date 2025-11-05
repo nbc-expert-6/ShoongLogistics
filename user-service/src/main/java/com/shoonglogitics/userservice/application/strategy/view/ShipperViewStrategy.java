@@ -20,7 +20,10 @@ public class ShipperViewStrategy implements UserViewStrategy<ShipperViewResponse
 
 	@Override
 	public Page<ShipperViewResponseDto> findUsers(Pageable pageable, UUID hubId) {
-		return userRepository.findShippers(hubId, pageable);
+		if (hubId != null) {
+			return userRepository.findShippersByHubId(hubId, pageable);
+		}
+		return userRepository.findShippers(pageable);
 	}
 
 	@Override

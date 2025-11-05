@@ -53,12 +53,13 @@ public class UserRepositoryAdapter implements UserRepository {
 	}
 
 	@Override
-	public Page<ShipperViewResponseDto> findShippers(UUID hubId, Pageable pageable) {
-		if (hubId != null) {
-			return jpaUserRepository.findShippersByHubId(hubId, pageable);
-		} else {
-			return jpaUserRepository.findAllShippers(pageable);
-		}
+	public Page<ShipperViewResponseDto> findShippers(Pageable pageable) {
+		return jpaUserRepository.findAllShippers(pageable);
+	}
+
+	@Override
+	public Page<ShipperViewResponseDto> findShippersByHubId(UUID hubId, Pageable pageable) {
+		return jpaUserRepository.findShippersByHubId(hubId, pageable);
 	}
 
 	@Override

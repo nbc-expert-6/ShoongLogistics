@@ -27,7 +27,9 @@ public interface UserRepository {
 
 	Page<HubManagerViewResponseDto> findHubManagers(Pageable pageable);
 
-	Page<ShipperViewResponseDto> findShippers(UUID hubId, Pageable pageable);
+	Page<ShipperViewResponseDto> findShippers(Pageable pageable);
+
+	Page<ShipperViewResponseDto> findShippersByHubId(UUID hubId, Pageable pageable);
 
 	Page<CompanyManagerViewResponseDto> findCompanyManagers(Pageable pageable);
 
