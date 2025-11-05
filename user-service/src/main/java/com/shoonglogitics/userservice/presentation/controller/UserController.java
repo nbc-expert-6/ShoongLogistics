@@ -64,30 +64,36 @@ public class UserController {
 
 	// 회원 목록 조회
 	@GetMapping
-	public PageResponse<?> getUsers(@RequestParam String role,
+	public ResponseEntity<ApiResponse<PageResponse<?>>> getUsers(@RequestParam String role,
 		@RequestParam(required = false) UUID hubId,
 		@PageableDefault(size = 10) Pageable pageable) {
-		return userService.getUsers(role, pageable, hubId);
+		PageResponse<Object> users = userService.getUsers(role, pageable, hubId);
+
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(users));
 	}
 
 	// 회원 단건 조회
 	@GetMapping("/{role}/{id}")
-	public ResponseEntity<?> getUser(@PathVariable String role, @PathVariable Long id) {
+	public ResponseEntity<ApiResponse<?>> getUser(@PathVariable String role, @PathVariable Long id) {
 		Optional<?> user = userService.getUser(role, id);
-		return user.map(ResponseEntity::ok)
-			.orElseGet(() -> ResponseEntity.notFound().build());
+
+		if (user.isPresent()) {
+			return ResponseEntity.ok(ApiResponse.success(user.get()));
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 	// 회원가입 승인/거절
 	@PutMapping("/{id}/signup-status")
 	//@PreAuthorize("hasAnyRole('HUB_MANAGER', 'MASTER')")
-	public ResponseEntity<Void> updateSignupStatus(@PathVariable Long id,
+	public ResponseEntity<ApiResponse<Void>> updateSignupStatus(@PathVariable Long id,
 		@RequestBody UpdateSignupStatusRequest request) {
 		userService.updateSignupStatus(id, request.getStatus());
 
 		User user = userService.findUser(id);
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok().body(ApiResponse.success("회원가입 요청 상태 변경이 완료되었습니다."));
 	}
 
 }
