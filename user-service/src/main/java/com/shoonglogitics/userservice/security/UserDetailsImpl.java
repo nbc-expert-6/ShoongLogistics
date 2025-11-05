@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.shoonglogitics.userservice.domain.entity.SignupStatus;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.domain.entity.UserRole;
 
@@ -50,7 +51,7 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return user.getSignupStatus() == SignupStatus.APPROVED;
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return user.getSignupStatus() == SignupStatus.APPROVED;
 	}
 
 }
