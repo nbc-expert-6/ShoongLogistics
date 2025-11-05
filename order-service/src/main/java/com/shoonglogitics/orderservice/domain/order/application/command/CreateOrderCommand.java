@@ -3,6 +3,8 @@ package com.shoonglogitics.orderservice.domain.order.application.command;
 import java.util.List;
 import java.util.UUID;
 
+import org.locationtech.jts.geom.Point;
+
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderRequest;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
@@ -14,12 +16,16 @@ public record CreateOrderCommand(
 	UUID supplierCompanyId,
 	String supplierCompanyName,
 	String request,
+	String address,
+	String addressDetail,
+	String zipCode,
+	Point location,
 	Long totalPrice,
 	List<CreateOrderItemCommand> orderItems
 ) {
 	public static CreateOrderCommand from(CreateOrderRequest request, Long userId, UserRoleType role) {
 		List<CreateOrderItemCommand> items = request.orderItems().stream()
-			.map(i -> new CreateOrderItemCommand(i.productId(), i.amount()))
+			.map(i -> new CreateOrderItemCommand(i.productId(), i.price(), i.amount()))
 			.toList();
 
 		return new CreateOrderCommand(
@@ -30,6 +36,10 @@ public record CreateOrderCommand(
 			request.supplierCompanyId(),
 			request.supplierCompanyName(),
 			request.request(),
+			request.address(),
+			request.addressDetail(),
+			request.zipCode(),
+			request.location(),
 			request.totalPrice(),
 			items
 		);

@@ -11,6 +11,10 @@ public record CreateOrderItemRequest(
 	UUID productId,
 
 	@NotNull(message = "수량은 필수입니다.")
+	@Min(value = 0, message = "금액은 0원 이상이어야 합니다.")
+	Integer price,
+
+	@NotNull(message = "수량은 필수입니다.")
 	@Min(value = 1, message = "수량은 1 이상이어야 합니다.")
 	Integer amount
 
