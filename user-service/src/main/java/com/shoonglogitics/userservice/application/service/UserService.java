@@ -6,10 +6,13 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shoonglogitics.userservice.application.command.LoginUserCommand;
 import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
+import com.shoonglogitics.userservice.application.dto.LoginUserResponseDto;
 import com.shoonglogitics.userservice.application.dto.PageResponse;
 import com.shoonglogitics.userservice.application.strategy.signup.SignUpStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.CompanyManagerViewStrategy;
@@ -17,8 +20,10 @@ import com.shoonglogitics.userservice.application.strategy.view.HubManagerViewSt
 import com.shoonglogitics.userservice.application.strategy.view.MasterViewStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.ShipperViewStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.UserViewStrategy;
+import com.shoonglogitics.userservice.domain.entity.SignupStatus;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.domain.repository.UserRepository;
+import com.shoonglogitics.userservice.security.JwtProvider;
 
 @Service
 public class UserService {
@@ -29,6 +34,8 @@ public class UserService {
 
 	private final Map<String, UserViewStrategy<?>> userViewStrategyMap;
 
+	private final JwtProvider jwtProvider;
+
 	// 생성자에서 Strategy Map 초기화
 	public UserService(
 		UserRepository userRepository,
@@ -36,10 +43,11 @@ public class UserService {
 		HubManagerViewStrategy hubManagerViewStrategy,
 		ShipperViewStrategy shipperViewStrategy,
 		CompanyManagerViewStrategy companyManagerViewStrategy,
-		Map<String, SignUpStrategy> signUpStrategyMap
+		Map<String, SignUpStrategy> signUpStrategyMap, JwtProvider jwtProvider
 	) {
 		this.userRepository = userRepository;
 		this.signUpStrategyMap = signUpStrategyMap;
+		this.jwtProvider = jwtProvider;
 
 		// Map 구성
 		this.userViewStrategyMap = Map.of(
@@ -48,6 +56,18 @@ public class UserService {
 			"SHIPPER", shipperViewStrategy,
 			"COMPANY_MANAGER", companyManagerViewStrategy
 		);
+	}
+
+	public LoginUserResponseDto loginUser(LoginUserCommand command) {
+		User user = userRepository.findByUsername(command.getUserName())
+			.orElseThrow(() -> new UsernameNotFoundException("해당 User를 찾을 수 없습니다."));
+
+		if (!user.getSignupStatus().equals(SignupStatus.APPROVED)) {
+			throw new IllegalArgumentException("회원가입이 승인된 사용자만 로그인 가능합니다.");
+		}
+
+		String accessToken = jwtProvider.createAccessToken(user.getId(), user.getUserRole());
+		return LoginUserResponseDto.of(accessToken, user.getId());
 	}
 
 	@Transactional

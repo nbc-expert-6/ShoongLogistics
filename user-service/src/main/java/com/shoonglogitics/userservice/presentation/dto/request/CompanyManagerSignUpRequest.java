@@ -1,5 +1,7 @@
 package com.shoonglogitics.userservice.presentation.dto.request;
 
+import java.util.UUID;
+
 import com.shoonglogitics.userservice.application.command.CompanyManagerSignUpCommand;
 import com.shoonglogitics.userservice.domain.vo.CompanyId;
 import com.shoonglogitics.userservice.domain.vo.Email;
@@ -12,8 +14,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CompanayManagerSignUpRequest extends SignUpRequest {
-	private CompanyId companyId;
+public class CompanyManagerSignUpRequest extends SignUpRequest {
+	private String companyId;
 
 	@Override
 	public Object toCommand() {
@@ -24,7 +26,7 @@ public class CompanayManagerSignUpRequest extends SignUpRequest {
 			.name(new Name(getName()))
 			.slackId(new SlackId(getSlackId()))
 			.phoneNumber(new PhoneNumber(getPhoneNumber()))
-			.companyId(companyId)
+			.companyId(new CompanyId(UUID.fromString(companyId)))
 			.build();
 	}
 }
