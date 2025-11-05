@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: api-gateway
+
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service
+              uri: http://localhost:8081 #TODO : 8081???? ???, lb://USER-SERVICE? ????? ??
+              predicates:
+                - Path=/api/v1/users/**
+
+jwt:
+  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
+  expiration: 3600000
+server:
+  port: 8000

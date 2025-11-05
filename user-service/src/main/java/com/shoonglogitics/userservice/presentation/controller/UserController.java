@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shoonglogitics.userservice.application.command.LoginUserCommand;
 import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
+import com.shoonglogitics.userservice.application.dto.LoginUserResponseDto;
 import com.shoonglogitics.userservice.application.dto.PageResponse;
 import com.shoonglogitics.userservice.application.service.UserService;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.presentation.dto.ApiResponse;
+import com.shoonglogitics.userservice.presentation.dto.request.LoginRequestDto;
 import com.shoonglogitics.userservice.presentation.dto.request.SignUpRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateSignupStatusRequest;
 import com.shoonglogitics.userservice.presentation.dto.response.SignUpResponse;
@@ -48,6 +51,15 @@ public class UserController {
 			.build();
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	// 로그인
+	@PostMapping("/login")
+	public ResponseEntity<ApiResponse<LoginUserResponseDto>> loginUser(@RequestBody LoginRequestDto dto) {
+		LoginUserCommand from = LoginUserCommand.from(dto);
+		LoginUserResponseDto responseDto = userService.loginUser(from);
+
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
 	}
 
 	// 회원 목록 조회

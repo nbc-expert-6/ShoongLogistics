@@ -1,7 +1,5 @@
 package com.shoonglogitics.userservice.application.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,7 +14,6 @@ public class UserResponseDto {
 	private String role;
 	private String signupStatus;
 
-	@QueryProjection
 	public UserResponseDto(Long userId, String username, String role, String signupStatus) {
 		this.userId = userId;
 		this.username = username;

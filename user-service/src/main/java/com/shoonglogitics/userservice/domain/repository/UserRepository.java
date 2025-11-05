@@ -19,6 +19,8 @@ public interface UserRepository {
 
 	User save(User user);
 
+	Optional<User> findByUserName(String userName);
+
 	Optional<User> findById(Long id);
 
 	Page<MasterViewResponseDto> findMasters(Pageable pageable);
