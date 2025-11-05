@@ -31,7 +31,7 @@ public class Product extends BaseEntity {
 	@Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
 
-	@Column(name = "p_product_category_id", columnDefinition = "uuid")
+	@Column(name = "product_category_id", columnDefinition = "uuid")
 	private UUID productCategoryId;
 
 	@Embedded

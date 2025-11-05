@@ -6,17 +6,18 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
-import org.springframework.data.geo.Point;
 
 import com.shoonglogitics.companyservice.domain.common.entity.BaseAggregateRoot;
+import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
-import com.shoonglogitics.companyservice.domain.company.vo.CompanyLocation;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
+import com.shoonglogitics.companyservice.infrastructure.persistence.converter.GeoLocationConverter;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -55,43 +56,32 @@ public class Company extends BaseAggregateRoot<Company> {
 	})
 	private CompanyAddress address;
 
-	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name = "location", column = @Column(name = "location", nullable = false, columnDefinition = "geometry(Point, 4326)"))
-	})
-	private CompanyLocation location;
+	@Column(name = "location", nullable = false, columnDefinition = "geometry(Point, 4326)")
+	@Convert(converter = GeoLocationConverter.class)
+	private GeoLocation location;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type", nullable = false)
 	private CompanyType type;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "p_company_id")
+	@JoinColumn(name = "company_id")
 	private List<Product> products = new ArrayList<>();
 
 
 	public static Company create(
 		UUID hubId,
 		String name,
-		String address,
-		String addressDetail,
-		String zipCode,
-		Point location,
-		CompanyType type,
-		List<Product> products
+		CompanyAddress address,
+		GeoLocation location,
+		CompanyType type
 	) {
 		Company company = new Company();
 		company.hubId = hubId;
 		company.name = name;
-		company.address = CompanyAddress.of(address, addressDetail, zipCode);
-		company.location = CompanyLocation.of(location);
+		company.address = address;
+		company.location = location;
 		company.type = type;
-
-		if (products != null && !products.isEmpty()) {
-			for (Product product : products) {
-				company.products.add(product);
-			}
-		}
 
 		return company;
 	}

@@ -33,10 +33,7 @@ public class StockHistory extends BaseEntity {
 	@Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
 
-	@Column(name = "p_stock_id", nullable = false, columnDefinition = "uuid")
-	private UUID stockId;
-
-	@Column(name = "p_order_id", columnDefinition = "uuid")
+	@Column(name = "order_id", columnDefinition = "uuid")
 	private UUID orderId;
 
 	@Embedded
@@ -55,14 +52,12 @@ public class StockHistory extends BaseEntity {
 	private String reason;
 
 	public static StockHistory createForOrder(
-		UUID stockId,
 		UUID orderId,
 		Integer beforeAmount,
 		Integer changeAmount,
 		Integer afterAmount
 	) {
 		StockHistory history = new StockHistory();
-		history.stockId = stockId;
 		history.orderId = orderId;
 		history.stockChange = StockChange.of(beforeAmount, changeAmount, afterAmount);
 		history.changeType = StockChangeType.ORDER;
@@ -70,14 +65,12 @@ public class StockHistory extends BaseEntity {
 	}
 
 	public static StockHistory createForOrderCancel(
-		UUID stockId,
 		UUID orderId,
 		Integer beforeAmount,
 		Integer changeAmount,
 		Integer afterAmount
 	) {
 		StockHistory history = new StockHistory();
-		history.stockId = stockId;
 		history.orderId = orderId;
 		history.stockChange = StockChange.of(beforeAmount, changeAmount, afterAmount);
 		history.changeType = StockChangeType.ORDER_CANCEL;
@@ -92,7 +85,6 @@ public class StockHistory extends BaseEntity {
 		String reason
 	) {
 		StockHistory history = new StockHistory();
-		history.stockId = stockId;
 		history.stockChange = StockChange.of(beforeAmount, changeAmount, afterAmount);
 		history.changeType = StockChangeType.STOCK_IN;
 		history.reason = reason;
@@ -107,7 +99,6 @@ public class StockHistory extends BaseEntity {
 		String reason
 	) {
 		StockHistory history = new StockHistory();
-		history.stockId = stockId;
 		history.stockChange = StockChange.of(beforeAmount, changeAmount, afterAmount);
 		history.changeType = StockChangeType.STOCK_OUT;
 		history.reason = reason;
