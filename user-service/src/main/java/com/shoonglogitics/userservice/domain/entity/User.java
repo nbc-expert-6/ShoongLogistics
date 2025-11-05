@@ -73,4 +73,20 @@ public class User {
 		}
 	}
 
+	public void approveSignup() {
+		if (this.signupStatus != SignupStatus.PENDING) {
+			throw new IllegalArgumentException("승인할 수 없는 상태입니다.");
+		}
+		this.signupStatus = SignupStatus.APPROVED;
+
+	}
+
+	public void rejectSignup() {
+		if (this.signupStatus != SignupStatus.PENDING) {
+			throw new IllegalArgumentException("승인할 수 없는 상태입니다.");
+		}
+		this.signupStatus = SignupStatus.REJECTED;
+
+	}
+
 }
