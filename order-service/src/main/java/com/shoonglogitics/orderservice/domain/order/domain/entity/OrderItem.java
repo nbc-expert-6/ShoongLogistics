@@ -1,16 +1,25 @@
 package com.shoonglogitics.orderservice.domain.order.domain.entity;
 
-import com.shoonglogitics.orderservice.global.common.entity.BaseEntity;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.UUID;
+
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
-import java.util.UUID;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.global.common.entity.BaseEntity;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "p_order_item")
@@ -18,27 +27,31 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem extends BaseEntity {
-    @Id
-    @UuidGenerator(style = UuidGenerator.Style.TIME)
-    @Column(name = "id",columnDefinition = "uuid")
-    private UUID id;
+	@Id
+	@UuidGenerator(style = UuidGenerator.Style.TIME)
+	@Column(name = "id", columnDefinition = "uuid")
+	private UUID id;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "productId", column = @Column(name = "product_id")),
-            @AttributeOverride(name = "price", column = @Column(name = "price"))
-    })
-    private ProductInfo productInfo;
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name = "productId", column = @Column(name = "product_id")),
+		@AttributeOverride(name = "price", column = @Column(name = "price"))
+	})
+	private ProductInfo productInfo;
 
-    @Embedded
-    @AttributeOverride(name = "amount", column = @Column(name = "amount"))
-    private Quentity amount;
+	@Embedded
+	@AttributeOverride(name = "value", column = @Column(name = "quantity"))
+	private Quentity quentity;
 
-    //Todo 생성시 검증 로직 추가
-    public static OrderItem create(ProductInfo productInfo, Quentity amount) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.productInfo = productInfo;
-        orderItem.amount = amount;
-        return orderItem;
-    }
+	//Todo 생성시 검증 로직 추가
+	public static OrderItem create(ProductInfo productInfo, Quentity quentity) {
+		OrderItem orderItem = new OrderItem();
+		orderItem.productInfo = productInfo;
+		orderItem.quentity = quentity;
+		return orderItem;
+	}
+
+	public Money calculateTotalPrice() {
+		return productInfo.getPrice().multiply(quentity.getValue());
+	}
 }
