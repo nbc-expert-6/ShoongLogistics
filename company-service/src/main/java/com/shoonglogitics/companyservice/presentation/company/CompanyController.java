@@ -7,13 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.companyservice.application.CompanyService;
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyRequest;
@@ -55,5 +59,20 @@ public class CompanyController {
 		);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@DeleteMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	public ResponseEntity<ApiResponse<String>> deleteCompany(
+		@PathVariable UUID companyId,
+		@RequestParam UUID hubId,
+		@AuthenticationPrincipal AuthUser authUser) {
+		DeleteCompanyCommand command = new DeleteCompanyCommand(authUser, companyId, hubId);
+
+		companyService.deleteCompany(command);
+
+		String responseMessage = "업체가 정상적으로 삭제 되었습니다.";
+
+		return ResponseEntity.ok().body(ApiResponse.success(responseMessage));
 	}
 }
