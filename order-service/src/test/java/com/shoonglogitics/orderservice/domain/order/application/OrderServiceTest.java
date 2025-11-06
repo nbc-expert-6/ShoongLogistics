@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.InjectMocks;
@@ -24,6 +23,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepos
 import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
@@ -67,7 +67,8 @@ class OrderServiceTest {
 			"서울특별시 중구 세종대로 110",
 			"서울시청",
 			"00000",
-			geometryFactory.createPoint(new Coordinate(longitude, latitude)),
+			longitude,
+			latitude,
 			10000L,
 			items
 		);
@@ -89,7 +90,7 @@ class OrderServiceTest {
 				command.address(),
 				command.addressDetail(),
 				command.zipCode(),
-				command.location()
+				GeoLocation.of(latitude, longitude)
 			),
 			orderItems
 		);
