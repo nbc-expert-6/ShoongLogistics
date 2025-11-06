@@ -6,7 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/user_service
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: qwer1234!
+    password: brian981103
 
   jpa:
     hibernate:
@@ -16,7 +16,7 @@ spring:
         format_sql: false
         show_sql: false
         use_sql_comments: false
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG10Dialect
+        database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 
 logging:
   level:
@@ -42,7 +42,7 @@ spring:
         format_sql: false
         show_sql: false
         use_sql_comments: false
-        database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG10Dialect
+        database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 
 logging:
   level:
@@ -68,7 +68,7 @@ spring:
         format_sql: false
         show_sql: false
         use_sql_comments: false
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 logging:
   level:
@@ -94,7 +94,7 @@ spring:
         format_sql: false
         show_sql: false
         use_sql_comments: false
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG10Dialect
+        database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 
 logging:
   level:
