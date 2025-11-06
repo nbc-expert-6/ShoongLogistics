@@ -1,15 +1,24 @@
 package com.shoonglogitics.companyservice.application.service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 
 public interface UserClient {
 
 	/**
-	 * @param userId
+	 * @param authUser
 	 * @param hubId
 	 * @return 허브 담당자 아이디와 허브 아이디가 일치하는지 여부
 	 */
-	boolean isHubManager(Long userId, UUID hubId);
+	boolean isHubManager(AuthUser authUser, UUID hubId);
+
+	/**
+	 * @param companyId 업체 ID
+	 * @return 업체 담당자 삭제 요청 성공 여부
+	 */
+	boolean deleteCompanyManager(AuthUser authUser, UUID companyId);
 
 	/**
 	 * User Service 응답 정보
@@ -27,7 +36,9 @@ public interface UserClient {
 		UUID companyId,    // COMPANY_MANAGER, SHIPPER
 		UUID shipperId,    // SHIPPER only
 		String shipperType, // SHIPPER only
-		Integer order      // SHIPPER only
+		Integer order,// SHIPPER only
+		LocalDateTime deleteAt,
+		Long deleteBy
 	) {
 	}
 }
