@@ -3,6 +3,8 @@ package com.shoonglogitics.companyservice.infrastructure.repository;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
@@ -29,5 +31,10 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 	@Override
 	public Optional<Company> findByNameAndZipCodeAndType(String name, String zipCode, CompanyType type) {
 		return jpaCompanyRepository.findByNameAndAddress_ZipCodeAndType(name, zipCode, type);
+	}
+
+	@Override
+	public Page<Company> getCompanies(UUID hubId, String name, CompanyType type, Pageable pageable) {
+		return jpaCompanyRepository.getCompanies(hubId, name, type, pageable);
 	}
 }
