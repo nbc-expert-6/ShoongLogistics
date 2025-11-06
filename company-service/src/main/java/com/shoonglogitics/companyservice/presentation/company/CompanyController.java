@@ -33,13 +33,12 @@ public class CompanyController {
 
 	@PostMapping
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
-	public ResponseEntity<ApiResponse<CreateCompanyResponse>> createOrder(
+	public ResponseEntity<ApiResponse<CreateCompanyResponse>> createCompany(
 		@Valid @RequestBody CreateCompanyRequest request,
 		@AuthenticationPrincipal AuthUser authUser) {
 		CreateCompanyCommand command = CreateCompanyCommand.builder()
 			.authUser(authUser)
 			.hubId(request.hubId())
-			.currentUserId(authUser.getUserId())
 			.name(request.name())
 			.address(request.address())
 			.addressDetail(request.addressDetail())

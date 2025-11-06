@@ -11,7 +11,6 @@ import lombok.Builder;
 public record CreateCompanyCommand(
 	AuthUser authUser,
 	UUID hubId,
-	Long currentUserId,
 	String name,
 	String address,
 	String addressDetail,
