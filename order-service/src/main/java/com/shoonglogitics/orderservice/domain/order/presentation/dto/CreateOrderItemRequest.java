@@ -1,5 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.presentation.dto;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
@@ -10,13 +11,13 @@ public record CreateOrderItemRequest(
 	@NotNull(message = "상품 ID는 필수입니다.")
 	UUID productId,
 
-	@NotNull(message = "수량은 필수입니다.")
+	@NotNull(message = "금액은 필수입니다.")
 	@Min(value = 0, message = "금액은 0원 이상이어야 합니다.")
-	Integer price,
+	BigDecimal price,
 
 	@NotNull(message = "수량은 필수입니다.")
 	@Min(value = 1, message = "수량은 1 이상이어야 합니다.")
-	Integer amount
+	Integer quantity
 
 ) {
 }

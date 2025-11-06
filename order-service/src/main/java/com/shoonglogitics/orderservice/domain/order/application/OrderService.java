@@ -91,8 +91,8 @@ public class OrderService {
 	public List<OrderItem> createItems(List<CreateOrderItemCommand> createOrderItemCommands) {
 		return createOrderItemCommands.stream()
 			.map(cmd -> OrderItem.create(
-				ProductInfo.of(cmd.productId(), cmd.price()),
-				Quentity.of(cmd.amount())
+				ProductInfo.of(cmd.productId(), Money.of(cmd.price())),
+				Quentity.of(cmd.quantity())
 			)).toList();
 	}
 

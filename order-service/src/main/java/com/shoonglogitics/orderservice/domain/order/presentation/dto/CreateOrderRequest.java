@@ -1,5 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.presentation.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +42,7 @@ public record CreateOrderRequest(
 
 	@NotNull(message = "총액은 필수입니다.")
 	@PositiveOrZero(message = "총액은 0 이상이어야 합니다.")
-	Long totalPrice,
+	BigDecimal totalPrice,
 
 	@NotEmpty(message = "주문 상품 목록은 비어 있을 수 없습니다.")
 	@Valid

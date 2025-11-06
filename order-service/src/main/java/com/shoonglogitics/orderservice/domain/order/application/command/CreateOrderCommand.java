@@ -1,5 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.application.command;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,12 +20,12 @@ public record CreateOrderCommand(
 	String zipCode,
 	Double latitude,
 	Double longitude,
-	Long totalPrice,
+	BigDecimal totalPrice,
 	List<CreateOrderItemCommand> orderItems
 ) {
 	public static CreateOrderCommand from(CreateOrderRequest request, Long userId, UserRoleType role) {
 		List<CreateOrderItemCommand> items = request.orderItems().stream()
-			.map(i -> new CreateOrderItemCommand(i.productId(), i.price(), i.amount()))
+			.map(i -> new CreateOrderItemCommand(i.productId(), i.price(), i.quantity()))
 			.toList();
 
 		return new CreateOrderCommand(
