@@ -14,6 +14,7 @@ import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
+import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +28,7 @@ public class CompanyService {
 	@Transactional
 	public UUID createCompany(CreateCompanyCommand command) {
 		validateHubManager(command.authUser(), command.hubId());
+		validateDuplicateCompany(command.name(), command.zipCode(), command.type());
 
 		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
 		GeoLocation location = GeoLocation.of(command.latitude(), command.longitude());
@@ -49,5 +51,11 @@ public class CompanyService {
 		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, hubId)) {
 			throw new IllegalArgumentException("해당 허브의 담당자만 업체를 생성, 삭제 할 수 있습니다.");
 		}
+	}
+
+	private void validateDuplicateCompany(String name, String zipCode, CompanyType type) {
+		companyRepository.findByNameAndZipCodeAndType(name, zipCode, type).ifPresent(company -> {
+			throw new IllegalArgumentException("이미 존재하는 업체입니다.");
+		});
 	}
 }

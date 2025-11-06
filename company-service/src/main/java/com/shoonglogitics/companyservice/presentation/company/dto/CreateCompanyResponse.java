@@ -3,6 +3,6 @@ package com.shoonglogitics.companyservice.presentation.company.dto;
 import java.util.UUID;
 
 public record CreateCompanyResponse(
-	UUID orderId,
+	UUID companyId,
 	String message
 ) {}
