@@ -46,17 +46,13 @@ public class Order extends BaseAggregateRoot<Order> {
 	private List<OrderItem> orderItems = new ArrayList<>();
 
 	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name = "companyId", column = @Column(name = "receiver_company_id")),
-		@AttributeOverride(name = "companyName", column = @Column(name = "receiver_company_name"))
-	})
+	@AttributeOverrides({@AttributeOverride(name = "companyId", column = @Column(name = "receiver_company_id")),
+		@AttributeOverride(name = "companyName", column = @Column(name = "receiver_company_name"))})
 	private CompanyInfo receiver;
 
 	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name = "companyId", column = @Column(name = "supplier_company_id")),
-		@AttributeOverride(name = "companyName", column = @Column(name = "supplier_company_name"))
-	})
+	@AttributeOverrides({@AttributeOverride(name = "companyId", column = @Column(name = "supplier_company_id")),
+		@AttributeOverride(name = "companyName", column = @Column(name = "supplier_company_name"))})
 	private CompanyInfo supplier;
 
 	@Column(name = "request")
@@ -73,20 +69,62 @@ public class Order extends BaseAggregateRoot<Order> {
 	private Address address;
 
 	//Todo 생성시 검증 로직 추가
-	public static Order create(CompanyInfo receiver,
-		CompanyInfo supplier,
-		String request,
-		Money totalPrice,
-		Address address,
-		List<OrderItem> orderItems) {
+	public static Order create(CompanyInfo receiver, CompanyInfo supplier, String request, Money totalPrice,
+		Address address, List<OrderItem> orderItems) {
 		Order order = new Order();
 		order.receiver = receiver;
 		order.supplier = supplier;
 		order.request = request;
 		order.totalPrice = totalPrice;
 		order.address = address;
-		order.status = OrderStatus.PAYMENT_PENDING;
+		order.status = OrderStatus.PENDING;
 		order.orderItems = orderItems != null ? new ArrayList<>(orderItems) : new ArrayList<>();
+		//불변식 검증
+		order.validateInvariants();
 		return order;
+	}
+
+	private void validateInvariants() {
+		if (receiver == null || supplier == null) {
+			throw new IllegalArgumentException("공급업체와 수령업체 정보는 필수입니다.");
+		}
+		if (receiver.getCompanyId().equals(supplier.getCompanyId())) {
+			throw new IllegalArgumentException("공급업체와 수령업체가 동일할 수 없습니다.");
+		}
+		if (address == null) {
+			throw new IllegalArgumentException("주소 정보는 필수입니다.");
+		}
+		if (orderItems == null || orderItems.isEmpty()) {
+			throw new IllegalArgumentException("주문 항목이 비어 있을 수 없습니다.");
+		}
+		if (totalPrice == null || totalPrice.isNegative()) {
+			throw new IllegalArgumentException("주문 총액은 0보다 커야 합니다.");
+		}
+		Money calculatedTotal = calculateTotalPrice();
+		if (!totalPrice.equals(calculatedTotal)) {
+			throw new IllegalArgumentException("주문 금액 합계와 총 주문 금액이 일치하지 않습니다.");
+		}
+	}
+
+	public Money calculateTotalPrice() {
+		return orderItems.stream().map(OrderItem::calculateTotalPrice).reduce(Money.zero(), Money::add);
+	}
+
+	public void changeStatus(OrderStatus next) {
+		if (!status.canTransitionTo(next)) {
+			throw new IllegalStateException(String.format("현재 상태(%s)에서는 %s 상태로 변경할 수 없습니다.", status, next));
+		}
+		this.status = next;
+	}
+
+	public int getOrderItemCount() {
+		return orderItems.size();
+	}
+
+	public boolean isCancellable() {
+		if (!status.canBeCancelled()) {
+			return false;
+		}
+		return true;
 	}
 }

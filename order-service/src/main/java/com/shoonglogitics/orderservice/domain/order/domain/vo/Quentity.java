@@ -9,15 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Quentity {
-    private Integer amount;
+	private int value;
 
-    public static Quentity of(Integer amount) {
-        if (amount < 1) {
-            throw new IllegalArgumentException("주문 수량은 최소 1개 이상이어야 합니다.");
-        }
-        Quentity quentity = new Quentity();
-        quentity.amount = amount;
-        return quentity;
-    }
+	private Quentity(int value) {
+		this.value = value;
+	}
+
+	public static Quentity of(int value) {
+		if (value < 1) {
+			throw new IllegalArgumentException("주문 수량은 최소 1개 이상이어야 합니다.");
+		}
+		return new Quentity(value);
+	}
 
 }

@@ -4,17 +4,81 @@ import lombok.Getter;
 
 @Getter
 public enum OrderStatus {
-    PAYMENT_PENDING("결제 대기중"),
-    PAYMENT_COMPLETED("결제 완료"),
-    DELIVERY_PENDING("배송 대기중"),
-    DELIVERING("배송중"),
-    DELIVERY_COMPLETED("배송완료"),
-    ORDER_CANCELLED("주문취소"),
-    ORDER_FAILED("주문실패");
+	PENDING("주문 대기") {
+		@Override
+		public boolean canTransitionTo(OrderStatus newStatus) {
+			return newStatus == PAID || newStatus == CANCELLED;
+		}
 
-    private final String description;
+		@Override
+		public boolean canBeCancelled() {
+			return true;
+		}
+	},
 
-    OrderStatus(String description) {
-        this.description = description;
-    }
+	PAID("결제 완료") {
+		@Override
+		public boolean canTransitionTo(OrderStatus newStatus) {
+			return newStatus == SHIPPED || newStatus == CANCELLED;
+		}
+
+		@Override
+		public boolean canBeCancelled() {
+			return true;
+		}
+	},
+
+	SHIPPED("배송 중") {
+		@Override
+		public boolean canTransitionTo(OrderStatus newStatus) {
+			return newStatus == DELIVERED;
+		}
+
+		@Override
+		public boolean canBeCancelled() {
+			return false;
+		}
+	},
+
+	DELIVERED("배송 완료") {
+		@Override
+		public boolean canTransitionTo(OrderStatus newStatus) {
+			return false;
+		}
+
+		@Override
+		public boolean canBeCancelled() {
+			return false;
+		}
+	},
+
+	CANCELLED("취소됨") {
+		@Override
+		public boolean canTransitionTo(OrderStatus newStatus) {
+			return false;
+		}
+
+		@Override
+		public boolean canBeCancelled() {
+			return false;
+		}
+	};
+
+	private final String description;
+
+	OrderStatus(String description) {
+		this.description = description;
+	}
+
+	public abstract boolean canTransitionTo(OrderStatus newStatus);
+
+	public abstract boolean canBeCancelled();
+
+	public boolean canBePaid() {
+		return this == PENDING;
+	}
+
+	public boolean canBeShipped() {
+		return this == PAID;
+	}
 }
