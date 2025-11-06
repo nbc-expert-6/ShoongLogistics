@@ -65,6 +65,7 @@ public class OrderService {
 
 		//정보 조합하여 order 엔티티 생성
 		Order order = Order.create(
+			command.userId(),
 			receiverInfo,
 			supplierInfo,
 			command.request(),
