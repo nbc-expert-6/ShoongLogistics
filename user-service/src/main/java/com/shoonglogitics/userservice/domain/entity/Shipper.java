@@ -25,7 +25,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "p_shipper")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Shipper extends User {
+public class Shipper extends User implements UserUpdatable {
 
 	@Embedded
 	@AttributeOverride(name = "id", column = @Column(name = "hub_id", nullable = true))
@@ -83,6 +83,14 @@ public class Shipper extends User {
 			.order(order)
 			.isShippingAvailable(isShippingAvailable)
 			.build();
+	}
+
+	@Override
+	public void updateUserInfo(Name name, Email email, SlackId slackId, PhoneNumber phoneNumber) {
+		this.name = name;
+		this.email = email;
+		this.slackId = slackId;
+		this.phoneNumber = phoneNumber;
 	}
 
 }

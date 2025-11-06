@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,8 +12,12 @@ import com.shoonglogitics.userservice.application.dto.CompanyManagerViewResponse
 import com.shoonglogitics.userservice.application.dto.HubManagerViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.MasterViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.ShipperViewResponseDto;
+import com.shoonglogitics.userservice.domain.entity.CompanyManager;
+import com.shoonglogitics.userservice.domain.entity.HubManager;
+import com.shoonglogitics.userservice.domain.entity.Shipper;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.domain.repository.UserRepository;
+import com.shoonglogitics.userservice.domain.vo.HubId;
 
 import lombok.RequiredArgsConstructor;
 
@@ -85,6 +90,26 @@ public class UserRepositoryAdapter implements UserRepository {
 	@Override
 	public Optional<CompanyManagerViewResponseDto> findCompanyManagerById(Long id) {
 		return jpaUserRepository.findCompanyManagerById(id);
+	}
+
+	@Override
+	public Optional<Integer> findLastShipperOrderByHubId(HubId hubId) {
+		return jpaUserRepository.findLastShipperOrderByHubId(hubId);
+	}
+
+	@Override
+	public List<HubManager> findHubManagersByHubId(UUID hubId) {
+		return jpaUserRepository.findHubManagersByHubId(hubId);
+	}
+
+	@Override
+	public List<Shipper> findShippersByHubId(UUID hubId) {
+		return jpaUserRepository.findShippersByHubId(hubId);
+	}
+
+	@Override
+	public List<CompanyManager> findCompanyManagersByCompanyId(UUID companyId) {
+		return jpaUserRepository.findCompanyManagersByCompanyId(companyId);
 	}
 
 }

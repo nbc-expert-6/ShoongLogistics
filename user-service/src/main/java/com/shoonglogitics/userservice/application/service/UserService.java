@@ -12,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.userservice.application.command.LoginUserCommand;
 import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
+import com.shoonglogitics.userservice.application.command.UpdateUserCommand;
+import com.shoonglogitics.userservice.application.dto.HubManagerViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.LoginUserResponseDto;
 import com.shoonglogitics.userservice.application.dto.PageResponse;
+import com.shoonglogitics.userservice.application.dto.ShipperViewResponseDto;
 import com.shoonglogitics.userservice.application.strategy.signup.SignUpStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.CompanyManagerViewStrategy;
 import com.shoonglogitics.userservice.application.strategy.view.HubManagerViewStrategy;
@@ -22,7 +25,12 @@ import com.shoonglogitics.userservice.application.strategy.view.ShipperViewStrat
 import com.shoonglogitics.userservice.application.strategy.view.UserViewStrategy;
 import com.shoonglogitics.userservice.domain.entity.SignupStatus;
 import com.shoonglogitics.userservice.domain.entity.User;
+import com.shoonglogitics.userservice.domain.entity.UserUpdatable;
 import com.shoonglogitics.userservice.domain.repository.UserRepository;
+import com.shoonglogitics.userservice.domain.vo.Email;
+import com.shoonglogitics.userservice.domain.vo.Name;
+import com.shoonglogitics.userservice.domain.vo.PhoneNumber;
+import com.shoonglogitics.userservice.domain.vo.SlackId;
 import com.shoonglogitics.userservice.security.JwtProvider;
 
 @Service
@@ -130,6 +138,57 @@ public class UserService {
 		}
 
 		userRepository.save(user);
+	}
+
+	private boolean canHubManager(Long requesterId, Long targetUserId) {
+		// 허브 관리자 조회
+		HubManagerViewResponseDto manager = userRepository.findHubManagerById(requesterId)
+			.orElseThrow(() -> new IllegalArgumentException("허브 관리자를 찾을 수 없습니다."));
+
+		// 대상이 허브 관리자인지 확인
+		Optional<HubManagerViewResponseDto> targetManagerOpt = userRepository.findHubManagerById(targetUserId);
+		if (targetManagerOpt.isPresent()) {
+			HubManagerViewResponseDto targetManager = targetManagerOpt.get();
+			return manager.getHubId().equals(targetManager.getHubId());
+		}
+
+		// 대상이 배송 담당자인지 확인
+		Optional<ShipperViewResponseDto> targetShipperOpt = userRepository.findShipperById(targetUserId);
+		if (targetShipperOpt.isPresent()) {
+			ShipperViewResponseDto targetShipper = targetShipperOpt.get();
+			return manager.getHubId().equals(targetShipper.getHubId());
+		}
+
+		return false;
+	}
+
+	public boolean canUpdateUser(String requesterRole, Long requesterId, Long targetUserId) {
+		if ("MASTER".equals(requesterRole)) {
+			return true;
+		}
+
+		if ("HUB_MANAGER".equals(requesterRole)) {
+			return canHubManager(requesterId, targetUserId);
+		}
+
+		return false;
+	}
+
+	@Transactional
+	public void updateUser(Long userId, UpdateUserCommand command) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+		if (user instanceof UserUpdatable updatable) {
+			updatable.updateUserInfo(
+				new Name(command.getName()),
+				new Email(command.getEmail()),
+				new SlackId(command.getSlackId()),
+				new PhoneNumber(command.getPhoneNumber())
+			);
+		} else {
+			throw new IllegalArgumentException("업데이트가 불가능한 사용자 타입입니다.");
+		}
 	}
 
 }
