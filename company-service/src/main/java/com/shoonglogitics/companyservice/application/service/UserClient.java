@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 
 public interface UserClient {
 
@@ -26,6 +27,8 @@ public interface UserClient {
 	 * @return 업체 담당자 삭제 요청 성공 여부
 	 */
 	boolean deleteCompanyManager(AuthUser authUser, UUID companyId);
+
+	boolean updateCompanyLocation(AuthUser authUser, UUID companyId, GeoLocation location);
 
 	/**
 	 * User Service 응답 정보

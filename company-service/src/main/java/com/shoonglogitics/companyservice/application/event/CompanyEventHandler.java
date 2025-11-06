@@ -22,4 +22,10 @@ public class CompanyEventHandler {
 	public void handleCompanyDeleted(CompanyDeletedEvent event) {
 		userClient.deleteCompanyManager(event.getAuthUser(), event.getCompanyId());
 	}
+
+	@Async
+	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+	public void handleCompanyUpdated(CompanyDeletedEvent event) {
+		userClient.deleteCompanyManager(event.getAuthUser(), event.getCompanyId());
+	}
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.PageResponse;
 
@@ -66,5 +67,11 @@ public class UserClientImpl implements UserClient {
 		return companyManager
 			.map(m -> userFeignClient.deleteUser(m.userId()).success())
 			.orElse(false);
+	}
+
+	@Override
+	public boolean updateCompanyLocation(AuthUser authUser, UUID companyId, GeoLocation location) {
+		//어떻게 주고받을지 결정 후 변경
+		return false;
 	}
 }
