@@ -27,7 +27,8 @@ public class JwtAuthenticationFilter implements WebFilter {
 	private final TokenProvider tokenProvider;
 	private final List<String> whiteList = List.of(
 		"/api/v1/users/login",
-		"/api/v1/users/signup"
+		"/api/v1/users/signup",
+		"/api/v1/users/internal"
 	);
 
 	private static ServerHttpRequest createCustomRequest(ServerWebExchange exchange, String userId,
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter implements WebFilter {
 	}
 
 	private boolean isWhiteListPath(String requestPath) {
-		return whiteList.contains(requestPath);
+		return whiteList.contains(requestPath) || requestPath.contains("internal");
 	}
 
 	private String extractToken(String accessToken) {
