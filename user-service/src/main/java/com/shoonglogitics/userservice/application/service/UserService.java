@@ -174,6 +174,20 @@ public class UserService {
 		return false;
 	}
 
+	// canUpdateUser랑 코드가 똑같지만
+	// 추후 update, delete가 권한별로 달라질 수 있다는 확장성을 고려하여 일부러 분리
+	public boolean canDeleteUser(String requesterRole, Long requesterId, Long targetUserId) {
+		if ("MASTER".equals(requesterRole)) {
+			return true;
+		}
+
+		if ("HUB_MANAGER".equals(requesterRole)) {
+			return canHubManager(requesterId, targetUserId);
+		}
+
+		return false;
+	}
+
 	@Transactional
 	public void updateUser(Long userId, UpdateUserCommand command) {
 		User user = userRepository.findById(userId)
@@ -189,6 +203,18 @@ public class UserService {
 		} else {
 			throw new IllegalArgumentException("업데이트가 불가능한 사용자 타입입니다.");
 		}
+	}
+
+	@Transactional
+	public void deleteUser(Long userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 User를 찾을 수 없습니다."));
+
+		if (user.isDeleted()) {
+			throw new IllegalArgumentException("이미 삭제된 사용자입니다.");
+		}
+
+		user.softDelete(userId);
 	}
 
 }
