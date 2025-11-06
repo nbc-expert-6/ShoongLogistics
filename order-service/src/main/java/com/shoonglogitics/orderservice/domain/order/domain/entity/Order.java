@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
@@ -68,7 +69,6 @@ public class Order extends BaseAggregateRoot<Order> {
 	@Embedded
 	private Address address;
 
-	//Todo 생성시 검증 로직 추가
 	public static Order create(CompanyInfo receiver, CompanyInfo supplier, String request, Money totalPrice,
 		Address address, List<OrderItem> orderItems) {
 		Order order = new Order();
@@ -81,6 +81,10 @@ public class Order extends BaseAggregateRoot<Order> {
 		order.orderItems = orderItems != null ? new ArrayList<>(orderItems) : new ArrayList<>();
 		//불변식 검증
 		order.validateInvariants();
+
+		order.registerEvent(new OrderCreatedEvent(
+			order.id
+		));
 		return order;
 	}
 
