@@ -1,27 +1,12 @@
+server:
+  port: 8081
+
 spring:
-  application:
-    name: user-service
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/userDB?useSSL=false&serverTimezone=Asia/Seoul
-    username: root
-    password: brian981103
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+  profiles:
+    include:
+      - datasource
 
 # TODO : configure-service? ??
 jwt:
   secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
   expiration: 3600000
-
-server:
-  port: 8081
