@@ -85,4 +85,24 @@ public class Company extends BaseAggregateRoot<Company> {
 
 		return company;
 	}
+
+	public Double getLongitude() {
+		return location != null ? location.getLongitude() : null;
+	}
+
+	public Double getLatitude() {
+		return location != null ? location.getLatitude() : null;
+	}
+
+	public String getAddressValue() {
+		return address != null ? address.getAddress() : null;
+	}
+
+	public String getAddressDetailValue() {
+		return address != null ? address.getAddressDetail() : null;
+	}
+
+	public String getZipCodeValue() {
+		return address != null ? address.getZipCode() : null;
+	}
 }

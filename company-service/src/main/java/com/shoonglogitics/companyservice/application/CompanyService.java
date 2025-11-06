@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
@@ -33,5 +34,12 @@ public class CompanyService {
 
 		companyRepository.save(company);
 		return company.getId();
+	}
+
+	public CompanyResult getCompany(UUID companyId) {
+		Company company = companyRepository.findById(companyId)
+			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+		
+		return CompanyResult.from(company);
 	}
 }

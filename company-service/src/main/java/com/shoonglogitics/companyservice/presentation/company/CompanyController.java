@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.companyservice.application.CompanyService;
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.FindCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyRequest;
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyResponse;
 
@@ -56,5 +60,16 @@ public class CompanyController {
 		);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@GetMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<FindCompanyResponse>> getCompany(
+		@PathVariable UUID companyId) {
+
+		CompanyResult result = companyService.getCompany(companyId);
+		FindCompanyResponse response = FindCompanyResponse.from(result);
+		
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
