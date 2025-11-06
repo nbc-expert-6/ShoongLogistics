@@ -1,13 +1,9 @@
 package com.shoonglogitics.userservice.presentation.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,24 +84,8 @@ public class UserController {
 		@RequestParam(defaultValue = "createdAt") List<String> sortBy,
 		@RequestParam(defaultValue = "DESC") List<String> direction) {
 
-		List<Sort.Order> orders = new ArrayList<>();
-		for (int i = 0; i < sortBy.size(); i++) {
-			String sortField = sortBy.get(i);
-			String sortDirection = (i < direction.size()) ? direction.get(i) : "DESC";
-			Sort.Order order = sortDirection.equalsIgnoreCase("ASC") ?
-				Sort.Order.asc(sortField) :
-				Sort.Order.desc(sortField);
-
-			orders.add(order);
-		}
-
-		Sort sort = Sort.by(orders);
-
-		Pageable pageable = PageRequest.of(page, pageSizeType.getValue(), sort);
-
-		PageResponse<Object> users = userService.getUsers(role, pageable, hubId);
-
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(users));
+		PageResponse<?> users = userService.getUsers(role, page, pageSizeType, sortBy, direction, hubId);
+		return ResponseEntity.ok(ApiResponse.success(users));
 	}
 
 	// 회원 단건 조회

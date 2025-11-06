@@ -1,11 +1,15 @@
 package com.shoonglogitics.userservice.application.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ import com.shoonglogitics.userservice.domain.vo.Email;
 import com.shoonglogitics.userservice.domain.vo.Name;
 import com.shoonglogitics.userservice.domain.vo.PhoneNumber;
 import com.shoonglogitics.userservice.domain.vo.SlackId;
+import com.shoonglogitics.userservice.presentation.dto.request.PageSizeType;
 import com.shoonglogitics.userservice.security.JwtProvider;
 
 @Service
@@ -96,12 +101,31 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public <T> PageResponse<T> getUsers(String roleKey, Pageable pageable, UUID hubId) {
+	public <T> PageResponse<T> getUsers(String roleKey,
+		int page,
+		PageSizeType pageSizeType,
+		List<String> sortBy,
+		List<String> direction,
+		UUID hubId) {
 		UserViewStrategy<T> strategy = (UserViewStrategy<T>)userViewStrategyMap.get(roleKey);
 
 		if (strategy == null) {
 			throw new IllegalArgumentException("지원하지 않는 역할입니다 : " + roleKey);
 		}
+
+		List<Sort.Order> orders = new ArrayList<>();
+		for (int i = 0; i < sortBy.size(); i++) {
+			String sortField = sortBy.get(i);
+			String sortDirection = (i < direction.size()) ? direction.get(i) : "DESC";
+			Sort.Order order = sortDirection.equalsIgnoreCase("ASC") ?
+				Sort.Order.asc(sortField) :
+				Sort.Order.desc(sortField);
+			orders.add(order);
+		}
+		Sort sort = Sort.by(orders);
+
+		// Pageable 생성
+		Pageable pageable = PageRequest.of(page, pageSizeType.getValue(), sort);
 
 		Page<T> users = strategy.findUsers(pageable, hubId);
 		return PageResponse.of(users);
