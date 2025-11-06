@@ -1,10 +1,10 @@
 package com.shoonglogitics.orderservice.domain.order.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
@@ -38,9 +38,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseAggregateRoot<Order> {
 	@Id
-	@UuidGenerator(style = UuidGenerator.Style.TIME)
 	@Column(name = "id", columnDefinition = "uuid")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
+
+	@Column(name = "user_id", nullable = false)
+	private Long userId;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "order_id")
@@ -69,9 +71,14 @@ public class Order extends BaseAggregateRoot<Order> {
 	@Embedded
 	private Address address;
 
-	public static Order create(CompanyInfo receiver, CompanyInfo supplier, String request, Money totalPrice,
+	@Column(name = "paid_at")
+	private LocalDateTime paidAt;
+
+	public static Order create(Long userId, CompanyInfo receiver, CompanyInfo supplier, String request,
+		Money totalPrice,
 		Address address, List<OrderItem> orderItems) {
 		Order order = new Order();
+		order.userId = userId;
 		order.receiver = receiver;
 		order.supplier = supplier;
 		order.request = request;
