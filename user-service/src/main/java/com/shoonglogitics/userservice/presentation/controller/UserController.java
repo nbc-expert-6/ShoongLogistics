@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -128,6 +129,21 @@ public class UserController {
 		return ResponseEntity.ok(
 			ApiResponse.success("회원 정보가 성공적으로 수정되었습니다.")
 		);
+	}
+
+	// 회원 삭제
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ApiResponse<?>> deleteUser(@RequestHeader("X-User-Role") String role,
+		@RequestHeader("X-User-Id") Long requesterId,
+		@PathVariable Long id) {
+
+		if (!userService.canDeleteUser(role, requesterId, id)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body(ApiResponse.error("삭제 권한이 없습니다."));
+		}
+
+		userService.deleteUser(id);
+		return ResponseEntity.ok(ApiResponse.success("회원이 성공적으로 삭제 되었습니다."));
 	}
 
 }
