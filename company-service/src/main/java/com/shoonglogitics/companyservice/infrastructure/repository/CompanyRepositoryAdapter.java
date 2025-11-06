@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
+import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,5 +24,10 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 	@Override
 	public Optional<Company> findById(UUID id) {
 		return jpaCompanyRepository.findById(id);
+	}
+
+	@Override
+	public Optional<Company> findByNameAndZipCodeAndType(String name, String zipCode, CompanyType type) {
+		return jpaCompanyRepository.findByNameAndAddress_ZipCodeAndType(name, zipCode, type);
 	}
 }
