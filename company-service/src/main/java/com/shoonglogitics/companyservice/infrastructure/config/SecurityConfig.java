@@ -9,7 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.shoonglogitics.companyservice.infrastructure.filter.GatewayAuthenticationFilter;
+import com.shoonglogitics.companyservice.infrastructure.security.GatewayAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
