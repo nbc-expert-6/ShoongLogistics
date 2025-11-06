@@ -18,7 +18,11 @@ public enum UserRoleType {
 	public static class Authority {
 		public static final String MASTER = "ROLE_MASTER";
 		public static final String HUB_MANAGER = "ROLE_HUB_MANAGER";
-		public static final String SHIPPER = "ROLE_DELIVERY_MANAGER";
+		public static final String SHIPPER = "ROLE_SHIPPER";
 		public static final String COMPANY_MANAGER = "ROLE_COMPANY_MANAGER";
+	}
+
+	public boolean isHubManager() {
+		return this == HUB_MANAGER;
 	}
 }
