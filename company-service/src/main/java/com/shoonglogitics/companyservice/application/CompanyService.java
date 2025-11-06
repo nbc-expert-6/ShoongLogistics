@@ -1,12 +1,15 @@
 package com.shoonglogitics.companyservice.application;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.service.UserClient;
+import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
@@ -23,9 +26,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID createCompany(CreateCompanyCommand command) {
-		if (command.authUser().isHubManager() && !userClient.isHubManager(command.currentUserId(), command.hubId())) {
-			throw new IllegalArgumentException("해당 허브의 담당자만 업체를 생성할 수 있습니다.");
-		}
+		validateHubManager(command.authUser(), command.hubId());
 
 		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
 		GeoLocation location = GeoLocation.of(command.latitude(), command.longitude());
@@ -33,5 +34,20 @@ public class CompanyService {
 
 		companyRepository.save(company);
 		return company.getId();
+	}
+
+	@Transactional
+	public void deleteCompany(DeleteCompanyCommand command) {
+		validateHubManager(command.authUser(), command.hubId());
+		Company company = companyRepository.findById(command.companyId())
+			.orElseThrow(() -> new NoSuchElementException("해당 업체를 찾을 수 없습니다."));
+
+		company.delete(command.authUser());
+	}
+
+	private void validateHubManager(AuthUser authUser, UUID hubId) {
+		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, hubId)) {
+			throw new IllegalArgumentException("해당 허브의 담당자만 업체를 생성, 삭제 할 수 있습니다.");
+		}
 	}
 }
