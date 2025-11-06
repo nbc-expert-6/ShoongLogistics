@@ -33,6 +33,19 @@ public class UserClientImpl implements UserClient {
 		return data.hubId().equals(hubId);
 	}
 
+	@Override
+	public boolean isCompanyManager(AuthUser authUser, UUID companyId) {
+		ApiResponse<UserInfo> response = userFeignClient.getUserInfo(authUser.getUserId(), authUser.getUserId(),
+			authUser.getAuthority());
+
+		if (!response.success() || response.data().companyId() == null) {
+			log.warn("사용자 정보 조회 실패 - userId: {}, message: {}", authUser.getUserId(), response.message());
+			throw new IllegalArgumentException(response.message());
+		}
+		UserInfo data = response.data();
+		return data.companyId().equals(companyId);
+	}
+
 	/**
 	 * @param companyId 업체 ID
 	 * @return 업체 담당자 삭제 요청 성공 여부

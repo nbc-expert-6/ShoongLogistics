@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ import com.shoonglogitics.companyservice.application.command.CreateCompanyComman
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
+import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
@@ -32,6 +34,8 @@ import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyR
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.FindCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.ListCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -115,5 +119,32 @@ public class CompanyController {
 		FindCompanyResponse response = FindCompanyResponse.from(result);
 
 		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@PutMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<UpdateCompanyResponse>> updateCompany(
+		@PathVariable UUID companyId,
+		@Valid @RequestBody UpdateCompanyRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		UpdateCompanyCommand command = UpdateCompanyCommand.builder()
+			.companyId(companyId)
+			.authUser(authUser)
+			.name(request.name())
+			.address(request.address())
+			.addressDetail(request.addressDetail())
+			.zipCode(request.zipCode())
+			.latitude(request.latitude())
+			.longitude(request.longitude())
+			.type(request.type())
+			.build();
+
+		UUID id = companyService.updateCompany(command);
+		UpdateCompanyResponse response = new UpdateCompanyResponse(
+			id,
+			"업체가 정상적으로 수정 되었습니다."
+		);
+
+		return ResponseEntity.ok().body(ApiResponse.success(response));
 	}
 }

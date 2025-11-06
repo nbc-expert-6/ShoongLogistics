@@ -10,9 +10,16 @@ public interface UserClient {
 	/**
 	 * @param authUser
 	 * @param hubId
-	 * @return 허브 담당자 아이디와 허브 아이디가 일치하는지 여부
+	 * @return 허브 담당자의 아이디와 매개변수의 허브 아이디가 일치하는지 여부
 	 */
 	boolean isHubManager(AuthUser authUser, UUID hubId);
+
+	/**
+	 * @param authUser
+	 * @param companyId
+	 * @return 업체 담당자의 업체 아이디와 매개변수의 업체 아이디가 일치하는지 여부
+	 */
+	boolean isCompanyManager(AuthUser authUser, UUID companyId);
 
 	/**
 	 * @param companyId 업체 ID
