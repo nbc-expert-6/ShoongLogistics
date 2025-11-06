@@ -1,4 +1,4 @@
-package com.shoonglogitics.companyservice.infrastructure.filter;
+package com.shoonglogitics.companyservice.infrastructure.security;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,15 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class GatewayAuthenticationFilter extends OncePerRequestFilter {
-	private static final String USER_ID_HEADER = "X-User-Id";
-	private static final String USER_ROLE_HEADER = "X-User-Role";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String userIdHeader = request.getHeader(USER_ID_HEADER);
-		String roleHeader = request.getHeader(USER_ROLE_HEADER);
+		String userIdHeader = request.getHeader(HeaderType.USER_ID);
+		String roleHeader = request.getHeader(HeaderType.USER_ROLE);
 
 		if (userIdHeader != null && roleHeader != null) {
 			try {
