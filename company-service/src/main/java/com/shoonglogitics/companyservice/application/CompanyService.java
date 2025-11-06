@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
+import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
@@ -57,5 +58,12 @@ public class CompanyService {
 		companyRepository.findByNameAndZipCodeAndType(name, zipCode, type).ifPresent(company -> {
 			throw new IllegalArgumentException("이미 존재하는 업체입니다.");
 		});
+	}
+
+	public CompanyResult getCompany(UUID companyId) {
+		Company company = companyRepository.findById(companyId)
+			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+
+		return CompanyResult.from(company);
 	}
 }

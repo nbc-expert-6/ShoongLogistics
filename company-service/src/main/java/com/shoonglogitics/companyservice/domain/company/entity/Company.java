@@ -8,7 +8,9 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.companyservice.domain.common.entity.BaseAggregateRoot;
+import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
+import com.shoonglogitics.companyservice.domain.company.event.CompanyDeletedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.infrastructure.persistence.converter.GeoLocationConverter;
@@ -90,5 +92,25 @@ public class Company extends BaseAggregateRoot<Company> {
 		this.softDelete(authUser.getUserId());
 		this.products.forEach(product -> product.softDelete(authUser.getUserId()));
 		this.registerEvent(new CompanyDeletedEvent(this.id, authUser));
+	}
+
+	public Double getLongitude() {
+		return location != null ? location.getLongitude() : null;
+	}
+
+	public Double getLatitude() {
+		return location != null ? location.getLatitude() : null;
+	}
+
+	public String getAddressValue() {
+		return address != null ? address.getAddress() : null;
+	}
+
+	public String getAddressDetailValue() {
+		return address != null ? address.getAddressDetail() : null;
+	}
+
+	public String getZipCodeValue() {
+		return address != null ? address.getZipCode() : null;
 	}
 }
