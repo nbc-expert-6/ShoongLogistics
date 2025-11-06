@@ -8,9 +8,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.companyservice.domain.common.entity.BaseAggregateRoot;
-import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
-import com.shoonglogitics.companyservice.domain.company.event.CompanyDeletedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.infrastructure.persistence.converter.GeoLocationConverter;
