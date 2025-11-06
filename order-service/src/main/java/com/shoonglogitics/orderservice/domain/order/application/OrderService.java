@@ -17,6 +17,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepos
 import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
@@ -40,6 +41,7 @@ public class OrderService {
 		log.info("Create order: {}", command);
 		//주문자 검증
 		validateCustomer(command.userId(), command.role());
+
 		//주문상품 엔티티 생성 (별도 함수로 분리, 함수에서 상품 유효성 검증)
 		//내부에서 quantity vo 생성
 		List<OrderItem> orderItems = createItems(command.orderItems());
@@ -52,7 +54,8 @@ public class OrderService {
 
 		//주소 vo 생성
 		Address address = Address.of(
-			command.address(), command.addressDetail(), command.zipCode(), command.location());
+			command.address(), command.addressDetail(), command.zipCode(),
+			GeoLocation.of(command.latitude(), command.longitude()));
 
 		//수령업체, 공급업체 정보 vo 생성
 		CompanyInfo receiverInfo = CompanyInfo.of(command.receiverCompanyId(), command.receiverCompanyName());

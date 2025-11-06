@@ -3,8 +3,6 @@ package com.shoonglogitics.orderservice.domain.order.application.command;
 import java.util.List;
 import java.util.UUID;
 
-import org.locationtech.jts.geom.Point;
-
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderRequest;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
@@ -19,7 +17,8 @@ public record CreateOrderCommand(
 	String address,
 	String addressDetail,
 	String zipCode,
-	Point location,
+	Double latitude,
+	Double longitude,
 	Long totalPrice,
 	List<CreateOrderItemCommand> orderItems
 ) {
@@ -39,7 +38,8 @@ public record CreateOrderCommand(
 			request.address(),
 			request.addressDetail(),
 			request.zipCode(),
-			request.location(),
+			request.latitude(),
+			request.longitude(),
 			request.totalPrice(),
 			items
 		);
