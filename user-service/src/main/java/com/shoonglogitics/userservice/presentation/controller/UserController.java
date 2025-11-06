@@ -1,11 +1,13 @@
 package com.shoonglogitics.userservice.presentation.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +32,7 @@ import com.shoonglogitics.userservice.application.service.UserService;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.presentation.dto.ApiResponse;
 import com.shoonglogitics.userservice.presentation.dto.request.LoginRequest;
+import com.shoonglogitics.userservice.presentation.dto.request.PageSizeType;
 import com.shoonglogitics.userservice.presentation.dto.request.SignUpRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateSignupStatusRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateUserRequest;
@@ -80,7 +83,26 @@ public class UserController {
 	@GetMapping
 	public ResponseEntity<ApiResponse<PageResponse<?>>> getUsers(@RequestParam String role,
 		@RequestParam(required = false) UUID hubId,
-		@PageableDefault(size = 10) Pageable pageable) {
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "SIZE_10") PageSizeType pageSizeType,
+		@RequestParam(defaultValue = "createdAt") List<String> sortBy,
+		@RequestParam(defaultValue = "DESC") List<String> direction) {
+
+		List<Sort.Order> orders = new ArrayList<>();
+		for (int i = 0; i < sortBy.size(); i++) {
+			String sortField = sortBy.get(i);
+			String sortDirection = (i < direction.size()) ? direction.get(i) : "DESC";
+			Sort.Order order = sortDirection.equalsIgnoreCase("ASC") ?
+				Sort.Order.asc(sortField) :
+				Sort.Order.desc(sortField);
+
+			orders.add(order);
+		}
+
+		Sort sort = Sort.by(orders);
+
+		Pageable pageable = PageRequest.of(page, pageSizeType.getValue(), sort);
+
 		PageResponse<Object> users = userService.getUsers(role, pageable, hubId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(users));
