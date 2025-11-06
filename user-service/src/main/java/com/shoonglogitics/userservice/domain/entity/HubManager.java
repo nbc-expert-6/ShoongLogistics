@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "p_hub_manager")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HubManager extends User {
+public class HubManager extends User implements UserUpdatable {
 
 	@Embedded
 	@AttributeOverride(name = "id", column = @Column(name = "hub_id"))
@@ -81,5 +81,13 @@ public class HubManager extends User {
 			throw new IllegalArgumentException("Slack ID는 필수 값입니다.");
 		if (phoneNumber == null)
 			throw new IllegalArgumentException("전화번호는 필수 값입니다.");
+	}
+
+	@Override
+	public void updateUserInfo(Name name, Email email, SlackId slackId, PhoneNumber phoneNumber) {
+		this.name = name;
+		this.email = email;
+		this.slackId = slackId;
+		this.phoneNumber = phoneNumber;
 	}
 }

@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,7 +15,11 @@ import com.shoonglogitics.userservice.application.dto.CompanyManagerViewResponse
 import com.shoonglogitics.userservice.application.dto.HubManagerViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.MasterViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.ShipperViewResponseDto;
+import com.shoonglogitics.userservice.domain.entity.CompanyManager;
+import com.shoonglogitics.userservice.domain.entity.HubManager;
+import com.shoonglogitics.userservice.domain.entity.Shipper;
 import com.shoonglogitics.userservice.domain.entity.User;
+import com.shoonglogitics.userservice.domain.vo.HubId;
 
 @Repository
 public interface JpaUserRepository extends JpaRepository<User, Long> {
@@ -139,5 +144,17 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
 		    from CompanyManager c where c.id = :id
 		""")
 	Optional<CompanyManagerViewResponseDto> findCompanyManagerById(@Param("id") Long id);
+
+	@Query("SELECT MAX(s.order) FROM Shipper s WHERE s.hubId = :hubId")
+	Optional<Integer> findLastShipperOrderByHubId(@Param("hubId") HubId hubId);
+
+	@Query("SELECT u FROM HubManager u WHERE u.hubId.id = :hubId AND u.deletedAt IS NULL")
+	List<HubManager> findHubManagersByHubId(@Param("hubId") UUID hubId);
+
+	@Query("SELECT u FROM Shipper u WHERE u.hubId.id = :hubId AND u.deletedAt IS NULL")
+	List<Shipper> findShippersByHubId(@Param("hubId") UUID hubId);
+
+	@Query("SELECT u FROM CompanyManager u WHERE u.companyId.id = :companyId AND u.deletedAt IS NULL")
+	List<CompanyManager> findCompanyManagersByCompanyId(@Param("companyId") UUID companyId);
 
 }

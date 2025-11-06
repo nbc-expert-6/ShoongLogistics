@@ -131,7 +131,6 @@ class UserServiceTest {
 			.hubId(new HubId(UUID.randomUUID()))
 			.slackId(new SlackId("ShipperSlack1"))
 			.phoneNumber(new PhoneNumber("010-4444-5555"))
-			.order(1)
 			.isShippingAvailable(true)
 			.shipperType(ShipperType.COMPANY_SHIPPER)
 			.build();
@@ -160,7 +159,6 @@ class UserServiceTest {
 			.phoneNumber(new PhoneNumber("010-1111-2222"))
 			.shipperType(ShipperType.COMPANY_SHIPPER)
 			.hubId(null) // hubId 누락
-			.order(1)
 			.isShippingAvailable(true)
 			.build();
 
@@ -181,7 +179,6 @@ class UserServiceTest {
 			.phoneNumber(new PhoneNumber("010-2222-3333"))
 			.shipperType(ShipperType.HUB_SHIPPER)
 			.hubId(new HubId(UUID.randomUUID())) // hubId 존재 → 예외
-			.order(1)
 			.isShippingAvailable(true)
 			.build();
 

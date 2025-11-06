@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,18 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.userservice.application.command.LoginUserCommand;
 import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
+import com.shoonglogitics.userservice.application.command.UpdateUserCommand;
 import com.shoonglogitics.userservice.application.dto.LoginUserResponseDto;
 import com.shoonglogitics.userservice.application.dto.PageResponse;
 import com.shoonglogitics.userservice.application.service.UserService;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.presentation.dto.ApiResponse;
-import com.shoonglogitics.userservice.presentation.dto.request.LoginRequestDto;
+import com.shoonglogitics.userservice.presentation.dto.request.LoginRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.SignUpRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateSignupStatusRequest;
+import com.shoonglogitics.userservice.presentation.dto.request.UpdateUserRequest;
 import com.shoonglogitics.userservice.presentation.dto.response.SignUpResponse;
 import com.shoonglogitics.userservice.security.JwtProvider;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -43,7 +47,7 @@ public class UserController {
 
 	// 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<ApiResponse<SignUpResponse>> createUser(@RequestBody SignUpRequest request) {
+	public ResponseEntity<ApiResponse<SignUpResponse>> createUser(@RequestBody @Valid SignUpRequest request) {
 		SignUpUserCommand command;
 
 		userService.signUp(request.toCommand());
@@ -59,7 +63,7 @@ public class UserController {
 
 	// 로그인
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<Void>> loginUser(@RequestBody LoginRequestDto dto,
+	public ResponseEntity<ApiResponse<Void>> loginUser(@RequestBody LoginRequest dto,
 		HttpServletResponse response) {
 		LoginUserCommand from = LoginUserCommand.from(dto);
 		LoginUserResponseDto responseDto = userService.loginUser(from);
@@ -70,6 +74,7 @@ public class UserController {
 	}
 
 	// 회원 목록 조회
+	@PreAuthorize("hasRole('MASTER')")
 	@GetMapping
 	public ResponseEntity<ApiResponse<PageResponse<?>>> getUsers(@RequestParam String role,
 		@RequestParam(required = false) UUID hubId,
@@ -102,6 +107,27 @@ public class UserController {
 		User user = userService.findUser(id);
 
 		return ResponseEntity.ok().body(ApiResponse.success("회원가입 요청 상태 변경이 완료되었습니다."));
+	}
+
+	// 회원 수정
+	@PutMapping("/{id}")
+	public ResponseEntity<ApiResponse<?>> updateUser(@RequestHeader("X-User-Role") String role,
+		@RequestHeader("X-User-Id") Long requesterId,
+		@PathVariable Long id,
+		@RequestBody UpdateUserRequest request) {
+
+		if (!userService.canUpdateUser(role, requesterId, id)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body(ApiResponse.error("수정 권한이 없습니다."));
+		}
+
+		UpdateUserCommand command = request.toCommand();
+
+		userService.updateUser(id, command);
+
+		return ResponseEntity.ok(
+			ApiResponse.success("회원 정보가 성공적으로 수정되었습니다.")
+		);
 	}
 
 }

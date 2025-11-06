@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,7 +11,11 @@ import com.shoonglogitics.userservice.application.dto.CompanyManagerViewResponse
 import com.shoonglogitics.userservice.application.dto.HubManagerViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.MasterViewResponseDto;
 import com.shoonglogitics.userservice.application.dto.ShipperViewResponseDto;
+import com.shoonglogitics.userservice.domain.entity.CompanyManager;
+import com.shoonglogitics.userservice.domain.entity.HubManager;
+import com.shoonglogitics.userservice.domain.entity.Shipper;
 import com.shoonglogitics.userservice.domain.entity.User;
+import com.shoonglogitics.userservice.domain.vo.HubId;
 
 public interface UserRepository {
 
@@ -40,4 +45,12 @@ public interface UserRepository {
 	Optional<ShipperViewResponseDto> findShipperById(Long id);
 
 	Optional<CompanyManagerViewResponseDto> findCompanyManagerById(Long id);
+
+	Optional<Integer> findLastShipperOrderByHubId(HubId hubId);
+
+	List<HubManager> findHubManagersByHubId(UUID hubId);
+
+	List<Shipper> findShippersByHubId(UUID hubId);
+
+	List<CompanyManager> findCompanyManagersByCompanyId(UUID companyId);
 }

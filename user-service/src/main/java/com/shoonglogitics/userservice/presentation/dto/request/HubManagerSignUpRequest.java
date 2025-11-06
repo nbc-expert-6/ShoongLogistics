@@ -1,5 +1,7 @@
 package com.shoonglogitics.userservice.presentation.dto.request;
 
+import java.util.UUID;
+
 import com.shoonglogitics.userservice.application.command.HubManagerSignUpCommand;
 import com.shoonglogitics.userservice.domain.vo.Email;
 import com.shoonglogitics.userservice.domain.vo.HubId;
@@ -13,7 +15,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class HubManagerSignUpRequest extends SignUpRequest {
-	private HubId hubId;
+	private String hubId;
 
 	@Override
 	public HubManagerSignUpCommand toCommand() {
@@ -24,7 +26,7 @@ public class HubManagerSignUpRequest extends SignUpRequest {
 			.name(new Name(getName()))
 			.slackId(new SlackId(getSlackId()))
 			.phoneNumber(new PhoneNumber(getPhoneNumber()))
-			.hubId(hubId)
+			.hubId(new HubId(UUID.fromString(hubId)))
 			.build();
 	}
 }

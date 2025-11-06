@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "p_master")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Master extends User {
+public class Master extends User implements UserUpdatable {
 
 	@Embedded
 	@AttributeOverride(name = "value", column = @Column(name = "email"))
@@ -67,6 +67,14 @@ public class Master extends User {
 		if (phoneNumber == null) {
 			throw new IllegalArgumentException("전화번호는 필수 값입니다.");
 		}
+	}
+
+	@Override
+	public void updateUserInfo(Name name, Email email, SlackId slackId, PhoneNumber phoneNumber) {
+		this.name = name;
+		this.email = email;
+		this.slackId = slackId;
+		this.phoneNumber = phoneNumber;
 	}
 
 }

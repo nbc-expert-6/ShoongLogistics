@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	//
 	private final GatewayAuthenticationFilter gatewayAuthenticationFilter;
 
 	@Bean
