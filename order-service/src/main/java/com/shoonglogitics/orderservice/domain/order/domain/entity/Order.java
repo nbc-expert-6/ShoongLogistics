@@ -100,14 +100,6 @@ public class Order extends BaseAggregateRoot<Order> {
 		if (totalPrice == null || totalPrice.isNegative()) {
 			throw new IllegalArgumentException("주문 총액은 0보다 커야 합니다.");
 		}
-		Money calculatedTotal = calculateTotalPrice();
-		if (!totalPrice.equals(calculatedTotal)) {
-			throw new IllegalArgumentException("주문 금액 합계와 총 주문 금액이 일치하지 않습니다.");
-		}
-	}
-
-	public Money calculateTotalPrice() {
-		return orderItems.stream().map(OrderItem::calculateTotalPrice).reduce(Money.zero(), Money::add);
 	}
 
 	public void changeStatus(OrderStatus next) {
