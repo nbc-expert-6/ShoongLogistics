@@ -1,5 +1,6 @@
 package com.shoonglogitics.userservice.presentation.controller;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ import com.shoonglogitics.userservice.application.command.SignUpUserCommand;
 import com.shoonglogitics.userservice.application.command.UpdateUserCommand;
 import com.shoonglogitics.userservice.application.dto.LoginUserResponseDto;
 import com.shoonglogitics.userservice.application.dto.PageResponse;
+import com.shoonglogitics.userservice.application.service.InternalUserService;
 import com.shoonglogitics.userservice.application.service.UserService;
 import com.shoonglogitics.userservice.domain.entity.User;
 import com.shoonglogitics.userservice.presentation.dto.ApiResponse;
@@ -32,7 +34,6 @@ import com.shoonglogitics.userservice.presentation.dto.request.SignUpRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateSignupStatusRequest;
 import com.shoonglogitics.userservice.presentation.dto.request.UpdateUserRequest;
 import com.shoonglogitics.userservice.presentation.dto.response.SignUpResponse;
-import com.shoonglogitics.userservice.security.JwtProvider;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -44,7 +45,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
-	private final JwtProvider jwtProvider;
+	private final InternalUserService internalUserService;
 
 	// 회원가입
 	@PostMapping("/signup")
@@ -144,6 +145,17 @@ public class UserController {
 
 		userService.deleteUser(id);
 		return ResponseEntity.ok(ApiResponse.success("회원이 성공적으로 삭제 되었습니다."));
+	}
+
+	// internal 회원목록 조회 --> 분리 이유 : MASTER권한이 필요없어야하기 때문에
+	// 검색기준 : 허브Id, 업체Id
+	@GetMapping("/internal")
+	public ResponseEntity<ApiResponse<List<?>>> getFeignClientUsers(
+		@RequestParam(required = false) UUID hubId,
+		@RequestParam(required = false) UUID companyId
+	) {
+		List<?> list = internalUserService.getInternalUsers(hubId, companyId);
+		return ResponseEntity.ok(ApiResponse.success(list));
 	}
 
 }
