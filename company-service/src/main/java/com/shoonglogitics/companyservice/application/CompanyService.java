@@ -3,11 +3,13 @@ package com.shoonglogitics.companyservice.application;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
@@ -65,5 +67,10 @@ public class CompanyService {
 			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 
 		return CompanyResult.from(company);
+	}
+
+	public Page<CompanyResult> getCompanies(GetCompaniesCommand command) {
+		Page<Company> companies = companyRepository.getCompanies(command.hubId(), command.name(), command.type(), command.pageRequest().toPageable());
+		return companies.map(CompanyResult::from);
 	}
 }
