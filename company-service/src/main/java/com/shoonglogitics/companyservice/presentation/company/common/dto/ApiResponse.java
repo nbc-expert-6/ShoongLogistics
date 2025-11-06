@@ -22,7 +22,7 @@ public record ApiResponse<T>(
 	 * 성공 응답 생성 (데이터 포함)
 	 */
 	public static <T> ApiResponse<T> success(T data) {
-		return new ApiResponse<>(true, null, data, System.currentTimeMillis());
+		return new ApiResponse<>(true, "요청에 성공했습니다.", data, System.currentTimeMillis());
 	}
 
 	/**
