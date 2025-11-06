@@ -23,6 +23,14 @@ public class ShipperSignUpStrategy implements SignUpStrategy {
 			throw new IllegalArgumentException("이미 존재하는 SHIPPER 회원입니다.");
 		}
 
+		ShipperSignUpCommand shipperSignUpCommand = (ShipperSignUpCommand)signUpUserCommand;
+
+		Integer lastOrder = userRepository.findLastShipperOrderByHubId(shipperSignUpCommand.getHubId())
+			.orElse(0);
+		System.out.println("lastOrder = " + lastOrder);
+
+		Integer newOrder = lastOrder + 1;
+
 		// Shipper 객체를 직접 생성
 		Shipper shipper = Shipper.create(
 			command.getUserName(),
@@ -33,7 +41,7 @@ public class ShipperSignUpStrategy implements SignUpStrategy {
 			command.getSlackId(),
 			command.getPhoneNumber(),
 			command.getShipperType(),
-			command.getOrder(),
+			newOrder,
 			command.getIsShippingAvailable()
 		);
 

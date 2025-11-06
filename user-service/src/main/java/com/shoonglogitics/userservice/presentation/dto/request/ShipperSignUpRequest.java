@@ -1,5 +1,7 @@
 package com.shoonglogitics.userservice.presentation.dto.request;
 
+import java.util.UUID;
+
 import com.shoonglogitics.userservice.application.command.ShipperSignUpCommand;
 import com.shoonglogitics.userservice.domain.entity.ShipperType;
 import com.shoonglogitics.userservice.domain.vo.Email;
@@ -14,9 +16,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ShipperSignUpRequest extends SignUpRequest {
-	private HubId hubId;
+	private String hubId;
 	private ShipperType shipperType;
-	private Integer order;
 	private Boolean isShippingAvailable;
 
 	@Override
@@ -28,9 +29,8 @@ public class ShipperSignUpRequest extends SignUpRequest {
 			.name(new Name(getName()))
 			.slackId(new SlackId(getSlackId()))
 			.phoneNumber(new PhoneNumber(getPhoneNumber()))
-			.hubId(hubId != null ? hubId : null)
+			.hubId(hubId != null ? new HubId(UUID.fromString(hubId)) : null)
 			.shipperType(shipperType)
-			.order(order)
 			.isShippingAvailable(isShippingAvailable)
 			.build();
 	}
