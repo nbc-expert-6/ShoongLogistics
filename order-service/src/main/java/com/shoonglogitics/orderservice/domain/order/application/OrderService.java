@@ -42,15 +42,18 @@ public class OrderService {
 		//주문자 검증
 		validateCustomer(command.userId(), command.role());
 
+		//주문 상품 검증(외부 호출 후 값 비교)
+		validateItems(command.orderItems());
+
 		//주문상품 엔티티 생성 (별도 함수로 분리, 함수에서 상품 유효성 검증)
 		//내부에서 quantity vo 생성
 		List<OrderItem> orderItems = createItems(command.orderItems());
 
-		//주문 상품 검증
-		validateItems(orderItems);
-
 		//총 주문 금액 vo 생성
 		Money totalPrice = Money.of(command.totalPrice());
+
+		//주문 가능한지 검증(상품이 1개 이상이고, 상품총액과 총 결제금액의 일치여부)
+		validateOrder(orderItems, totalPrice);
 
 		//주소 vo 생성
 		Address address = Address.of(
@@ -71,9 +74,6 @@ public class OrderService {
 			orderItems
 		);
 
-		//Order 검증(도메인 서비스 사용)
-		validateOrder(order, totalPrice);
-
 		//응답
 		Optional<Order> createdOrder = orderRepository.save(order);
 		if (createdOrder.isEmpty()) {
@@ -86,7 +86,6 @@ public class OrderService {
 	내부용 유틸 함수들
 	 */
 
-	//업체 서비스와 통신을 통해 현재 주문하려는 상품들이 존재하는지, 가격이 일치하는지, 재고는 있는지 검증
 	//문제가 없다면 엔티티로 만들어서 반환, 문제가 생기면 예외 발생
 	public List<OrderItem> createItems(List<CreateOrderItemCommand> createOrderItemCommands) {
 		return createOrderItemCommands.stream()
@@ -103,14 +102,14 @@ public class OrderService {
 		userClient.canOrder(userId, role);
 	}
 
-	public void validateItems(List<OrderItem> orderItems) {
+	public void validateItems(List<CreateOrderItemCommand> orderItems) {
 		//Todo: 클라이언트를 통해 외부 통신 후 로직수행
 		//회원 컨텍스트에 해당 상품의 업체id로 담당자 id를 조회해오기
 		//업체 담당자가 수정하는 것처럼 요청
 		companyClient.validateItems(orderItems);
 	}
 
-	private void validateOrder(Order order, Money totalPrice) {
-		orderDomainService.validateOrder(order, totalPrice);
+	private void validateOrder(List<OrderItem> orderItems, Money totalPrice) {
+		orderDomainService.validateOrder(orderItems, totalPrice);
 	}
 }

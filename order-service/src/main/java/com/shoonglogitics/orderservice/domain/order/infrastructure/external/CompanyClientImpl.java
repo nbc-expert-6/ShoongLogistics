@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
-import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
 
 @Component
 public class CompanyClientImpl implements CompanyClient {
 	@Override
-	public void validateItems(List<OrderItem> orderItems) {
+	public void validateItems(List<CreateOrderItemCommand> orderItems) {
 		//실제 구현
 
 	}
