@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
-import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 
 public interface CompanyRepository {
 	Company save(Company company);
