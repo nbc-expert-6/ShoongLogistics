@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.userservice.UserServiceApplication;
@@ -36,6 +37,7 @@ import jakarta.persistence.EntityManager;
 
 @SpringBootTest(classes = UserServiceApplication.class)
 @Transactional
+@Profile(value = "test")
 class UserServiceTest {
 
 	@Autowired

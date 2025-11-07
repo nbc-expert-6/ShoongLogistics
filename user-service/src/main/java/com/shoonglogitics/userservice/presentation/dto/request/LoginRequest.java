@@ -2,10 +2,18 @@ package com.shoonglogitics.userservice.presentation.dto.request;
 
 import com.shoonglogitics.userservice.application.command.LoginUserCommand;
 
-public record LoginRequest(String userName, String password) {
+import jakarta.validation.constraints.NotBlank;
 
-	public static LoginUserCommand from(LoginRequest dto) {
-		return new LoginUserCommand(dto.userName(), dto.password());
+public record LoginRequest(
+
+	@NotBlank(message = "사용자 이름은 필수입니다.")
+	String userName,
+
+	@NotBlank(message = "비밀번호는 필수입니다.")
+	String password) {
+
+	public LoginUserCommand toCommand() {
+		return new LoginUserCommand(userName, password);
 	}
 
 }

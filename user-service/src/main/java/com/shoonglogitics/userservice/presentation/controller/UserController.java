@@ -66,8 +66,8 @@ public class UserController {
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<Void>> loginUser(@RequestBody LoginRequest dto,
 		HttpServletResponse response) {
-		LoginUserCommand from = LoginUserCommand.from(dto);
-		LoginUserResponseDto responseDto = userService.loginUser(from);
+		LoginUserCommand command = dto.toCommand();
+		LoginUserResponseDto responseDto = userService.loginUser(command);
 
 		response.setHeader("Authorization", "Bearer " + responseDto.accessToken());
 
