@@ -14,6 +14,7 @@ import com.shoonglogitics.companyservice.domain.company.event.CompanyDeletedEven
 import com.shoonglogitics.companyservice.domain.company.event.CompanyUpdatedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
+import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
 import com.shoonglogitics.companyservice.infrastructure.persistence.converter.GeoLocationConverter;
 
 import jakarta.persistence.AttributeOverride;
@@ -111,6 +112,12 @@ public class Company extends BaseAggregateRoot<Company> {
 		this.address = address;
 		this.location = location;
 		this.type = type;
+	}
+
+	public Product createProduct(UUID productCategoryId, ProductInfo productInfo) {
+		Product product = Product.create(productCategoryId, productInfo);
+		this.products.add(product);
+		return product;
 	}
 
 	public Double getLongitude() {

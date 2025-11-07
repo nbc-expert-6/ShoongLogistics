@@ -8,17 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.CreateProductCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
-import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
+import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
+import com.shoonglogitics.companyservice.domain.company.entity.Product;
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
+import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -79,10 +82,25 @@ public class CompanyService {
 	}
 
 	public Page<CompanyResult> getCompanies(GetCompaniesCommand command) {
-		Page<Company> companies = companyRepository.getCompanies(command.hubId(), command.name(), command.type(), command.pageRequest().toPageable());
+		Page<Company> companies = companyRepository.getCompanies(command.hubId(), command.name(), command.type(),
+			command.pageRequest().toPageable());
 		return companies.map(CompanyResult::from);
 	}
 
+	@Transactional
+	public UUID createProduct(CreateProductCommand command) {
+		Company company = companyRepository.findById(command.companyId())
+			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+
+		validateCompanyManager(command.authUser(), command.companyId());
+		validateHubManager(command.authUser(), company.getHubId());
+
+		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
+
+		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
+		Product product= company.createProduct(command.productCategoryId(), productInfo);
+		return product.getId();
+	}
 
 	private void validateHubManager(AuthUser authUser, UUID hubId) {
 		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, hubId)) {
