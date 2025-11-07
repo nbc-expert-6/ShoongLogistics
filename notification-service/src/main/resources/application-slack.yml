@@ -1,0 +1,4 @@
+# Github secret update
+slack:
+  api:
+    webhook: ${SLACK_WEBHOOK_URL}

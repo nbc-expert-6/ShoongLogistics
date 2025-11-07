@@ -28,7 +28,8 @@ public class JwtAuthenticationFilter implements WebFilter {
 	private final List<String> whiteList = List.of(
 		"/api/v1/users/login",
 		"/api/v1/users/signup",
-		"/api/v1/users/internal"
+		"/api/v1/users/internal",
+		"/api/v1/ai-delivery/advice"
 	);
 
 	private static ServerHttpRequest createCustomRequest(ServerWebExchange exchange, String userId,
