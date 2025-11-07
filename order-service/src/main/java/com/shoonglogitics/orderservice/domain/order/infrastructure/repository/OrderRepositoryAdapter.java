@@ -1,5 +1,8 @@
 package com.shoonglogitics.orderservice.domain.order.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
@@ -16,5 +19,10 @@ public class OrderRepositoryAdapter implements OrderRepository {
 	@Override
 	public Order save(Order order) {
 		return jpaOrderRepository.save(order);
+	}
+
+	@Override
+	public Optional<Order> findById(UUID orderId) {
+		return jpaOrderRepository.findById(orderId);
 	}
 }
