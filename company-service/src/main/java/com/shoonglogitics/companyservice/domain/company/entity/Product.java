@@ -44,13 +44,11 @@ public class Product extends BaseEntity {
 
 	public static Product create(
 		UUID productCategoryId,
-		String name,
-		Integer price,
-		String description
+		ProductInfo productInfo
 	) {
 		Product product = new Product();
 		product.productCategoryId = productCategoryId;
-		product.productInfo = ProductInfo.of(name, price, description);
+		product.productInfo = productInfo;
 
 		return product;
 	}

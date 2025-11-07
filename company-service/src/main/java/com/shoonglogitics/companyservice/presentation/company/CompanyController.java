@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.companyservice.application.CompanyService;
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.CreateProductCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
@@ -32,6 +33,8 @@ import com.shoonglogitics.companyservice.presentation.company.common.dto.PageReq
 import com.shoonglogitics.companyservice.presentation.company.common.dto.PageResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyRequest;
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.FindCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.ListCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyRequest;
@@ -146,5 +149,29 @@ public class CompanyController {
 		);
 
 		return ResponseEntity.ok().body(ApiResponse.success(response));
+	}
+
+	@PostMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<CreateProductResponse>> createProduct(
+		@PathVariable UUID companyId,
+		@Valid @RequestBody CreateProductRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		CreateProductCommand command = CreateProductCommand.builder()
+			.authUser(authUser)
+			.companyId(companyId)
+			.productCategoryId(request.productCategoryId())
+			.name(request.name())
+			.price(request.price())
+			.description(request.description())
+			.build();
+
+		UUID productId = companyService.createProduct(command);
+		CreateProductResponse response = new CreateProductResponse(
+			productId,
+			"업체에 상품이 정상적으로 생성 되었습니다."
+		);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
 	}
 }
