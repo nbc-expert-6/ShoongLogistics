@@ -8,7 +8,10 @@ import com.shoonglogitics.orderservice.domain.order.application.command.CreateOr
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
 
-@Component
+import lombok.RequiredArgsConstructor;
+
+@Component("orderCompanyClientImpl")
+@RequiredArgsConstructor
 public class CompanyClientImpl implements CompanyClient {
 	@Override
 	public void validateItems(List<CreateOrderItemCommand> orderItems) {

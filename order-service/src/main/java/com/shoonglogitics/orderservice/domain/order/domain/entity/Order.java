@@ -61,6 +61,9 @@ public class Order extends BaseAggregateRoot<Order> {
 	@Column(name = "request")
 	private String request;
 
+	@Column(name = "delivery_request")
+	private String deliveryRequest;
+
 	@Embedded
 	private Money totalPrice;
 
@@ -75,6 +78,7 @@ public class Order extends BaseAggregateRoot<Order> {
 	private LocalDateTime paidAt;
 
 	public static Order create(Long userId, CompanyInfo receiver, CompanyInfo supplier, String request,
+		String deliveryRequest,
 		Money totalPrice,
 		Address address, List<OrderItem> orderItems) {
 		Order order = new Order();
@@ -82,6 +86,7 @@ public class Order extends BaseAggregateRoot<Order> {
 		order.receiver = receiver;
 		order.supplier = supplier;
 		order.request = request;
+		order.deliveryRequest = deliveryRequest;
 		order.totalPrice = totalPrice;
 		order.address = address;
 		order.status = OrderStatus.PENDING;
