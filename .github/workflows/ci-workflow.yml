@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed services
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            user-service:
+              - 'user-service/**'
+            company-service:
+              - 'company-service/**'
+            order-service:
+              - 'order-service/**'
+            hub-service:
+              - 'hub-service/**'
+            notification-service:
+              - 'notification-service/**'
+
+      - name: Set matrix dynamically
+        id: set-matrix
+        run: |
+          # 전체 changes 출력(JSON 형태)
+          changes_json='${{ toJson(steps.changes.outputs) }}'
+          echo "🔍 Detected changes: $changes_json"
+          
+          # 변경된 서비스 목록 초기화
+          changed=()
+
+          # 변경된 service 찾기
+          for service in user-service company-service order-service hub-service notification-service; do
+            if echo "$changes_json" | grep -q "\"$service\": \"true\""; then
+              changed+=("\"$service\"")
+            fi
+          done
+
+          # 변경사항이 없는 경우
+          if [ ${#changed[@]} -eq 0 ]; then
+            echo "🚫No services changed. Skipping tests."
+            echo "matrix={\"service\":[]}" >> $GITHUB_OUTPUT
+          # 변경사항이 있는 경우
+          else
+            matrix_json="{\"service\":[${changed[*]}]}"
+            echo "✅ Matrix = $matrix_json"
+            echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+  test:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.matrix && needs.detect-changes.outputs.matrix != '{"service":[]}' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PostgreSQL with PostGIS
+        uses: ./.github/actions/postgres-setup
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Test ${{ matrix.service }}
+        run: |
+          DB_NAME=${{ matrix.service }}
+          DB_NAME=${DB_NAME//-/_}
+          echo "🧪 Running tests for ${{ matrix.service }} (DB: $DB_NAME)"
+          SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/$DB_NAME \
+          SPRING_DATASOURCE_USERNAME=postgres \
+          SPRING_DATASOURCE_PASSWORD=qwer1234! \
+          ./gradlew :${{ matrix.service }}:test
+        shell: bash
