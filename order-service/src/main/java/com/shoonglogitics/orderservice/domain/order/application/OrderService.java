@@ -1,7 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.application;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -78,11 +77,9 @@ public class OrderService {
 		companyClient.decreaseStock(orderItems);
 
 		//응답
-		Optional<Order> createdOrder = orderRepository.save(order);
-		if (createdOrder.isEmpty()) {
-			throw new IllegalStateException("주문이 생성되지 않았습니다.");
-		}
-		return createdOrder.get().getId();
+		Order createdOrder = orderRepository.save(order);
+
+		return createdOrder.getId();
 	}
 
 	/*
