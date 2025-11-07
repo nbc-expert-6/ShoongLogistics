@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: service-discovery
+  profiles:
+    include:
+      - eureka
+  
+server:
+  port: 8761

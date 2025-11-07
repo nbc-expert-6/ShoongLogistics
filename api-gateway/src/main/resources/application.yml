@@ -1,6 +1,12 @@
 spring:
   application:
     name: api-gateway
+  profiles:
+    include:
+      - eureka
+
+  config:
+    import: configserver:http://localhost:8888
 
   main:
     web-application-type: reactive
@@ -20,8 +26,8 @@ spring:
               predicates:
                 - Path=/api/v1/ai-delivery/**
 
-jwt:
-  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
-  expiration: 3600000
+#jwt:
+#  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
+#  expiration: 3600000
 server:
   port: 8000

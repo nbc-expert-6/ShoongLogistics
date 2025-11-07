@@ -2,12 +2,18 @@ server:
   port: 8081
 
 spring:
+  application:
+    name: user-service
   profiles:
     include:
       - datasource
+      - eureka
     active: test
 
+  config:
+    import: configserver:http://localhost:8888
+
 # TODO : configure-service? ??
-jwt:
-  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
-  expiration: 3600000
+#jwt:
+#  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
+#  expiration: 3600000
