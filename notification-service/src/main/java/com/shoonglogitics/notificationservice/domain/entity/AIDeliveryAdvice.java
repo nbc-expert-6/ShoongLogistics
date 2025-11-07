@@ -3,6 +3,8 @@ package com.shoonglogitics.notificationservice.domain.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.UuidGenerator;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,8 +21,9 @@ import lombok.NoArgsConstructor;
 public class AIDeliveryAdvice {
 
 	@Id
+	@UuidGenerator(style = UuidGenerator.Style.TIME)
 	@Column(name = "id", columnDefinition = "uuid")
-	private UUID id = UUID.randomUUID();
+	private UUID id;
 
 	private UUID orderId;
 
