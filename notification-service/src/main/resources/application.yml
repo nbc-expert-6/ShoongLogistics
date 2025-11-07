@@ -4,10 +4,10 @@ spring:
 
   profiles:
     include:
-      - datasource
       - openai
       - slack
+      - datasource
     active: test
-    
+
 server:
   port: 8089
