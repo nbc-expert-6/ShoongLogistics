@@ -1,0 +1,38 @@
+spring:
+  config:
+    activate:
+      on-profile: test, local
+
+user-service:
+  url: http://localhost:8081
+order-service:
+  url: http://localhost:8080
+company-service:
+  url: http://localhost:8082
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+user-service:
+  url: http://dev-user-service:8081
+order-service:
+  url: http://dev-order-service:8080
+company-service:
+  url: http://dev-company-service:8082
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+user-service:
+  url: http://prod-user-service:8081
+order-service:
+  url: http://prod-order-service:8080
+company-service:
+  url: http://prod-company-service:8082

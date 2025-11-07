@@ -69,6 +69,7 @@ public class OrderService {
 			receiverInfo,
 			supplierInfo,
 			command.request(),
+			command.deliveryRequest(),
 			totalPrice,
 			address,
 			orderItems

@@ -24,6 +24,7 @@ public record CreateOrderRequest(
 	String supplierCompanyName,
 
 	String request,
+	String deliveryRequest,
 
 	@NotBlank(message = "주소는 필수입니다.")
 	String address,

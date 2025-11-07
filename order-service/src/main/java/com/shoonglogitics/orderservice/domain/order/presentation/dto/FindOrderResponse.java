@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.OrderStatus;
 
 public record FindOrderResponse(
 	UUID orderId,
@@ -13,8 +12,15 @@ public record FindOrderResponse(
 	String receiverCompanyName,
 	UUID supplierCompanyId,
 	String supplierCompanyName,
+	String request,
+	String deliveryRequest,
+	String address,
+	String addressDetail,
+	String zipCode,
+	Double latitude,
+	Double longitude,
 	List<FindOrderItemResponse> items,
-	OrderStatus status,
+	String status,
 	LocalDateTime createdAt,
 	LocalDateTime paidAt
 ) {
@@ -25,10 +31,17 @@ public record FindOrderResponse(
 			result.receiverCompanyName(),
 			result.supplierCompanyId(),
 			result.supplierCompanyName(),
+			result.request(),
+			result.deliveryRequest(),
+			result.address(),
+			result.addressDetail(),
+			result.zipCode(),
+			result.latitude(),
+			result.longitude(),
 			result.items().stream()
 				.map(FindOrderItemResponse::from)
 				.toList(),
-			result.status(),
+			result.status().getDescription(),
 			result.createdAt(),
 			result.paidAt()
 
