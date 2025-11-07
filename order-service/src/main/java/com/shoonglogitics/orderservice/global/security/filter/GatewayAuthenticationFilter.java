@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,16 +27,18 @@ public class GatewayAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String userId = request.getHeader(USER_ID_HEADER);
-		String role = request.getHeader(USER_ROLE_HEADER);
+		String userIdHeader = request.getHeader(USER_ID_HEADER);
+		String roleHeader = request.getHeader(USER_ROLE_HEADER);
 
-		if (userId != null && role != null) {
+		if (userIdHeader != null && roleHeader != null) {
 			try {
+				Long userId = Long.parseLong(userIdHeader);
+				AuthUser authUser = AuthUser.of(userId, roleHeader);
 				UsernamePasswordAuthenticationToken authentication =
 					new UsernamePasswordAuthenticationToken(
-						userId,  // principal
-						null,    // credentials
-						List.of(new SimpleGrantedAuthority("ROLE_" + role))  // authorities
+						authUser,
+						null,
+						List.of(new SimpleGrantedAuthority(authUser.getAuthority()))
 					);
 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
