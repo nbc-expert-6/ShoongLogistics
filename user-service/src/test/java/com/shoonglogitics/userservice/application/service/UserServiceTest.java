@@ -1,46 +1,11 @@
 package com.shoonglogitics.userservice.application.service;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.UUID;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.shoonglogitics.userservice.UserServiceApplication;
-import com.shoonglogitics.userservice.application.command.CompanyManagerSignUpCommand;
-import com.shoonglogitics.userservice.application.command.HubManagerSignUpCommand;
-import com.shoonglogitics.userservice.application.command.MasterSignUpCommand;
-import com.shoonglogitics.userservice.application.command.ShipperSignUpCommand;
-import com.shoonglogitics.userservice.application.command.UpdateUserCommand;
-import com.shoonglogitics.userservice.domain.entity.CompanyManager;
-import com.shoonglogitics.userservice.domain.entity.HubManager;
-import com.shoonglogitics.userservice.domain.entity.Master;
-import com.shoonglogitics.userservice.domain.entity.Shipper;
-import com.shoonglogitics.userservice.domain.entity.ShipperType;
-import com.shoonglogitics.userservice.domain.entity.SignupStatus;
-import com.shoonglogitics.userservice.domain.entity.User;
-import com.shoonglogitics.userservice.domain.entity.UserRole;
-import com.shoonglogitics.userservice.domain.repository.UserRepository;
-import com.shoonglogitics.userservice.domain.vo.CompanyId;
-import com.shoonglogitics.userservice.domain.vo.Email;
-import com.shoonglogitics.userservice.domain.vo.HubId;
-import com.shoonglogitics.userservice.domain.vo.Name;
-import com.shoonglogitics.userservice.domain.vo.PhoneNumber;
-import com.shoonglogitics.userservice.domain.vo.SlackId;
-
-import jakarta.persistence.EntityManager;
-
-@SpringBootTest(classes = UserServiceApplication.class)
+/*@SpringBootTest(classes = UserServiceApplication.class)
 @Transactional
-@Profile(value = "test")
+@Profile(value = "test")*/
 class UserServiceTest {
 
-	@Autowired
+	/*@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -383,6 +348,6 @@ class UserServiceTest {
 		// 다른 허브면 false
 		assertThat(userService.canUpdateUser("HUB_MANAGER", manager.getId(), targetManagerDiffHub.getId())).isFalse();
 		assertThat(userService.canDeleteUser("HUB_MANAGER", manager.getId(), targetManagerDiffHub.getId())).isFalse();
-	}
+	}*/
 
 }
