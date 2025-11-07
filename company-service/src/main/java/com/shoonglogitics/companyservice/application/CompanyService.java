@@ -11,6 +11,7 @@ import com.shoonglogitics.companyservice.application.command.CreateCompanyComman
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
+import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
@@ -50,10 +51,18 @@ public class CompanyService {
 		company.delete(command.authUser());
 	}
 
-	private void validateHubManager(AuthUser authUser, UUID hubId) {
-		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, hubId)) {
-			throw new IllegalArgumentException("해당 허브의 담당자만 업체를 생성, 삭제 할 수 있습니다.");
-		}
+	@Transactional
+	public UUID updateCompany(UpdateCompanyCommand command) {
+		Company company = companyRepository.findById(command.companyId())
+			.orElseThrow(() -> new NoSuchElementException("해당 업체를 찾을 수 없습니다."));
+		validateHubManager(command.authUser(), company.getHubId());
+		validateCompanyManager(command.authUser(), command.companyId());
+
+		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
+		GeoLocation location = GeoLocation.of(command.latitude(), command.longitude());
+		company.update(command.name(), address, location, command.type(), command.authUser());
+
+		return company.getId();
 	}
 
 	private void validateDuplicateCompany(String name, String zipCode, CompanyType type) {
@@ -72,5 +81,18 @@ public class CompanyService {
 	public Page<CompanyResult> getCompanies(GetCompaniesCommand command) {
 		Page<Company> companies = companyRepository.getCompanies(command.hubId(), command.name(), command.type(), command.pageRequest().toPageable());
 		return companies.map(CompanyResult::from);
+	}
+
+
+	private void validateHubManager(AuthUser authUser, UUID hubId) {
+		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, hubId)) {
+			throw new IllegalArgumentException("해당 허브의 담당자만 업체를 생성, 수정, 삭제 할 수 있습니다.");
+		}
+	}
+
+	private void validateCompanyManager(AuthUser authUser, UUID companyId) {
+		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, companyId)) {
+			throw new IllegalArgumentException("해당 업체의 담당자만 업체를 수정 할 수 있습니다.");
+		}
 	}
 }

@@ -11,6 +11,7 @@ import com.shoonglogitics.companyservice.domain.common.entity.BaseAggregateRoot;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.event.CompanyDeletedEvent;
+import com.shoonglogitics.companyservice.domain.company.event.CompanyUpdatedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.infrastructure.persistence.converter.GeoLocationConverter;
@@ -44,7 +45,7 @@ public class Company extends BaseAggregateRoot<Company> {
 	@Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
 
-	@Column(name = "p_hub_id", columnDefinition = "uuid")
+	@Column(name = "hub_id", columnDefinition = "uuid")
 	private UUID hubId;
 
 	@Column(name = "name", nullable = false)
@@ -91,7 +92,25 @@ public class Company extends BaseAggregateRoot<Company> {
 	public void delete(AuthUser authUser) {
 		this.softDelete(authUser.getUserId());
 		this.products.forEach(product -> product.softDelete(authUser.getUserId()));
+
 		this.registerEvent(new CompanyDeletedEvent(this.id, authUser));
+	}
+
+	public void update(
+		String name,
+		CompanyAddress address,
+		GeoLocation location,
+		CompanyType type,
+		AuthUser authUser
+	) {
+		if (!this.location.equals(location)) {
+			registerEvent(new CompanyUpdatedEvent(this.id, authUser));
+		}
+
+		this.name = name;
+		this.address = address;
+		this.location = location;
+		this.type = type;
 	}
 
 	public Double getLongitude() {
