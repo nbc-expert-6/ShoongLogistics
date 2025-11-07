@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
+import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
@@ -82,6 +83,14 @@ public class OrderService {
 		return createdOrder.getId();
 	}
 
+	//orderid로 상세조회
+	public FindOrderResult getOrder(UUID orderId) {
+		Order order = orderRepository.findById(orderId).orElseThrow(
+			() -> new IllegalArgumentException("주문 정보를 찾을 수 없습니다.")
+		);
+		return FindOrderResult.from(order);
+	}
+
 	/*
 	내부용 유틸 함수들
 	 */
@@ -115,4 +124,5 @@ public class OrderService {
 	private void validateOrder(List<OrderItem> orderItems, Money totalPrice) {
 		orderDomainService.validateOrder(orderItems, totalPrice);
 	}
+
 }
