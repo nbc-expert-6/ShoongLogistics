@@ -20,6 +20,7 @@ import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.entity.Product;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
+import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
 import com.shoonglogitics.companyservice.infrastructure.repository.CompanyRepositoryAdapter;
 import com.shoonglogitics.companyservice.infrastructure.repository.JpaCompanyRepository;
 
@@ -59,16 +60,16 @@ class CompanyRepositoryAdapterTest {
 
 		Product product1 = Product.create(
 			UUID.randomUUID(),
-			"노트북",
+			ProductInfo.of("노트북",
 			1500000,
-			"고성능 업무용 노트북"
+			"고성능 업무용 노트북")
 		);
 
 		Product product2 = Product.create(
 			UUID.randomUUID(),
-			"마우스",
+			ProductInfo.of("마우스",
 			50000,
-			"무선 마우스"
+			"무선 마우스")
 		);
 
 		company.getProducts().add(product1);
@@ -96,9 +97,9 @@ class CompanyRepositoryAdapterTest {
 
 		Product product = Product.create(
 			UUID.randomUUID(),
-			"노트북",
+			ProductInfo.of("노트북",
 			1500000,
-			"고성능 업무용 노트북"
+			"고성능 업무용 노트북")
 		);
 		company.getProducts().add(product);
 
@@ -123,8 +124,8 @@ class CompanyRepositoryAdapterTest {
 		// Given
 		Company company = createTestCompany("서울 제조 업체", "06234", CompanyType.MANUFACTURER);
 
-		Product product1 = Product.create(UUID.randomUUID(), "노트북", 1500000, "고성능 노트북");
-		Product product2 = Product.create(UUID.randomUUID(), "마우스", 50000, "무선 마우스");
+		Product product1 = Product.create(UUID.randomUUID(), ProductInfo.of("노트북", 1500000, "고성능 노트북"));
+		Product product2 = Product.create(UUID.randomUUID(), ProductInfo.of("마우스", 50000, "무선 마우스"));
 
 		company.getProducts().add(product1);
 		company.getProducts().add(product2);

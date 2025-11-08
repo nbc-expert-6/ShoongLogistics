@@ -8,10 +8,8 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.companyservice.domain.common.entity.BaseAggregateRoot;
-import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.event.CompanyDeletedEvent;
-import com.shoonglogitics.companyservice.domain.company.event.CompanyUpdatedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
@@ -90,24 +88,19 @@ public class Company extends BaseAggregateRoot<Company> {
 		return company;
 	}
 
-	public void delete(AuthUser authUser) {
-		this.softDelete(authUser.getUserId());
-		this.products.forEach(product -> product.softDelete(authUser.getUserId()));
+	public void delete(Long deletedBy) {
+		this.softDelete(deletedBy);
+		this.products.forEach(product -> product.softDelete(deletedBy));
 
-		this.registerEvent(new CompanyDeletedEvent(this.id, authUser));
+		this.registerEvent(new CompanyDeletedEvent(deletedBy));
 	}
 
 	public void update(
 		String name,
 		CompanyAddress address,
 		GeoLocation location,
-		CompanyType type,
-		AuthUser authUser
+		CompanyType type
 	) {
-		if (!this.location.equals(location)) {
-			registerEvent(new CompanyUpdatedEvent(this.id, authUser));
-		}
-
 		this.name = name;
 		this.address = address;
 		this.location = location;

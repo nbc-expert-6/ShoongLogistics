@@ -8,6 +8,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
 
@@ -138,6 +139,21 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(errorResponse));
 	}
 
+	@ExceptionHandler(ResponseStatusException.class)
+	public ResponseEntity<ApiResponse<ErrorResponse>> handleResponseStatusException(
+		ResponseStatusException e
+	) {
+		log.warn("상태 코드 예외: {}", e.getReason());
+
+		ErrorResponse errorResponse = new ErrorResponse(
+			"HTTP_" + e.getStatusCode().value(),
+			e.getReason(),
+			e.getStatusCode().value()
+		);
+
+		return ResponseEntity.status(e.getStatusCode())
+			.body(ApiResponse.error(errorResponse));
+	}
 	/**
 	 * 서버 내부 오류 예외 처리
 	 */

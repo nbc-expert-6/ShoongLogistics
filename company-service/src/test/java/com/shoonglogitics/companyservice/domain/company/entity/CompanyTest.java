@@ -2,7 +2,6 @@ package com.shoonglogitics.companyservice.domain.company.entity;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -10,10 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
-import com.shoonglogitics.companyservice.domain.company.event.CompanyUpdatedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
-import com.shoonglogitics.companyservice.helper.DomainEventTestHelper;
 
 /**
  * 엔티티 테스트 - Company
@@ -62,7 +59,7 @@ class CompanyTest {
 		CompanyType newType = CompanyType.RECEIVER;
 
 		// When
-		company.update(newName, newAddress, newLocation, newType, authUser);
+		company.update(newName, newAddress, newLocation, newType);
 
 		// Then
 		assertThat(company.getName()).isEqualTo(newName);
@@ -79,7 +76,7 @@ class CompanyTest {
 		AuthUser authUser = createAuthUser();
 
 		// When
-		company.delete(authUser);
+		company.delete(authUser.getUserId());
 
 		// Then
 		assertThat(company.getDeletedAt()).isNotNull();
@@ -150,60 +147,6 @@ class CompanyTest {
 		// Then
 		assertThat(zipCode).isEqualTo("06234");
 	}
-
-	@Test
-	@DisplayName("업체 위치 변경 시 이벤트가 등록된다")
-	void updateLocationEvent() {
-		// Given
-		Company company = createTestCompany();
-		AuthUser authUser = createAuthUser();
-
-		String name = "서울 제조 업체";
-		CompanyAddress address = CompanyAddress.of(
-			"서울특별시 강남구 테헤란로 123",
-			"12층",
-			"06234"
-		);
-		GeoLocation newLocation = GeoLocation.of(37.4919, 127.0294); // 다른 위치
-		CompanyType type = CompanyType.MANUFACTURER;
-
-		// When
-		company.update(name, address, newLocation, type, authUser);
-
-		// Then
-		List<Object> events = DomainEventTestHelper.extractDomainEvents(company).stream().toList();
-		assertThat(events)
-			.hasSize(1)
-			.first()
-			.isInstanceOf(CompanyUpdatedEvent.class);
-	}
-
-	@Test
-	@DisplayName("업체 위치가 변경되지 않으면 이벤트가 등록되지 않는다")
-	void updateWithoutLocationChange() {
-		// Given
-		Company company = createTestCompany();
-		AuthUser authUser = createAuthUser();
-
-		String newName = "새로운 업체명";
-		CompanyAddress address = CompanyAddress.of(
-			"서울특별시 강남구 테헤란로 123",
-			"12층",
-			"06234"
-		);
-		GeoLocation sameLocation = GeoLocation.of(37.5665, 126.9780); // 동일한 위치
-		CompanyType type = CompanyType.MANUFACTURER;
-
-		// When
-		company.update(newName, address, sameLocation, type, authUser);
-
-		// Then
-		List<Object> events = DomainEventTestHelper.extractDomainEvents(company).stream().toList();
-		assertThat(events)
-			.hasSize(0);
-	}
-
-	// ========== 테스트 헬퍼 메서드 ==========
 
 	private Company createTestCompany() {
 		UUID hubId = UUID.randomUUID();
