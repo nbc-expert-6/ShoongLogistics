@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
+import com.shoonglogitics.orderservice.domain.delivery.domain.event.DeliveryCreatedEvent;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.HubInfo;
@@ -110,7 +111,16 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 		delivery.request = request;
 		delivery.deliveryRoutes = deliveryRoutes;
 
-		delivery.registerEvent()
+		delivery.registerEvent(
+			new DeliveryCreatedEvent(delivery.createAssginedShippers(deliveryRoutes, shipperInfo.getShipperId())));
 		return delivery;
+	}
+
+	//배송 생성 이벤트에 상태변경 요청할 담당자 목록 생성
+	private List<UUID> createAssginedShippers(List<DeliveryRoute> deliveryRoutes, UUID shipperId) {
+		List<UUID> assginedShippers = new ArrayList<>();
+		deliveryRoutes.stream().map(deliveryRoute -> shipperInfo.getShipperId()).forEach(assginedShippers::add);
+		assginedShippers.add(shipperId);
+		return assginedShippers;
 	}
 }

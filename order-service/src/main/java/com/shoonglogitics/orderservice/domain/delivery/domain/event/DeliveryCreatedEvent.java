@@ -1,11 +1,15 @@
 package com.shoonglogitics.orderservice.domain.delivery.domain.event;
 
+import java.util.List;
 import java.util.UUID;
 
-public class DeliveryCreatedEvent extends DeliveryDomainEvent {
-	private final UUID shipperId;
+import lombok.Getter;
 
-	public DeliveryCreatedEvent(UUID shipperId) {
-		this.shipperId = shipperId;
+@Getter
+public class DeliveryCreatedEvent extends DeliveryDomainEvent {
+	private final List<UUID> shippers;
+
+	public DeliveryCreatedEvent(List<UUID> shippers) {
+		this.shippers = shippers;
 	}
 }
