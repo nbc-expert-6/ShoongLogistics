@@ -11,6 +11,8 @@ company-service:
   url: http://localhost:8082
 hub-service:
   url: http://localhost:8083
+delivery-service:
+  url: http://localhost:8080
 ---
 
 spring:
@@ -26,6 +28,8 @@ company-service:
   url: http://dev-company-service:8082
 hub-service:
   url: http://dev-hub-service:8083
+delivery-service:
+  url: http://dev-delivery-service:8080
 ---
 
 spring:
@@ -41,3 +45,5 @@ company-service:
   url: http://prod-company-service:8082
 hub-service:
   url: http://prod-hub-service:8083
+delivery-service:
+  url: http://prod-delivery-service:8080

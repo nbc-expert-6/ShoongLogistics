@@ -1,4 +1,4 @@
-package com.shoonglogitics.orderservice.domain.order.infrastructure.external;
+package com.shoonglogitics.orderservice.domain.order.infrastructure.external.client.impl;
 
 import org.springframework.stereotype.Component;
 
