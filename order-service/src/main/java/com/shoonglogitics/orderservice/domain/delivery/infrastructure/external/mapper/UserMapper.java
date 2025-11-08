@@ -29,7 +29,7 @@ public final class UserMapper {
 				"허브2_허브담당자A", "010-2222-1111", "slack-hub2A", ShipperType.HUB_SHIPPER, 1, false),
 			CreateDeliveryShipperInfo.from(UUID.randomUUID(),
 				UUID.fromString("b19f84b1-3c56-4c9c-8f85-1b3d93e1e4b2"),
-				"허브2_허브담당자B", "010-2222-1112", "slack-hub2B", ShipperType.HUB_SHIPPER, 2, true),
+				"허브2_허브담당자B", "010-2222-1112", "slack-hub2B", ShipperType.HUB_SHIPPER, 2, false),
 			CreateDeliveryShipperInfo.from(UUID.randomUUID(),
 				UUID.fromString("b19f84b1-3c56-4c9c-8f85-1b3d93e1e4b2"),
 				"허브2_업체담당자A", "010-2222-1113", "slack-comp2A", ShipperType.COMPANY_SHIPPER, 1, true),

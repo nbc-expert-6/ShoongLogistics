@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j(topic = "delivery-service")
 public class DeliveryService {
+
 	private final DeliveryRepository deliveryRepository;
 	private final DeliveryDomainService domainService;
 
@@ -46,164 +47,163 @@ public class DeliveryService {
 	private final HubClient hubClient;
 	private final UserClient userClient;
 
-	//배송 생성
-	//주문 시 자동호출
+	/**
+	 * 배송 생성
+	 * 주문 생성 시 자동 호출
+	 */
 	@Transactional
 	public CreateDeliveryResult createDelivery(CreateDeliveryCommand command) {
-		// 주문 서비스에 주문 정보 조회
+		//주문 서비스에서 주문 정보 조회
 		CreateDeliveryOrderInfo orderData = getOrderInfo(command);
 
-		// 업체 서비스에 수령업체 허브 조회
-		CreateDeliveryCompanyInfo receiverCompanyInfo = getCompanyInfo(orderData.receiverCompanyId(), command);
+		//업체 서비스에서 수령업체, 공급업체 허브 정보 조회
+		CreateDeliveryCompanyInfo receiverHub = getCompanyHub(orderData.receiverCompanyId(), command);
+		CreateDeliveryCompanyInfo supplierHub = getCompanyHub(orderData.supplierCompanyId(), command);
 
-		// 업체 서비스에 공급업체 허브 조회
-		CreateDeliveryCompanyInfo supplierCompanyInfo = getCompanyInfo(orderData.supplierCompanyId(), command);
+		//허브 서비스에 허브 간 최적 배송 경로 요청
+		List<CreateDeliveryRoutesInfo> routeInfos = getDeliveryRoutes(supplierHub, receiverHub, command);
 
-		// 허브 서비스에 혀브간 운송경로 요청
-		// 출발허브id, 도착허브id 넘겨주고 허브 운송경로 받기
-		List<CreateDeliveryRoutesInfo> deliveryRoutesInfo = getDeliveryRoutesInfo(receiverCompanyInfo,
-			supplierCompanyInfo,
+		// 회원 서비스에서 허브별 배송 담당자 전부 조회 (타입별, 순서 오름차순)
+		Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> allHubShippers = getAllHubShippers(routeInfos,
 			command);
 
-		// 회원 컨텍스트에 요청 여러번 보내서 허브별 담당자 현황 가져오기
-		// 가져올 때 배송 가능한 담당자만 가져오고 순번대로 오름차순
-		// 타입: Map<허브Id : List<허브별 타입 담당자>
-		Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> allHubShippers = getAllHubShippers(
-			deliveryRoutesInfo, command);
+		//배송 경로 엔티티 생성
+		List<DeliveryRoute> deliveryRoutes = createDeliveryRoutes(routeInfos, allHubShippers);
 
-		List<DeliveryRoute> deliveryRoutes = new ArrayList<>();
-		// 만들어진 경로 순회하며 배송 경로 엔티티 생성
-		for (CreateDeliveryRoutesInfo routesInfo : deliveryRoutesInfo) {
-			CreateDeliveryShipperInfo assignedShipper = assignShipper(routesInfo.departureHubId(), allHubShippers,
-				ShipperType.HUB_SHIPPER);
-
-			DeliveryRoute route = DeliveryRoute.create(
-				ShipperInfo.of(assignedShipper.shipperId(), assignedShipper.shipperName(),
-					assignedShipper.shipperPhoneNumber(), assignedShipper.slackId()),
-				HubInfo.of(routesInfo.departureHubId()),
-				HubInfo.of(routesInfo.arrivalHubId()),
-				routesInfo.sequence(),
-				DeliveryEstimate.of(routesInfo.estimateDistance(), routesInfo.estimatedDuration())
-			);
-
-			deliveryRoutes.add(route);
-		}
-
-		// 배송 생성, 만들어진 배송경로 목록 함께 저장
-		// 최종 배송담당자 배정
-		CreateDeliveryShipperInfo destinationShipper = assignShipper(receiverCompanyInfo.hubId(), allHubShippers,
+		//최종 배송 담당자 배정 (수령업체 허브 기준)
+		CreateDeliveryShipperInfo finalShipper = assignShipper(receiverHub.hubId(), allHubShippers,
 			ShipperType.COMPANY_SHIPPER);
+
+		//Delivery 엔티티 생성
 		Delivery delivery = Delivery.create(
 			command.orderId(),
-			Address.of(
-				orderData.address(),
-				orderData.addressDetail(),
-				orderData.zipCode(),
-				GeoLocation.of(
-					orderData.latitude(),
-					orderData.longitude()
-				)
-			),
-			ShipperInfo.of(
-				destinationShipper.shipperId(),
-				destinationShipper.shipperName(),
-				destinationShipper.shipperPhoneNumber(),
-				destinationShipper.slackId()
-			),
-			HubInfo.of(supplierCompanyInfo.hubId()),
-			HubInfo.of(receiverCompanyInfo.hubId()),
+			Address.of(orderData.address(), orderData.addressDetail(), orderData.zipCode(),
+				GeoLocation.of(orderData.latitude(), orderData.longitude())),
+			ShipperInfo.of(finalShipper.shipperId(), finalShipper.shipperName(),
+				finalShipper.shipperPhoneNumber(), finalShipper.slackId()),
+			HubInfo.of(supplierHub.hubId()),
+			HubInfo.of(receiverHub.hubId()),
 			orderData.deliveryRequest(),
 			deliveryRoutes
 		);
 
-		// 배송정보 저장
-		Delivery savedDelivery = deliveryRepository.save(delivery);
+		//배송 정보 저장
+		Delivery saved = deliveryRepository.save(delivery);
 
-		// 응답
-		return CreateDeliveryResult.from(savedDelivery.getId(), "배송 정보가 생성되었습니다.");
+		//응답
+		return CreateDeliveryResult.from(saved.getId(), "배송 정보가 생성되었습니다.");
 	}
 
+
 	/*
-	내부용 유틸 함수
+	내부 유틸용 함수
 	 */
 
-	//배송 생성에 필요한 필수 주문 정보 조회
+	/** 주문 서비스에서 주문 정보 조회 */
 	private CreateDeliveryOrderInfo getOrderInfo(CreateDeliveryCommand command) {
 		return orderClient.getOrderInfo(command.orderId(), command.userId(), command.role());
 	}
 
-	//업체가 속한 hubId 조회
-	private CreateDeliveryCompanyInfo getCompanyInfo(UUID uuid, CreateDeliveryCommand command) {
-		return companyClient.getCompanyInfo(uuid, command.userId(), command.role());
+	/** 업체 서비스에서 허브 정보 조회 */
+	private CreateDeliveryCompanyInfo getCompanyHub(UUID companyId, CreateDeliveryCommand command) {
+		return companyClient.getCompanyInfo(companyId, command.userId(), command.role());
 	}
 
-	//허브에 최적 경로 요청
-	private List<CreateDeliveryRoutesInfo> getDeliveryRoutesInfo(CreateDeliveryCompanyInfo receiverCompanyInfo,
-		CreateDeliveryCompanyInfo supplierCompanyInfo, CreateDeliveryCommand command) {
+	/** 허브 서비스에서 허브 간 최적 배송 경로 조회 */
+	private List<CreateDeliveryRoutesInfo> getDeliveryRoutes(CreateDeliveryCompanyInfo supplierHub,
+		CreateDeliveryCompanyInfo receiverHub,
+		CreateDeliveryCommand command) {
 		return hubClient.getDeliveryRoutesInfo(
-			supplierCompanyInfo.hubId(), receiverCompanyInfo.hubId(), command.userId(), command.role()
+			supplierHub.hubId(),
+			receiverHub.hubId(),
+			command.userId(),
+			command.role()
 		);
 	}
 
-	//회원 서비스에 요청하여 허브별 배송 담당자 전부조회
-	//타입별로 반환 (순서 기준 오름차순)
+	/**
+	 * 회원 서비스에서 허브별 배송 담당자 전부 조회
+	 * 출발/도착 허브 기준, 배송/운송 타입별로 Map 구성
+	 */
 	private Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> getAllHubShippers(
-		List<CreateDeliveryRoutesInfo> deliveryRoutes, CreateDeliveryCommand command
-	) {
-		Map<UUID, List<CreateDeliveryShipperInfo>> hubDeliveryShippers = new HashMap<>();
-		Map<UUID, List<CreateDeliveryShipperInfo>> hubTransportShippers = new HashMap<>();
+		List<CreateDeliveryRoutesInfo> routes, CreateDeliveryCommand command) {
 
-		for (CreateDeliveryRoutesInfo route : deliveryRoutes) {
+		Map<UUID, List<CreateDeliveryShipperInfo>> deliveryMap = new HashMap<>();
+		Map<UUID, List<CreateDeliveryShipperInfo>> transportMap = new HashMap<>();
+
+		for (CreateDeliveryRoutesInfo route : routes) {
+			// 출발/도착 허브 모두 조회
 			for (UUID hubId : List.of(route.departureHubId(), route.arrivalHubId())) {
-				if (hubDeliveryShippers.containsKey(hubId))
+				if (deliveryMap.containsKey(hubId))
 					continue;
 
-				List<CreateDeliveryShipperInfo> allShippers = userClient.getShippers(hubId, command.userId(),
-						command.role())
+				// 허브별 모든 담당자 조회 및 순서 기준 오름차순 정렬
+				List<CreateDeliveryShipperInfo> all = userClient.getShippers(hubId, command.userId(), command.role())
 					.stream()
 					.sorted(Comparator.comparingInt(CreateDeliveryShipperInfo::order))
 					.toList();
 
-				List<CreateDeliveryShipperInfo> deliveryShippers = allShippers.stream()
-					.filter(s -> s.type() == ShipperType.HUB_SHIPPER)
-					.toList();
-
-				List<CreateDeliveryShipperInfo> transportShippers = allShippers.stream()
-					.filter(s -> s.type() == ShipperType.COMPANY_SHIPPER)
-					.toList();
-
-				hubDeliveryShippers.put(hubId, deliveryShippers);
-				hubTransportShippers.put(hubId, transportShippers);
+				// 배송 / 운송 타입별 분류
+				deliveryMap.put(hubId, filterByType(all, ShipperType.HUB_SHIPPER));
+				transportMap.put(hubId, filterByType(all, ShipperType.COMPANY_SHIPPER));
 			}
 		}
 
 		Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> result = new HashMap<>();
-		result.put(ShipperType.HUB_SHIPPER, hubDeliveryShippers);
-		result.put(ShipperType.COMPANY_SHIPPER, hubTransportShippers);
-
+		result.put(ShipperType.HUB_SHIPPER, deliveryMap);
+		result.put(ShipperType.COMPANY_SHIPPER, transportMap);
 		return result;
 	}
 
-	//전체 담당자에서 해당 허브의 배송 타입 담당자를 할당 (우선순위대로)
-	private CreateDeliveryShipperInfo assignShipper(
-		UUID hubId,
-		Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> allHubShippers,
-		ShipperType shipperType
-	) {
-		List<CreateDeliveryShipperInfo> shippers =
-			allHubShippers.getOrDefault(shipperType, Map.of())
-				.getOrDefault(hubId, List.of());
+	/** 특정 타입으로 허브 담당자 필터링 */
+	private List<CreateDeliveryShipperInfo> filterByType(List<CreateDeliveryShipperInfo> shippers, ShipperType type) {
+		return shippers.stream()
+			.filter(s -> s.type() == type)
+			.toList();
+	}
 
-		// 1순위 - 배송 가능한 담당자 중 order가 가장 빠른 사람
-		// 2순위 - 없으면 전체 중 order가 가장 빠른 사람
+	/**
+	 * 배송 경로 엔티티 생성
+	 * 허브 담당자를 배정하여 DeliveryRoute 객체로 변환
+	 */
+	private List<DeliveryRoute> createDeliveryRoutes(List<CreateDeliveryRoutesInfo> routeInfos,
+		Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> allHubShippers) {
+
+		List<DeliveryRoute> routes = new ArrayList<>();
+		for (CreateDeliveryRoutesInfo info : routeInfos) {
+			//허브 간 이동 담당자 배정
+			CreateDeliveryShipperInfo assigned = assignShipper(info.departureHubId(), allHubShippers,
+				ShipperType.HUB_SHIPPER);
+
+			//배송 경로 엔티티 생성
+			routes.add(DeliveryRoute.create(
+				ShipperInfo.of(assigned.shipperId(), assigned.shipperName(), assigned.shipperPhoneNumber(),
+					assigned.slackId()),
+				HubInfo.of(info.departureHubId()),
+				HubInfo.of(info.arrivalHubId()),
+				info.sequence(),
+				DeliveryEstimate.of(info.estimateDistance(), info.estimatedDuration())
+			));
+		}
+		return routes;
+	}
+
+	/**
+	 * 해당 허브의 배송 담당자 배정
+	 * 1순위: 배송 가능한 담당자 중 order가 가장 빠른 사람
+	 * 2순위: 전체 중 order가 가장 빠른 사람
+	 * 없으면 예외 발생
+	 */
+	private CreateDeliveryShipperInfo assignShipper(UUID hubId,
+		Map<ShipperType, Map<UUID, List<CreateDeliveryShipperInfo>>> allHubShippers,
+		ShipperType type) {
+		List<CreateDeliveryShipperInfo> shippers = allHubShippers.getOrDefault(type, Map.of())
+			.getOrDefault(hubId, List.of());
+
 		return shippers.stream()
 			.filter(CreateDeliveryShipperInfo::isShippingAvailable)
 			.min(Comparator.comparingInt(CreateDeliveryShipperInfo::order))
-			.or(() -> shippers.stream()
-				.min(Comparator.comparingInt(CreateDeliveryShipperInfo::order))
-			)
-			.orElseThrow(() -> new IllegalStateException(
-				"허브 " + hubId + "에 배송 담당자가 존재하지 않습니다."
-			));
+			.or(() -> shippers.stream().min(Comparator.comparingInt(CreateDeliveryShipperInfo::order)))
+			.orElseThrow(() -> new IllegalStateException("허브 " + hubId + "에 배송 담당자가 존재하지 않습니다."));
 	}
 }
