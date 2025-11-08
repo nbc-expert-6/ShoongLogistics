@@ -7,14 +7,15 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
+import com.shoonglogitics.orderservice.domain.delivery.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.HubInfo;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.ShipperInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.global.common.entity.BaseAggregateRoot;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -41,6 +42,9 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 	@Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
 
+	@Column(name = "order_id", nullable = false)
+	private UUID orderId;
+
 	@Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
@@ -49,7 +53,7 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 	private String request;
 
 	@Embedded
-	private Address address;
+	private com.shoonglogitics.orderservice.domain.delivery.domain.vo.Address address;
 
 	@Embedded
 	@AttributeOverrides({
@@ -67,25 +71,46 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 	@AttributeOverride(name = "hubId", column = @Column(name = "destination_hub_id"))
 	private HubInfo destinationHubId;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "delivery_id")
 	private List<DeliveryRoute> deliveryRoutes = new ArrayList<>();
 
-	//Todo 생성시 검증 로직 추가
 	public static Delivery create(
+		UUID orderId,
 		Address address,
 		ShipperInfo shipperInfo,
 		HubInfo departureHubId,
 		HubInfo destinationHubId,
-		String request
+		String request,
+		List<DeliveryRoute> deliveryRoutes
 	) {
+		if (orderId == null) {
+			throw new IllegalArgumentException("주문 번호(OrderId)는 필수입니다.");
+		}
+		if (address == null) {
+			throw new IllegalArgumentException("배송지 주소(Address)는 필수입니다.");
+		}
+		if (shipperInfo == null) {
+			throw new IllegalArgumentException("배송 담당자(ShipperInfo)는 필수입니다.");
+		}
+		if (departureHubId == null) {
+			throw new IllegalArgumentException("출발 허브(HubInfo)는 필수입니다.");
+		}
+		if (destinationHubId == null) {
+			throw new IllegalArgumentException("도착 허브(HubInfo)는 필수입니다.");
+		}
+
 		Delivery delivery = new Delivery();
+		delivery.orderId = orderId;
 		delivery.status = DeliveryStatus.HUB_WAITING;
 		delivery.address = address;
 		delivery.shipperInfo = shipperInfo;
 		delivery.departureHubId = departureHubId;
 		delivery.destinationHubId = destinationHubId;
 		delivery.request = request;
+		delivery.deliveryRoutes = deliveryRoutes;
+
+		delivery.registerEvent()
 		return delivery;
 	}
 }
