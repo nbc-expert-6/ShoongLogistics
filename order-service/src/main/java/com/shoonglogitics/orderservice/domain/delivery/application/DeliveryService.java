@@ -8,12 +8,15 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.FindDeliveryResult;
+import com.shoonglogitics.orderservice.domain.delivery.application.dto.ListDeliveryRouteResult;
+import com.shoonglogitics.orderservice.domain.delivery.application.query.ListDeliveryRouteQuery;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.HubClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.OrderClient;
@@ -101,6 +104,12 @@ public class DeliveryService {
 			() -> new NoSuchElementException("배송 정보가 존재하지 않습니다.,")
 		);
 		return FindDeliveryResult.from(delivery);
+	}
+
+	public Page<ListDeliveryRouteResult> getDeliveryRoutes(ListDeliveryRouteQuery query) {
+		Page<DeliveryRoute> deliveryRoutes = deliveryRepository.getDeliveryRoutes(query.deliveryId(),
+			query.pageRequest());
+		return deliveryRoutes.map(ListDeliveryRouteResult::from);
 	}
 
 	/*

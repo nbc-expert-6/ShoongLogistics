@@ -7,6 +7,7 @@ import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryActual;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryEstimate;
+import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.HubInfo;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.ShipperInfo;
 import com.shoonglogitics.orderservice.global.common.entity.BaseEntity;
@@ -59,6 +60,9 @@ public class DeliveryRoute extends BaseEntity {
 	@Embedded
 	DeliveryActual actual;
 
+	@Column(name = "status", nullable = false)
+	private DeliveryStatus status;
+
 	public static DeliveryRoute create(
 		ShipperInfo shipperInfo,
 		HubInfo departureHubId,
@@ -88,6 +92,7 @@ public class DeliveryRoute extends BaseEntity {
 		route.arrivalHubId = arrivalHubId;
 		route.sequence = sequence;
 		route.estimate = estimate;
+		route.status = DeliveryStatus.HUB_WAITING;
 		return route;
 	}
 

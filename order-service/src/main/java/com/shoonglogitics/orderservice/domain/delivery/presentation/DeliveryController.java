@@ -2,10 +2,12 @@ package com.shoonglogitics.orderservice.domain.delivery.presentation;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,9 +18,14 @@ import com.shoonglogitics.orderservice.domain.delivery.application.DeliveryServi
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.FindDeliveryResult;
+import com.shoonglogitics.orderservice.domain.delivery.application.dto.ListDeliveryRouteResult;
+import com.shoonglogitics.orderservice.domain.delivery.application.query.ListDeliveryRouteQuery;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.CreateDeliveryRequest;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.CreateDeliveryResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.FindDeliveryResponse;
+import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ListDeliveryRouteResponse;
+import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.global.common.dto.PageResponse;
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
 import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
 
@@ -53,6 +60,16 @@ public class DeliveryController {
 	}
 
 	//배송 경로 조회
+	@GetMapping("/{deliveryId}")
+	public ResponseEntity<ApiResponse<PageResponse<ListDeliveryRouteResponse>>> getDeliveries(
+		@PathVariable("deliveryId") UUID deliveryId,
+		@ModelAttribute PageRequest pageRequest
+	) {
+		ListDeliveryRouteQuery query = ListDeliveryRouteQuery.from(deliveryId, pageRequest);
+		Page<ListDeliveryRouteResult> result = deliveryService.getDeliveryRoutes(query);
+		Page<ListDeliveryRouteResponse> response = result.map(ListDeliveryRouteResponse::from);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(PageResponse.of(response)));
+	}
 
 	//배송 정보 수정
 
