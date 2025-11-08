@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
+import com.shoonglogitics.orderservice.domain.delivery.application.dto.FindDeliveryResult;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.HubClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.OrderClient;
@@ -94,10 +96,23 @@ public class DeliveryService {
 		return CreateDeliveryResult.from(saved.getId());
 	}
 
+	public FindDeliveryResult getDelivery(UUID orderId) {
+		Delivery delivery = deliveryRepository.findByOrderId(orderId).orElseThrow(
+			() -> new NoSuchElementException("배송 정보가 존재하지 않습니다.,")
+		);
+		return FindDeliveryResult.from(delivery);
+	}
 
 	/*
 	내부 유틸용 함수
 	 */
+
+	//id로 배송 정보 조회
+	private Delivery getDeliveryById(UUID deliveryId) {
+		return deliveryRepository.findById(deliveryId).orElseThrow(
+			() -> new NoSuchElementException("배송 정보가 존재하지 않습니다.")
+		);
+	}
 
 	/** 주문 서비스에서 주문 정보 조회 */
 	private CreateDeliveryOrderInfo getOrderInfo(CreateDeliveryCommand command) {
