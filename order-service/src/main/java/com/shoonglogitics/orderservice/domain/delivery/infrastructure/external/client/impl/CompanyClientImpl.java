@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryCompanyInfo;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.CompanyClient;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryCompanyInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.client.feign.CompanyFeignClient;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignCompanyResponse;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper.CompanyMapper;

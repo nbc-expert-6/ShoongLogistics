@@ -33,6 +33,6 @@ public class DeliveryController {
 			CreateDeliveryCommand.from(request, authUser.getUserId(), authUser.getRole())
 		);
 		CreateDeliveryResponse response = CreateDeliveryResponse.from(result);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response, "요청 성공"));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response, "배송 정보가 생성되었습니다."));
 	}
 }

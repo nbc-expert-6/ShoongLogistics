@@ -1,6 +1,6 @@
 package com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper;
 
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryCompanyInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryCompanyInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignCompanyResponse;
 
 public final class CompanyMapper {

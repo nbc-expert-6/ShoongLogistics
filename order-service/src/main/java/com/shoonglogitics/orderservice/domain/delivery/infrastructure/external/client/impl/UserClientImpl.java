@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryShipperInfo;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.UserClient;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryShipperInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.client.feign.UserFeignClient;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper.UserMapper;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;

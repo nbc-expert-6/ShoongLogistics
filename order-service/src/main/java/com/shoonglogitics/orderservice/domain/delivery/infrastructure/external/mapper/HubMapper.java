@@ -3,7 +3,7 @@ package com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.
 import java.util.List;
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryRoutesInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryRoutesInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignHubResponse;
 
 public final class HubMapper {

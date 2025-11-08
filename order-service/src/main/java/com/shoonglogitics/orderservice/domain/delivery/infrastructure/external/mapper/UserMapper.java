@@ -3,7 +3,7 @@ package com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.
 import java.util.List;
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryShipperInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryShipperInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignUserResponse;
 import com.shoonglogitics.orderservice.global.common.vo.ShipperType;
 
