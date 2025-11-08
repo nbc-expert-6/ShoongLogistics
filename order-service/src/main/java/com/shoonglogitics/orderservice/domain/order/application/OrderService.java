@@ -38,7 +38,6 @@ public class OrderService {
 
 	@Transactional
 	public UUID createOrder(CreateOrderCommand command) {
-		log.info("Create order: {}", command);
 		//주문자 검증(외부 호출 후 검증)
 		validateCustomer(command.userId(), command.role());
 

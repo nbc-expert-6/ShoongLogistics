@@ -52,22 +52,18 @@ public class DeliveryService {
 	public CreateDeliveryResult createDelivery(CreateDeliveryCommand command) {
 		// 주문 서비스에 주문 정보 조회
 		CreateDeliveryOrderInfo orderData = getOrderInfo(command);
-		log.info("orderData={}", orderData);
 
 		// 업체 서비스에 수령업체 허브 조회
 		CreateDeliveryCompanyInfo receiverCompanyInfo = getCompanyInfo(orderData.receiverCompanyId(), command);
-		log.info("receiver={}", receiverCompanyInfo);
 
 		// 업체 서비스에 공급업체 허브 조회
 		CreateDeliveryCompanyInfo supplierCompanyInfo = getCompanyInfo(orderData.supplierCompanyId(), command);
-		log.info("supplier={}", supplierCompanyInfo);
 
 		// 허브 서비스에 혀브간 운송경로 요청
 		// 출발허브id, 도착허브id 넘겨주고 허브 운송경로 받기
 		List<CreateDeliveryRoutesInfo> deliveryRoutesInfo = getDeliveryRoutesInfo(receiverCompanyInfo,
 			supplierCompanyInfo,
 			command);
-		log.info("deliveryRoutes={}", deliveryRoutesInfo);
 
 		// 회원 컨텍스트에 요청 여러번 보내서 허브별 담당자 현황 가져오기
 		// 가져올 때 배송 가능한 담당자만 가져오고 순번대로 오름차순
@@ -124,7 +120,6 @@ public class DeliveryService {
 		Delivery savedDelivery = deliveryRepository.save(delivery);
 
 		// 응답
-		log.info("savedDeliveryId={}", savedDelivery.getId());
 		return CreateDeliveryResult.from(savedDelivery.getId(), "배송 정보가 생성되었습니다.");
 	}
 
