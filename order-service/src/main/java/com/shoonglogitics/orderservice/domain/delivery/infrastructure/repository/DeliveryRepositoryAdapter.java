@@ -1,5 +1,8 @@
 package com.shoonglogitics.orderservice.domain.delivery.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.orderservice.domain.delivery.domain.entity.Delivery;
@@ -15,5 +18,15 @@ public class DeliveryRepositoryAdapter implements DeliveryRepository {
 	@Override
 	public Delivery save(Delivery delivery) {
 		return jpaDeliveryRepository.save(delivery);
+	}
+
+	@Override
+	public Optional<Delivery> findById(UUID deliveryId) {
+		return jpaDeliveryRepository.findById(deliveryId);
+	}
+
+	@Override
+	public Optional<Delivery> findByOrderId(UUID orderId) {
+		return jpaDeliveryRepository.findByOrderId(orderId);
 	}
 }
