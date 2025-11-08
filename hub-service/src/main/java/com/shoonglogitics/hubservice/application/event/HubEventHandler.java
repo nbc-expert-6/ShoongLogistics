@@ -1,5 +1,6 @@
 package com.shoonglogitics.hubservice.application.event;
 
+import com.shoonglogitics.hubservice.domain.event.HubDeactivatedEvent;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -18,6 +19,12 @@ public class HubEventHandler {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleHubCreated(HubCreatedEvent event) {
+		//허브 캐싱 재설정
+	}
+
+	@Async
+	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+	public void handleHubDeactivated(HubDeactivatedEvent event) {
 		//허브 캐싱 재설정
 	}
 

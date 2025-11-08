@@ -55,12 +55,14 @@ public class HubController {
 	}
 
 	@GetMapping("/{hubId}")
+	@PreAuthorize("hasAnyRole('MASTER','HUB_MANAGER','SHIPPER','COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<HubDetailResponse>> getHub(@PathVariable UUID hubId) {
 		HubDetailResponse response = HubDetailResponse.from(hubService.getHub(hubId));
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@GetMapping
+	@PreAuthorize("hasAnyRole('MASTER','HUB_MANAGER','SHIPPER','COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<HubListResponse>> getHubs() {
 		List<HubSummary> hubs = hubService.getAllHubs();
 		HubListResponse response = HubListResponse.of(hubs);
