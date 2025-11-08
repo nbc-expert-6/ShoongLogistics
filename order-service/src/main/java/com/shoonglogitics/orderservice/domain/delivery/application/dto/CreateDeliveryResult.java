@@ -3,13 +3,11 @@ package com.shoonglogitics.orderservice.domain.delivery.application.dto;
 import java.util.UUID;
 
 public record CreateDeliveryResult(
-	UUID deliveryId,
-	String maeesage
+	UUID deliveryId
 ) {
-	public static CreateDeliveryResult from(UUID deliveryId, String message) {
+	public static CreateDeliveryResult from(UUID deliveryId) {
 		return new CreateDeliveryResult(
-			deliveryId,
-			message
+			deliveryId
 		);
 	}
 }

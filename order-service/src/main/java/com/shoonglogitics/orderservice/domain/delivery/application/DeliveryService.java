@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryCompanyInfo;
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryOrderInfo;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryRoutesInfo;
-import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryShipperInfo;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.HubClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.OrderClient;
 import com.shoonglogitics.orderservice.domain.delivery.application.service.UserClient;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryCompanyInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryOrderInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryRoutesInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryShipperInfo;
 import com.shoonglogitics.orderservice.domain.delivery.domain.entity.Delivery;
 import com.shoonglogitics.orderservice.domain.delivery.domain.entity.DeliveryRoute;
 import com.shoonglogitics.orderservice.domain.delivery.domain.repository.DeliveryRepository;
@@ -91,7 +91,7 @@ public class DeliveryService {
 		Delivery saved = deliveryRepository.save(delivery);
 
 		//응답
-		return CreateDeliveryResult.from(saved.getId(), "배송 정보가 생성되었습니다.");
+		return CreateDeliveryResult.from(saved.getId());
 	}
 
 

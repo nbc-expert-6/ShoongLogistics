@@ -1,4 +1,4 @@
-package com.shoonglogitics.orderservice.domain.delivery.application.dto;
+package com.shoonglogitics.orderservice.domain.delivery.application.service.dto;
 
 import java.util.UUID;
 
