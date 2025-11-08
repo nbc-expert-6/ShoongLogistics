@@ -6,6 +6,7 @@ import com.shoonglogitics.orderservice.domain.delivery.domain.entity.Delivery;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 
 public record FindDeliveryResult(
+	UUID deliveryId,
 	UUID orderId,
 	DeliveryStatus status,
 	String request,
@@ -21,6 +22,7 @@ public record FindDeliveryResult(
 ) {
 	public static FindDeliveryResult from(Delivery delivery) {
 		return new FindDeliveryResult(
+			delivery.getId(),
 			delivery.getOrderId(),
 			delivery.getStatus(),
 			delivery.getRequest(),

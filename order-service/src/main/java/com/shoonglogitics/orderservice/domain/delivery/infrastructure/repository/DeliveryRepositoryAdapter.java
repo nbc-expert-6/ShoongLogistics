@@ -3,10 +3,13 @@ package com.shoonglogitics.orderservice.domain.delivery.infrastructure.repositor
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.orderservice.domain.delivery.domain.entity.Delivery;
+import com.shoonglogitics.orderservice.domain.delivery.domain.entity.DeliveryRoute;
 import com.shoonglogitics.orderservice.domain.delivery.domain.repository.DeliveryRepository;
+import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,5 +31,10 @@ public class DeliveryRepositoryAdapter implements DeliveryRepository {
 	@Override
 	public Optional<Delivery> findByOrderId(UUID orderId) {
 		return jpaDeliveryRepository.findByOrderId(orderId);
+	}
+
+	@Override
+	public Page<DeliveryRoute> getDeliveryRoutes(UUID uuid, PageRequest pageRequest) {
+		return jpaDeliveryRepository.findAllDeliveryRouteById(uuid, pageRequest.toNativePageable());
 	}
 }
