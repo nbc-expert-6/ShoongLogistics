@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,7 @@ public class DeliveryController {
 	private final DeliveryService deliveryService;
 
 	@PostMapping
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<CreateDeliveryResponse>> createDelivery(
 		@RequestBody CreateDeliveryRequest request, @AuthenticationPrincipal AuthUser authUser
 	) {
@@ -58,6 +60,7 @@ public class DeliveryController {
 
 	//배송 정보 조회
 	@GetMapping("/orders/{orderId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<FindDeliveryResponse>> getDelivery(
 		@PathVariable("orderId") UUID orderId
 	) {
@@ -68,6 +71,7 @@ public class DeliveryController {
 
 	//배송 경로 조회
 	@GetMapping("/{deliveryId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<PageResponse<ListDeliveryRouteResponse>>> getDeliveries(
 		@PathVariable("deliveryId") UUID deliveryId,
 		@ModelAttribute PageRequest pageRequest
@@ -80,6 +84,7 @@ public class DeliveryController {
 
 	//배송 정보 수정
 	@PutMapping("/{deliveryId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
 	public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> updateDelivery(
 		@PathVariable("deliveryId") UUID deliveryId,
 		@RequestBody UpdateDeliveryRequest request,
@@ -93,6 +98,7 @@ public class DeliveryController {
 
 	//배송 삭제
 	@DeleteMapping("/{deliveryId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
 	public ResponseEntity<ApiResponse<DeleteDeliveryResponse>> deleteDelivery(
 		@PathVariable("deliveryId") UUID deliveryId,
 		@AuthenticationPrincipal AuthUser authUser

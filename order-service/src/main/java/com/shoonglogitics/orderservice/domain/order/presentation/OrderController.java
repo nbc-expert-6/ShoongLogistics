@@ -87,6 +87,7 @@ public class OrderController {
 
 	//주문 수정
 	@PutMapping("/{orderId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
 	public ResponseEntity<ApiResponse<UpdateOrderResponse>> updateOrder(
 		@PathVariable("orderId") UUID orderId,
 		@AuthenticationPrincipal AuthUser authUser,
@@ -100,6 +101,7 @@ public class OrderController {
 
 	//주문 삭제
 	@DeleteMapping("/{orderId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
 	public ResponseEntity<ApiResponse<DeleteOrderResponse>> deleteOrder(
 		@AuthenticationPrincipal AuthUser authUser,
 		@PathVariable("orderId") UUID orderId

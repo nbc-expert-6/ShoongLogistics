@@ -117,9 +117,6 @@ public class OrderService {
 	@Transactional
 	public UUID updateOrder(UpdateOrderCommand command) {
 		Order order = getOrderById(command.orderId());
-		if (command.role() != UserRoleType.MASTER && !order.getUserId().equals(command.userId())) {
-			throw new IllegalArgumentException("자신의 주문만 수정할 수 있습니다.");
-		}
 		order.update(command.request(), command.deliveryRequest());
 		//배송 수정 이벤트 발행
 		publisher.publishEvent(new OrderUpdatedEvent(order.getId(), order.getDeliveryRequest()));
@@ -131,8 +128,7 @@ public class OrderService {
 	public UUID cancleOrder(DeleteOrderCommand command) {
 		Order order = getOrderById(command.orderId());
 		order.delete(
-			command.userId(),
-			command.role()
+			command.userId()
 		);
 
 		//배송 삭제 이벤트 발행
