@@ -35,7 +35,7 @@ public class HubService {
 		return hubRepository.save(hub);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public HubResult getHub(UUID hubId) {
 
 		Hub hub = hubRepository.findById(hubId).orElseThrow(() -> new IllegalArgumentException("Hub를 찾을 수 없습니다."));
@@ -43,7 +43,7 @@ public class HubService {
 
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<HubSummary> getAllHubs() {
 		return hubRepository.findAll().stream()
 			.map(HubSummary::from)
