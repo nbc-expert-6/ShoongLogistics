@@ -13,6 +13,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.OrderStatus;
 import com.shoonglogitics.orderservice.global.common.entity.BaseAggregateRoot;
+import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -148,5 +149,21 @@ public class Order extends BaseAggregateRoot<Order> {
 		if (deliveryRequest != null) {
 			this.deliveryRequest = deliveryRequest;
 		}
+	}
+
+	public void delete(Long userId, UserRoleType role) {
+		if (!this.status.canBeCancelled()) {
+			throw new IllegalStateException("주문을 취소할 수 없는 상태입니다.");
+		}
+		if (role != UserRoleType.MASTER && !userId.equals(this.userId)) {
+			throw new IllegalArgumentException("로그인한 사용자의 주문만 취소할 수 있습니다.");
+		}
+
+		this.orderItems.forEach(orderItem -> {
+			orderItem.softDelete(userId);
+		});
+
+		this.softDelete(userId);
+
 	}
 }

@@ -134,13 +134,10 @@ public class DeliveryService {
 	//배송 삭제
 	//배송 경로까지 전부 삭제
 	@Transactional
-	public void deleteDelivery(DeleteDeliveryCommand command) {
-		Delivery delivery = getDeliveryByOrderId(command.orderId());
-		OrderInfo orderInfo = getOrderInfo(delivery.getOrderId(), command.userId(), command.role());
-		if (command.role() != UserRoleType.MASTER && command.userId().longValue() != orderInfo.userId().longValue()) {
-			throw new IllegalArgumentException("현재 로그인한 사용자가 주문한 배송정보만 삭제할 수 있습니다.");
-		}
+	public UUID deleteDelivery(DeleteDeliveryCommand command) {
+		Delivery delivery = getDeliveryById(command.deliveryId());
 		delivery.delete(command.userId());
+		return delivery.getId();
 	}
 
 	/*

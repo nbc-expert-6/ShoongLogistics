@@ -23,6 +23,7 @@ public class DeliveryClientImpl implements DeliveryClient {
 
 	private final DeliveryFeignClient deliveryFeignClient;
 
+	//주문 생성시 배송 생성 요청
 	@Override
 	public void createDelivery(UUID orderId, Long userId, UserRoleType role) {
 		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.createDelivery(
@@ -30,6 +31,7 @@ public class DeliveryClientImpl implements DeliveryClient {
 
 	}
 
+	//배송 요청사항 변경 시 배송에서 요청사항 변경 요청
 	@Override
 	public void updateDelivery(UUID deliveryId, String deliveryRequest, Long userId, UserRoleType role) {
 		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.updateDelivery(
@@ -37,11 +39,20 @@ public class DeliveryClientImpl implements DeliveryClient {
 		);
 	}
 
+	//주문 Id로 배송정보 조회 요청
 	@Override
 	public DeliveryInfo getDelivery(UUID orderId, Long userId, UserRoleType role) {
 		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.getDelivery(
 			orderId, userId, role
 		);
 		return DeliveryMapper.toDeliveryInfo(response.getBody().data());
+	}
+
+	//주문이 취소되면 관련 배송 삭제 요청
+	@Override
+	public void deleteDelivery(UUID deliveryId, Long userId, UserRoleType role) {
+		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.deleteDelivery(
+			deliveryId, userId, role
+		);
 	}
 }
