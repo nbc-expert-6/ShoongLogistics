@@ -2,6 +2,8 @@ package com.shoonglogitics.companyservice.domain.company.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -70,7 +72,6 @@ public class Company extends BaseAggregateRoot<Company> {
 	@JoinColumn(name = "company_id")
 	private List<Product> products = new ArrayList<>();
 
-
 	public static Company create(
 		UUID hubId,
 		String name,
@@ -113,23 +114,36 @@ public class Company extends BaseAggregateRoot<Company> {
 		return product;
 	}
 
-	public Double getLongitude() {
-		return location != null ? location.getLongitude() : null;
+	public void deleteProduct(Long deletedBy, UUID productId) {
+		Product product = findProductById(productId)
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
+
+		product.softDelete(deletedBy);
 	}
 
-	public Double getLatitude() {
-		return location != null ? location.getLatitude() : null;
-	}
+private Optional<Product> findProductById(UUID productId) {
+	return products.stream()
+		.filter(p -> p.getId().equals(productId))
+		.findFirst();
+}
 
-	public String getAddressValue() {
-		return address != null ? address.getAddress() : null;
-	}
+public Double getLongitude() {
+	return location != null ? location.getLongitude() : null;
+}
 
-	public String getAddressDetailValue() {
-		return address != null ? address.getAddressDetail() : null;
-	}
+public Double getLatitude() {
+	return location != null ? location.getLatitude() : null;
+}
 
-	public String getZipCodeValue() {
-		return address != null ? address.getZipCode() : null;
-	}
+public String getAddressValue() {
+	return address != null ? address.getAddress() : null;
+}
+
+public String getAddressDetailValue() {
+	return address != null ? address.getAddressDetail() : null;
+}
+
+public String getZipCodeValue() {
+	return address != null ? address.getZipCode() : null;
+}
 }

@@ -13,13 +13,16 @@ import org.springframework.web.server.ResponseStatusException;
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.CreateProductCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
+import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
+import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.entity.Product;
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
@@ -38,7 +41,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID createCompany(CreateCompanyCommand command) {
-		validateHubManager(command.authUser().getUserId(), command.hubId());
+		validateHubManager(command.authUser(), command.hubId());
 		validateDuplicateCompany(command.name(), command.zipCode(), command.type());
 
 		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
@@ -51,7 +54,7 @@ public class CompanyService {
 
 	@Transactional
 	public void deleteCompany(DeleteCompanyCommand command) {
-		validateHubManager(command.authUser().getUserId(), command.hubId());
+		validateHubManager(command.authUser(), command.hubId());
 		Company company = companyRepository.findById(command.companyId())
 			.orElseThrow(() -> new NoSuchElementException("해당 업체를 찾을 수 없습니다."));
 
@@ -61,8 +64,8 @@ public class CompanyService {
 	@Transactional
 	public UUID updateCompany(UpdateCompanyCommand command) {
 		Company company= getCompanyById(command.companyId());
-		validateHubManager(command.authUser().getUserId(), company.getHubId());
-		validateCompanyManager(command.authUser().getUserId(), command.companyId());
+		validateHubManager(command.authUser(), company.getHubId());
+		validateCompanyManager(command.authUser(), command.companyId());
 
 		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
 		GeoLocation location = GeoLocation.of(command.latitude(), command.longitude());
@@ -92,8 +95,8 @@ public class CompanyService {
 	public UUID createProduct(CreateProductCommand command) {
 		Company company = getCompanyById(command.companyId());
 
-		validateCompanyManager(command.authUser().getUserId(), command.companyId());
-		validateHubManager(command.authUser().getUserId(), company.getHubId());
+		validateCompanyManager(command.authUser(), command.companyId());
+		validateHubManager(command.authUser(), company.getHubId());
 
 		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
 
@@ -102,15 +105,26 @@ public class CompanyService {
 		return product.getId();
 	}
 
+	@Transactional
+	public void deleteProduct(DeleteProductCommand command) {
+		Company company = getCompanyById(command.companyId());
+		validateHubManager(command.authUser(), company.getHubId());
+		validateCompanyManager(command.authUser(), command.companyId());
+
+		company.deleteProduct(command.authUser().getUserId(), command.productId());
+	}
+
 	private Company getCompanyById(UUID companyId) {
 		return companyRepository.findById(companyId)
 			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 	}
 
-	private void validateHubManager(Long currentUserId, UUID hubId) {
+	private void validateHubManager(AuthUser authUser, UUID hubId) {
+		if (!authUser.getRole().equals(UserRoleType.HUB_MANAGER)) return;
+
 		List<HubManagerInfo> managerInfos = userClient.getHubManagerInfos(hubId);
 		boolean isManager = managerInfos.stream()
-			.anyMatch(info -> info.userId().equals(currentUserId));
+			.anyMatch(info -> info.userId().equals(authUser.getUserId()));
 
 		if (!isManager) {
 			throw new ResponseStatusException(
@@ -120,10 +134,13 @@ public class CompanyService {
 		}
 	}
 
-	private void validateCompanyManager(Long currentUserId, UUID companyId) {
+	private void validateCompanyManager(AuthUser authUser, UUID companyId) {
+		if (!authUser.getRole().equals(UserRoleType.COMPANY_MANAGER)) return;
+
 		List<CompanyManagerInfo> managerInfos = userClient.getCompanyManagerInfos(companyId);
 		boolean isManager = managerInfos.stream()
-			.anyMatch(info -> info.userId().equals(currentUserId));
+			.anyMatch(info -> info.userId().equals(authUser.getUserId()));
+
 		if (!isManager) {
 			throw new ResponseStatusException(
 				HttpStatus.FORBIDDEN,
