@@ -135,4 +135,18 @@ public class Order extends BaseAggregateRoot<Order> {
 		}
 		return true;
 	}
+
+	public void update(String request, String deliveryRequest) {
+		if (!this.status.canBeUpdatable()) {
+			throw new IllegalStateException("주문을 수정할 수 없는 상태입니다.");
+		}
+
+		if (request != null) {
+			this.request = request;
+		}
+
+		if (deliveryRequest != null) {
+			this.deliveryRequest = deliveryRequest;
+		}
+	}
 }

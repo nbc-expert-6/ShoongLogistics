@@ -14,6 +14,11 @@ public enum OrderStatus {
 		public boolean canBeCancelled() {
 			return true;
 		}
+
+		@Override
+		public boolean canBeUpdatable() {
+			return true;
+		}
 	},
 
 	PAID("결제 완료") {
@@ -24,6 +29,11 @@ public enum OrderStatus {
 
 		@Override
 		public boolean canBeCancelled() {
+			return true;
+		}
+
+		@Override
+		public boolean canBeUpdatable() {
 			return true;
 		}
 	},
@@ -38,6 +48,11 @@ public enum OrderStatus {
 		public boolean canBeCancelled() {
 			return false;
 		}
+
+		@Override
+		public boolean canBeUpdatable() {
+			return false;
+		}
 	},
 
 	DELIVERED("배송 완료") {
@@ -48,6 +63,11 @@ public enum OrderStatus {
 
 		@Override
 		public boolean canBeCancelled() {
+			return false;
+		}
+
+		@Override
+		public boolean canBeUpdatable() {
 			return false;
 		}
 	},
@@ -62,6 +82,11 @@ public enum OrderStatus {
 		public boolean canBeCancelled() {
 			return false;
 		}
+
+		@Override
+		public boolean canBeUpdatable() {
+			return false;
+		}
 	};
 
 	private final String description;
@@ -73,6 +98,8 @@ public enum OrderStatus {
 	public abstract boolean canTransitionTo(OrderStatus newStatus);
 
 	public abstract boolean canBeCancelled();
+
+	public abstract boolean canBeUpdatable();
 
 	public boolean canBePaid() {
 		return this == PENDING;
