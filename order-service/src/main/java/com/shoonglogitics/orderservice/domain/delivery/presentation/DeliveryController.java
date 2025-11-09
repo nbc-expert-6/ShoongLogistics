@@ -26,6 +26,7 @@ import com.shoonglogitics.orderservice.domain.delivery.application.dto.ListDeliv
 import com.shoonglogitics.orderservice.domain.delivery.application.query.ListDeliveryRouteQuery;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.CreateDeliveryRequest;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.CreateDeliveryResponse;
+import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.DeleteDeliveryResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.FindDeliveryResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ListDeliveryRouteResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.UpdateDeliveryRequest;
@@ -91,15 +92,16 @@ public class DeliveryController {
 	}
 
 	//배송 삭제
-	@DeleteMapping("/orders/{orderId}")
-	public ResponseEntity<ApiResponse<Void>> deleteDelivery(
-		@PathVariable("orderId") UUID orderId,
+	@DeleteMapping("/{deliveryId}")
+	public ResponseEntity<ApiResponse<DeleteDeliveryResponse>> deleteDelivery(
+		@PathVariable("deliveryId") UUID deliveryId,
 		@AuthenticationPrincipal AuthUser authUser
 	) {
-		deliveryService.deleteDelivery(DeleteDeliveryCommand.from(
-			orderId, authUser.getUserId(), authUser.getRole()
+		UUID deletedDeliveryId = deliveryService.deleteDelivery(DeleteDeliveryCommand.from(
+			deliveryId, authUser.getUserId(), authUser.getRole()
 		));
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("배송 정보가 삭제되었습니다."));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(ApiResponse.success(DeleteDeliveryResponse.from(deletedDeliveryId), "배송 정보가 삭제되었습니다."));
 	}
 
 }

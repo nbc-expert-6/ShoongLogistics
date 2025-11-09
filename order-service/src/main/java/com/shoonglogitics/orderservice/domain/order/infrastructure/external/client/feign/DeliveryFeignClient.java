@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,24 +18,22 @@ import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
-@FeignClient(
-	name = "delivery-service",
-	url = "${delivery-service.url}"
-)
+@FeignClient(name = "delivery-service", url = "${delivery-service.url}")
 public interface DeliveryFeignClient {
 	@PostMapping("/api/v1/deliveries")
-	ResponseEntity<ApiResponse<FeignDeliveryResponse>> createDelivery(
-		@RequestBody FeignCreateDeliveryRequest request,
-		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role
-	);
+	ResponseEntity<ApiResponse<FeignDeliveryResponse>> createDelivery(@RequestBody FeignCreateDeliveryRequest request,
+		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role);
 
 	@GetMapping("/api/v1/deliveries/orders/{orderId}")
-	ResponseEntity<ApiResponse<FeignDeliveryResponse>> getDelivery(
-		@PathVariable("orderId") UUID orderId,
+	ResponseEntity<ApiResponse<FeignDeliveryResponse>> getDelivery(@PathVariable("orderId") UUID orderId,
 		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role);
 
 	@PutMapping("/api/v1/deliveries/{deliveryId}")
-	ResponseEntity<ApiResponse<FeignDeliveryResponse>> updateDelivery(
-		@PathVariable("deliveryId") UUID deliveryId, @RequestBody FeignUpdateDeliveryRequest request,
+	ResponseEntity<ApiResponse<FeignDeliveryResponse>> updateDelivery(@PathVariable("deliveryId") UUID deliveryId,
+		@RequestBody FeignUpdateDeliveryRequest request, @RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Role") UserRoleType role);
+
+	@DeleteMapping("/api/v1/deliveries/{deliveryId}")
+	ResponseEntity<ApiResponse<FeignDeliveryResponse>> deleteDelivery(@PathVariable("deliveryId") UUID deliveryId,
 		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role);
 }

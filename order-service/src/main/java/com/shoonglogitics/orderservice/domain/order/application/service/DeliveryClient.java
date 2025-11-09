@@ -11,4 +11,6 @@ public interface DeliveryClient {
 	void updateDelivery(UUID orderId, String deliveryRequest, Long userId, UserRoleType role);
 
 	DeliveryInfo getDelivery(UUID orderId, Long userId, UserRoleType role);
+
+	void deleteDelivery(UUID orderId, Long userId, UserRoleType role);
 }

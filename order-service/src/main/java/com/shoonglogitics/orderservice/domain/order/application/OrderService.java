@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
+import com.shoonglogitics.orderservice.domain.order.application.command.DeleteOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
@@ -17,6 +18,7 @@ import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQ
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
+import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderCancledEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
@@ -124,6 +126,19 @@ public class OrderService {
 		return order.getId();
 	}
 
+	//주문 삭제
+	@Transactional
+	public UUID cancleOrder(DeleteOrderCommand command) {
+		Order order = getOrderById(command.orderId());
+		order.delete(
+			command.userId(),
+			command.role()
+		);
+
+		//배송 삭제 이벤트 발행
+		publisher.publishEvent(new OrderCancledEvent(order.getId()));
+		return order.getId();
+	}
 	/*
 	내부용 유틸 함수들
 	 */

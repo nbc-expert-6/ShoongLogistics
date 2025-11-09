@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,12 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.orderservice.domain.order.application.OrderService;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
+import com.shoonglogitics.orderservice.domain.order.application.command.DeleteOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderRequest;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderResponse;
+import com.shoonglogitics.orderservice.domain.order.presentation.dto.DeleteOrderResponse;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.FindOrderResponse;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.ListOrderResponse;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.UpdateOrderRequest;
@@ -93,5 +96,17 @@ public class OrderController {
 			request.request(), request.deliveryRequest(), authUser, orderId
 		));
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(UpdateOrderResponse.from(updatedOrderId)));
+	}
+
+	//주문 삭제
+	@DeleteMapping("/{orderId}")
+	public ResponseEntity<ApiResponse<DeleteOrderResponse>> deleteOrder(
+		@AuthenticationPrincipal AuthUser authUser,
+		@PathVariable("orderId") UUID orderId
+	) {
+		UUID deletedOrderId = orderService.cancleOrder(DeleteOrderCommand.from(
+			orderId, authUser
+		));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(DeleteOrderResponse.from(deletedOrderId)));
 	}
 }
