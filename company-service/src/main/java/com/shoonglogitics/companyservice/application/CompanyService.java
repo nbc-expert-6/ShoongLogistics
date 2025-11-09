@@ -1,11 +1,14 @@
 package com.shoonglogitics.companyservice.application;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.CreateProductCommand;
@@ -14,7 +17,8 @@ import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
-import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
+import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.entity.Product;
@@ -34,7 +38,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID createCompany(CreateCompanyCommand command) {
-		validateHubManager(command.authUser(), command.hubId());
+		validateHubManager(command.authUser().getUserId(), command.hubId());
 		validateDuplicateCompany(command.name(), command.zipCode(), command.type());
 
 		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
@@ -47,23 +51,22 @@ public class CompanyService {
 
 	@Transactional
 	public void deleteCompany(DeleteCompanyCommand command) {
-		validateHubManager(command.authUser(), command.hubId());
+		validateHubManager(command.authUser().getUserId(), command.hubId());
 		Company company = companyRepository.findById(command.companyId())
 			.orElseThrow(() -> new NoSuchElementException("해당 업체를 찾을 수 없습니다."));
 
-		company.delete(command.authUser());
+		company.delete(command.authUser().getUserId());
 	}
 
 	@Transactional
 	public UUID updateCompany(UpdateCompanyCommand command) {
-		Company company = companyRepository.findById(command.companyId())
-			.orElseThrow(() -> new NoSuchElementException("해당 업체를 찾을 수 없습니다."));
-		validateHubManager(command.authUser(), company.getHubId());
-		validateCompanyManager(command.authUser(), command.companyId());
+		Company company= getCompanyById(command.companyId());
+		validateHubManager(command.authUser().getUserId(), company.getHubId());
+		validateCompanyManager(command.authUser().getUserId(), command.companyId());
 
 		CompanyAddress address = CompanyAddress.of(command.address(), command.addressDetail(), command.zipCode());
 		GeoLocation location = GeoLocation.of(command.latitude(), command.longitude());
-		company.update(command.name(), address, location, command.type(), command.authUser());
+		company.update(command.name(), address, location, command.type());
 
 		return company.getId();
 	}
@@ -75,9 +78,7 @@ public class CompanyService {
 	}
 
 	public CompanyResult getCompany(UUID companyId) {
-		Company company = companyRepository.findById(companyId)
-			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
-
+		Company company = getCompanyById(companyId);
 		return CompanyResult.from(company);
 	}
 
@@ -89,11 +90,10 @@ public class CompanyService {
 
 	@Transactional
 	public UUID createProduct(CreateProductCommand command) {
-		Company company = companyRepository.findById(command.companyId())
-			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+		Company company = getCompanyById(command.companyId());
 
-		validateCompanyManager(command.authUser(), command.companyId());
-		validateHubManager(command.authUser(), company.getHubId());
+		validateCompanyManager(command.authUser().getUserId(), command.companyId());
+		validateHubManager(command.authUser().getUserId(), company.getHubId());
 
 		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
 
@@ -102,15 +102,33 @@ public class CompanyService {
 		return product.getId();
 	}
 
-	private void validateHubManager(AuthUser authUser, UUID hubId) {
-		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, hubId)) {
-			throw new IllegalArgumentException("해당 허브의 담당자만 업체를 생성, 수정, 삭제 할 수 있습니다.");
+	private Company getCompanyById(UUID companyId) {
+		return companyRepository.findById(companyId)
+			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+	}
+
+	private void validateHubManager(Long currentUserId, UUID hubId) {
+		List<HubManagerInfo> managerInfos = userClient.getHubManagerInfos(hubId);
+		boolean isManager = managerInfos.stream()
+			.anyMatch(info -> info.userId().equals(currentUserId));
+
+		if (!isManager) {
+			throw new ResponseStatusException(
+				HttpStatus.FORBIDDEN,
+				"해당 허브의 담당자만 업체를 생성, 수정, 삭제 할 수 있습니다."
+			);
 		}
 	}
 
-	private void validateCompanyManager(AuthUser authUser, UUID companyId) {
-		if (authUser.getRole().isHubManager() && !userClient.isHubManager(authUser, companyId)) {
-			throw new IllegalArgumentException("해당 업체의 담당자만 업체를 수정 할 수 있습니다.");
+	private void validateCompanyManager(Long currentUserId, UUID companyId) {
+		List<CompanyManagerInfo> managerInfos = userClient.getCompanyManagerInfos(companyId);
+		boolean isManager = managerInfos.stream()
+			.anyMatch(info -> info.userId().equals(currentUserId));
+		if (!isManager) {
+			throw new ResponseStatusException(
+				HttpStatus.FORBIDDEN,
+				"해당 업체의 담당자만 업체를 수정 할 수 있습니다."
+			);
 		}
 	}
 }
