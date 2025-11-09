@@ -9,6 +9,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.OrderStatus;
 
 public record FindOrderResult(
 	UUID orderId,
+	Long userId,
 	UUID receiverCompanyId,
 	String receiverCompanyName,
 	UUID supplierCompanyId,
@@ -29,6 +30,7 @@ public record FindOrderResult(
 	public static FindOrderResult from(Order order) {
 		return new FindOrderResult(
 			order.getId(),
+			order.getUserId(),
 			order.getReceiver().getCompanyId(),
 			order.getReceiver().getCompanyName(),
 			order.getSupplier().getCompanyId(),

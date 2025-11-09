@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record FeignOrderResponse(
 	UUID orderId,
+	Long userId,
 	UUID receiverCompanyId,
 	String receiverCompanyName,
 	UUID supplierCompanyId,

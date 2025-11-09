@@ -4,11 +4,11 @@ import java.util.UUID;
 
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignCompanyResponse;
 
-public record CreateDeliveryCompanyInfo(
+public record CompanyInfo(
 	UUID hubId
 ) {
-	public static CreateDeliveryCompanyInfo from(FeignCompanyResponse response) {
-		return new CreateDeliveryCompanyInfo(
+	public static CompanyInfo from(FeignCompanyResponse response) {
+		return new CompanyInfo(
 			response.hubId()
 		);
 	}

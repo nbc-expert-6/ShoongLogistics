@@ -4,8 +4,9 @@ import java.util.UUID;
 
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignOrderResponse;
 
-public record CreateDeliveryOrderInfo(
+public record OrderInfo(
 	UUID orderId,
+	Long userId,
 	UUID supplierCompanyId,
 	UUID receiverCompanyId,
 	String deliveryRequest,
@@ -15,9 +16,10 @@ public record CreateDeliveryOrderInfo(
 	Double latitude,
 	Double longitude
 ) {
-	public static CreateDeliveryOrderInfo from(FeignOrderResponse response) {
-		return new CreateDeliveryOrderInfo(
+	public static OrderInfo from(FeignOrderResponse response) {
+		return new OrderInfo(
 			response.orderId(),
+			response.userId(),
 			response.supplierCompanyId(),
 			response.receiverCompanyId(),
 			response.deliveryRequest(),

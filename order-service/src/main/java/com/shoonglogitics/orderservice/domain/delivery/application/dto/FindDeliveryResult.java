@@ -32,7 +32,7 @@ public record FindDeliveryResult(
 			delivery.getShipperInfo().getShipperId(),
 			delivery.getShipperInfo().getShipperName(),
 			delivery.getShipperInfo().getShipperPhoneNumber(),
-			delivery.getShipperInfo().getSlackId(),
+			delivery.getShipperInfo().getShipperSlackId(),
 			delivery.getDepartureHubId().getHubId(),
 			delivery.getDestinationHubId().getHubId()
 		);

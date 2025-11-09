@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.shoonglogitics.orderservice.global.common.vo.ShipperType;
 
-public record CreateDeliveryShipperInfo(
+public record ShipperInfo(
 	UUID shipperId,
 	UUID hubId,
 	String shipperName,
@@ -14,7 +14,7 @@ public record CreateDeliveryShipperInfo(
 	int order,
 	boolean isShippingAvailable
 ) {
-	public static CreateDeliveryShipperInfo from(
+	public static ShipperInfo from(
 		UUID shipperId,
 		UUID hubId,
 		String shipperName,
@@ -24,7 +24,7 @@ public record CreateDeliveryShipperInfo(
 		int order,
 		boolean isShippingAvailable
 	) {
-		return new CreateDeliveryShipperInfo(
+		return new ShipperInfo(
 			shipperId,
 			hubId,
 			shipperName,

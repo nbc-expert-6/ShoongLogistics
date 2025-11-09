@@ -26,7 +26,7 @@ public record ListDeliveryRouteResult(
 			route.getShipperInfo().getShipperId(),
 			route.getShipperInfo().getShipperName(),
 			route.getShipperInfo().getShipperPhoneNumber(),
-			route.getShipperInfo().getSlackId(),
+			route.getShipperInfo().getShipperSlackId(),
 			route.getDepartureHubId().getHubId(),
 			route.getArrivalHubId().getHubId(),
 			route.getSequence(),
