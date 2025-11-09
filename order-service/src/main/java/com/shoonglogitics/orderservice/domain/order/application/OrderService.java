@@ -3,6 +3,7 @@ package com.shoonglogitics.orderservice.domain.order.application;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +12,13 @@ import com.shoonglogitics.orderservice.domain.order.application.command.CreateOr
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
 import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
@@ -36,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderDomainService orderDomainService;
+	private final ApplicationEventPublisher publisher;
 
 	private final UserClient userClient;
 	private final CompanyClient companyClient;
@@ -89,9 +93,7 @@ public class OrderService {
 
 	//orderid로 상세조회
 	public FindOrderResult getOrder(UUID orderId) {
-		Order order = orderRepository.findById(orderId).orElseThrow(
-			() -> new IllegalArgumentException("주문 정보를 찾을 수 없습니다.")
-		);
+		Order order = getOrderById(orderId);
 		return FindOrderResult.from(order);
 	}
 
@@ -108,9 +110,30 @@ public class OrderService {
 			return orderRepository.getOrdersByUserId(userId, pageRequest);
 		}
 	}
+
+	//주문 수정(요청사항, 배송요청사항)
+	@Transactional
+	public UUID updateOrder(UpdateOrderCommand command) {
+		Order order = getOrderById(command.orderId());
+		if (command.role() != UserRoleType.MASTER && !order.getUserId().equals(command.userId())) {
+			throw new IllegalArgumentException("자신의 주문만 수정할 수 있습니다.");
+		}
+		order.update(command.request(), command.deliveryRequest());
+		//배송 수정 이벤트 발행
+		publisher.publishEvent(new OrderUpdatedEvent(order.getId(), order.getDeliveryRequest()));
+		return order.getId();
+	}
+
 	/*
 	내부용 유틸 함수들
 	 */
+
+	//orderId로 주문 조회
+	private Order getOrderById(UUID orderId) {
+		return orderRepository.findById(orderId).orElseThrow(
+			() -> new IllegalArgumentException("주문 정보를 찾을 수 없습니다.")
+		);
+	}
 
 	//문제가 없다면 엔티티로 만들어서 반환, 문제가 생기면 예외 발생
 	private List<OrderItem> createItems(List<CreateOrderItemCommand> createOrderItemCommands) {

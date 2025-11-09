@@ -6,9 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.orderservice.domain.order.application.service.DeliveryClient;
+import com.shoonglogitics.orderservice.domain.order.application.service.dto.DeliveryInfo;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.client.feign.DeliveryFeignClient;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignCreateDeliveryRequest;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignDeliveryResponse;
+import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignUpdateDeliveryRequest;
+import com.shoonglogitics.orderservice.domain.order.infrastructure.external.mapper.DeliveryMapper;
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
@@ -25,5 +28,20 @@ public class DeliveryClientImpl implements DeliveryClient {
 		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.createDelivery(
 			FeignCreateDeliveryRequest.from(orderId), userId, role);
 
+	}
+
+	@Override
+	public void updateDelivery(UUID deliveryId, String deliveryRequest, Long userId, UserRoleType role) {
+		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.updateDelivery(
+			deliveryId, FeignUpdateDeliveryRequest.from(deliveryRequest), userId, role
+		);
+	}
+
+	@Override
+	public DeliveryInfo getDelivery(UUID orderId, Long userId, UserRoleType role) {
+		ResponseEntity<ApiResponse<FeignDeliveryResponse>> response = deliveryFeignClient.getDelivery(
+			orderId, userId, role
+		);
+		return DeliveryMapper.toDeliveryInfo(response.getBody().data());
 	}
 }
