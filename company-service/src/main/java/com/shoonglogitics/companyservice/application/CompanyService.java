@@ -60,8 +60,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID updateCompany(UpdateCompanyCommand command) {
-		Company company = companyRepository.findById(command.companyId())
-			.orElseThrow(() -> new NoSuchElementException("해당 업체를 찾을 수 없습니다."));
+		Company company= getCompanyById(command.companyId());
 		validateHubManager(command.authUser().getUserId(), company.getHubId());
 		validateCompanyManager(command.authUser().getUserId(), command.companyId());
 
@@ -79,9 +78,7 @@ public class CompanyService {
 	}
 
 	public CompanyResult getCompany(UUID companyId) {
-		Company company = companyRepository.findById(companyId)
-			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
-
+		Company company = getCompanyById(companyId);
 		return CompanyResult.from(company);
 	}
 
@@ -93,8 +90,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID createProduct(CreateProductCommand command) {
-		Company company = companyRepository.findById(command.companyId())
-			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+		Company company = getCompanyById(command.companyId());
 
 		validateCompanyManager(command.authUser().getUserId(), command.companyId());
 		validateHubManager(command.authUser().getUserId(), company.getHubId());
@@ -104,6 +100,11 @@ public class CompanyService {
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
 		Product product= company.createProduct(command.productCategoryId(), productInfo);
 		return product.getId();
+	}
+
+	private Company getCompanyById(UUID companyId) {
+		return companyRepository.findById(companyId)
+			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
 	}
 
 	private void validateHubManager(Long currentUserId, UUID hubId) {
