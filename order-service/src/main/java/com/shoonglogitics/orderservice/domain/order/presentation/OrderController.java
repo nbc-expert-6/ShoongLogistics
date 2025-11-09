@@ -67,6 +67,7 @@ public class OrderController {
 
 	//주문 목록 조회
 	@GetMapping
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<PageResponse<ListOrderResponse>>> listOrders(
 		@AuthenticationPrincipal AuthUser authUser,
 		@ModelAttribute PageRequest pageRequest
