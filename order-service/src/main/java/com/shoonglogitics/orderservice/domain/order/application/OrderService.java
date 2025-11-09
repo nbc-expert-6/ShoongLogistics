@@ -3,12 +3,15 @@ package com.shoonglogitics.orderservice.domain.order.application;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
@@ -21,6 +24,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
@@ -91,6 +95,19 @@ public class OrderService {
 		return FindOrderResult.from(order);
 	}
 
+	//목록조회
+	public Page<ListOrderResult> listOrders(ListOrderQuery query) {
+		Page<Order> orders = getOrdersByRole(query.role(), query.userId(), query.pageRequest());
+		return orders.map(ListOrderResult::from);
+	}
+
+	private Page<Order> getOrdersByRole(UserRoleType role, Long userId, PageRequest pageRequest) {
+		if (role == UserRoleType.MASTER) {
+			return orderRepository.getOrdersByMaster(pageRequest);
+		} else {
+			return orderRepository.getOrdersByUserId(userId, pageRequest);
+		}
+	}
 	/*
 	내부용 유틸 함수들
 	 */
@@ -124,5 +141,4 @@ public class OrderService {
 	private void validateOrder(List<OrderItem> orderItems, Money totalPrice) {
 		orderDomainService.validateOrder(orderItems, totalPrice);
 	}
-
 }
