@@ -2,21 +2,21 @@ package com.shoonglogitics.orderservice.domain.delivery.application.service.dto;
 
 import java.util.UUID;
 
-public record CreateDeliveryRoutesInfo(
+public record RoutesInfo(
 	UUID departureHubId,
 	UUID arrivalHubId,
 	int sequence,
 	Long estimateDistance,
 	int estimatedDuration
 ) {
-	public static CreateDeliveryRoutesInfo from(
+	public static RoutesInfo from(
 		UUID departureHubId,
 		UUID arrivalHubId,
 		int sequence,
 		Long estimateDistance,
 		int estimatedDuration
 	) {
-		return new CreateDeliveryRoutesInfo(
+		return new RoutesInfo(
 			departureHubId,
 			arrivalHubId,
 			sequence,

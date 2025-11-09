@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.service.UserClient;
-import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryShipperInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.ShipperInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.client.feign.UserFeignClient;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper.UserMapper;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
@@ -20,7 +20,7 @@ public class UserClientImpl implements UserClient {
 	private final UserFeignClient userFeignClient;
 
 	@Override
-	public List<CreateDeliveryShipperInfo> getShippers(UUID hubId, Long userId, UserRoleType role) {
+	public List<ShipperInfo> getShippers(UUID hubId, Long userId, UserRoleType role) {
 		//Todo: 실제 엔드포인트로 변경
 
 		// ResponseEntity<ApiResponse<List<FeignUserResponse>>> response = userFeignClient.getShippers(hubId, userId,

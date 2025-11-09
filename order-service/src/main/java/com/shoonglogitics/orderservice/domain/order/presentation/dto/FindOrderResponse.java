@@ -8,6 +8,7 @@ import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderRes
 
 public record FindOrderResponse(
 	UUID orderId,
+	Long userId,
 	UUID receiverCompanyId,
 	String receiverCompanyName,
 	UUID supplierCompanyId,
@@ -27,6 +28,7 @@ public record FindOrderResponse(
 	public static FindOrderResponse from(FindOrderResult result) {
 		return new FindOrderResponse(
 			result.orderId(),
+			result.userId(),
 			result.receiverCompanyId(),
 			result.receiverCompanyName(),
 			result.supplierCompanyId(),

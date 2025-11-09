@@ -14,14 +14,38 @@ public class ShipperInfo {
 	private UUID shipperId;
 	private String shipperName;
 	private String shipperPhoneNumber;
-	private String slackId;
+	private String shipperSlackId;
 
-	public static ShipperInfo of(UUID shipperId, String shipperName, String shipperPhoneNumber, String slackId) {
+	public static ShipperInfo of(UUID shipperId, String shipperName, String shipperPhoneNumber, String shipperSlackId) {
 		ShipperInfo shipperInfo = new ShipperInfo();
 		shipperInfo.shipperId = shipperId;
 		shipperInfo.shipperName = shipperName;
 		shipperInfo.shipperPhoneNumber = shipperPhoneNumber;
-		shipperInfo.slackId = slackId;
+		shipperInfo.shipperSlackId = shipperSlackId;
 		return shipperInfo;
+	}
+
+	public void update(
+		UUID shipperId,
+		String shipperName,
+		String shipperPhoneNumber,
+		String shipperSlackId
+	) {
+		if (shipperId != null) {
+			this.shipperId = shipperId;
+		}
+
+		if (shipperName != null) {
+			this.shipperName = shipperName;
+		}
+
+		if (shipperPhoneNumber != null) {
+			this.shipperPhoneNumber = shipperPhoneNumber;
+		}
+
+		if (shipperSlackId != null) {
+			this.shipperSlackId = shipperSlackId;
+		}
+
 	}
 }

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.service.CompanyClient;
-import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CreateDeliveryCompanyInfo;
+import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.client.feign.CompanyFeignClient;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignCompanyResponse;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper.CompanyMapper;
@@ -22,7 +22,7 @@ public class CompanyClientImpl implements CompanyClient {
 	private final CompanyFeignClient companyFeignClient;
 
 	@Override
-	public CreateDeliveryCompanyInfo getCompanyInfo(UUID uuid, Long userId, UserRoleType role) {
+	public CompanyInfo getCompanyInfo(UUID uuid, Long userId, UserRoleType role) {
 		ResponseEntity<ApiResponse<FeignCompanyResponse>> response = companyFeignClient.getCompany(uuid, userId, role);
 		return CompanyMapper.toCreateDeliveryCompanyInfo(response.getBody().data());
 	}

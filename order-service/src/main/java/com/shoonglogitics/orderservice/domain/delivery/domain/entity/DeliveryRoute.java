@@ -39,7 +39,8 @@ public class DeliveryRoute extends BaseEntity {
 	@AttributeOverrides({
 		@AttributeOverride(name = "shipperId", column = @Column(name = "shipper_id")),
 		@AttributeOverride(name = "shipperName", column = @Column(name = "shipper_name")),
-		@AttributeOverride(name = "shipperPhoneNumber", column = @Column(name = "shipper_phone_number"))
+		@AttributeOverride(name = "shipperPhoneNumber", column = @Column(name = "shipper_phone_number")),
+		@AttributeOverride(name = "shipperSlackId", column = @Column(name = "shipper_slack_id"))
 	})
 	private ShipperInfo shipperInfo;
 

@@ -60,7 +60,8 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 	@AttributeOverrides({
 		@AttributeOverride(name = "shipperId", column = @Column(name = "shipper_id")),
 		@AttributeOverride(name = "shipperName", column = @Column(name = "shipper_name")),
-		@AttributeOverride(name = "shipperPhoneNumber", column = @Column(name = "shipper_phone_number"))
+		@AttributeOverride(name = "shipperPhoneNumber", column = @Column(name = "shipper_phone_number")),
+		@AttributeOverride(name = "shipperSlackId", column = @Column(name = "shipper_slack_id"))
 	})
 	private ShipperInfo shipperInfo;
 
@@ -122,5 +123,28 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 		deliveryRoutes.stream().map(deliveryRoute -> shipperInfo.getShipperId()).forEach(assginedShippers::add);
 		assginedShippers.add(shipperId);
 		return assginedShippers;
+	}
+
+	public void update(
+		String request,
+		UUID shipperId,
+		String shipperName,
+		String shipperPhoneNumber,
+		String shipperSlackId
+	) {
+		if (this.status == DeliveryStatus.DELIVERED) {
+			throw new IllegalArgumentException("배송이 완료되어 수정할 수 없습니다.");
+		}
+
+		if (request != null) {
+			this.request = request;
+		}
+
+		this.shipperInfo.update(
+			shipperId,
+			shipperName,
+			shipperPhoneNumber,
+			shipperSlackId
+		);
 	}
 }
