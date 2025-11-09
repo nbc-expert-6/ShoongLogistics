@@ -2,11 +2,13 @@ package com.shoonglogitics.orderservice.domain.order.presentation;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,9 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shoonglogitics.orderservice.domain.order.application.OrderService;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderRequest;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderResponse;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.FindOrderResponse;
+import com.shoonglogitics.orderservice.domain.order.presentation.dto.ListOrderResponse;
+import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.global.common.dto.PageResponse;
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
 import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
 
@@ -56,5 +63,17 @@ public class OrderController {
 		FindOrderResult result = orderService.getOrder(orderId);
 		FindOrderResponse response = FindOrderResponse.from(result);
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response, "요청 성공"));
+	}
+
+	//주문 목록 조회
+	@GetMapping
+	public ResponseEntity<ApiResponse<PageResponse<ListOrderResponse>>> listOrders(
+		@AuthenticationPrincipal AuthUser authUser,
+		@ModelAttribute PageRequest pageRequest
+	) {
+		Page<ListOrderResult> result = orderService.listOrders(
+			ListOrderQuery.from(authUser.getUserId(), authUser.getRole(), pageRequest));
+		Page<ListOrderResponse> response = result.map(ListOrderResponse::from);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(PageResponse.of(response)));
 	}
 }
