@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
+import com.shoonglogitics.orderservice.domain.delivery.application.command.DeleteDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.command.UpdateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.FindDeliveryResult;
@@ -102,9 +103,7 @@ public class DeliveryService {
 	}
 
 	public FindDeliveryResult getDelivery(UUID orderId) {
-		Delivery delivery = deliveryRepository.findByOrderId(orderId).orElseThrow(
-			() -> new NoSuchElementException("배송 정보가 존재하지 않습니다.,")
-		);
+		Delivery delivery = getDeliveryByOrderId(orderId);
 		return FindDeliveryResult.from(delivery);
 	}
 
@@ -132,6 +131,18 @@ public class DeliveryService {
 		return delivery.getId();
 	}
 
+	//배송 삭제
+	//배송 경로까지 전부 삭제
+	@Transactional
+	public void deleteDelivery(DeleteDeliveryCommand command) {
+		Delivery delivery = getDeliveryByOrderId(command.orderId());
+		OrderInfo orderInfo = getOrderInfo(delivery.getOrderId(), command.userId(), command.role());
+		if (command.role() != UserRoleType.MASTER && command.userId().longValue() != orderInfo.userId().longValue()) {
+			throw new IllegalArgumentException("현재 로그인한 사용자가 주문한 배송정보만 삭제할 수 있습니다.");
+		}
+		delivery.delete(command.userId());
+	}
+
 	/*
 	내부 유틸용 함수
 	 */
@@ -139,6 +150,13 @@ public class DeliveryService {
 	//id로 배송 정보 조회
 	private Delivery getDeliveryById(UUID deliveryId) {
 		return deliveryRepository.findById(deliveryId).orElseThrow(
+			() -> new NoSuchElementException("배송 정보가 존재하지 않습니다.")
+		);
+	}
+
+	//orderId로 배송 정보 조회
+	private Delivery getDeliveryByOrderId(UUID orderId) {
+		return deliveryRepository.findByOrderId(orderId).orElseThrow(
 			() -> new NoSuchElementException("배송 정보가 존재하지 않습니다.")
 		);
 	}

@@ -147,4 +147,20 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 			shipperSlackId
 		);
 	}
+
+	public void delete(Long userId) {
+		if (this.status != DeliveryStatus.HUB_WAITING) {
+			throw new IllegalStateException("배송 중인 상태에선 삭제할 수 없습니다.");
+		}
+
+		if (userId == null) {
+			throw new IllegalArgumentException("사용자 정보가 존재하지 않습니다.");
+		}
+
+		this.deliveryRoutes.forEach(deliveryRoute -> {
+			deliveryRoute.softDelete(userId);
+		});
+
+		this.softDelete(userId);
+	}
 }
