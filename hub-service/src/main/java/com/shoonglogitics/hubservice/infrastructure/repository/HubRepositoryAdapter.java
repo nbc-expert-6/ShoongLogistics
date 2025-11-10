@@ -24,17 +24,14 @@ public class HubRepositoryAdapter implements HubRepository {
 
 	@Override
 	public Optional<Hub> findById(UUID id) {
-		return jpaHubRepository.findById(id);
+		return jpaHubRepository.findById(id)
+				.filter(hub -> !hub.isDeleted());
 	}
 
-	@Override
-	public void deleteById(UUID id) {
-		jpaHubRepository.deleteById(id);
-
-	}
 
 	@Override
 	public List<Hub> findAll() {
-		return jpaHubRepository.findAll();
+		return jpaHubRepository.findAll().stream().filter(hub -> !hub.isDeleted())
+				.toList();
 	}
 }
