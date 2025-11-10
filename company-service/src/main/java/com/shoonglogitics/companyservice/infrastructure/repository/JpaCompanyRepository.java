@@ -1,5 +1,6 @@
 package com.shoonglogitics.companyservice.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
+import com.shoonglogitics.companyservice.domain.company.entity.Product;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 
 @Repository
@@ -36,5 +38,16 @@ public interface JpaCompanyRepository extends JpaRepository<Company, UUID> {
 	Optional<Company> findByIdAndProductIdWithProduct(
 		@Param("companyId") UUID companyId,
 		@Param("productId") UUID productId
+	);
+
+	@Query("SELECT p FROM Company c " +
+		"JOIN c.products p " +
+		"WHERE c.id = :companyId " +
+		"AND p.deletedAt IS NULL " +
+		"AND (:productCategoryIds IS NULL OR p.productCategoryId IN :productCategoryIds)")
+	Page<Product> findProductsByCompanyId(
+		@Param("companyId") UUID companyId,
+		@Param("categoryId") List<UUID> productCategoryIds,
+		Pageable pageable
 	);
 }

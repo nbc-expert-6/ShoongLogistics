@@ -1,5 +1,6 @@
 package com.shoonglogitics.companyservice.presentation.company;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import com.shoonglogitics.companyservice.application.command.DeleteCompanyComman
 import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.command.GetProductCommand;
+import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.dto.ProductResult;
@@ -40,7 +42,8 @@ import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductR
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.FindCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.FindProductResponse;
-import com.shoonglogitics.companyservice.presentation.company.dto.ListCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.SearchCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.SearchProductResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyRequest;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyResponse;
 
@@ -99,7 +102,7 @@ public class CompanyController {
 
 	@GetMapping
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
-	public ResponseEntity<ApiResponse<PageResponse<ListCompanyResponse>>> getCompanies(
+	public ResponseEntity<ApiResponse<PageResponse<SearchCompanyResponse>>> getCompanies(
 		@RequestParam(required = false) UUID hubId,
 		@RequestParam(required = false) String name,
 		@RequestParam(required = false) CompanyType type,
@@ -113,7 +116,7 @@ public class CompanyController {
 			.build();
 		Page<CompanyResult> results = companyService.getCompanies(command);
 
-		Page<ListCompanyResponse> responses = results.map(ListCompanyResponse::from);
+		Page<SearchCompanyResponse> responses = results.map(SearchCompanyResponse::from);
 		return ResponseEntity.ok(ApiResponse.success(PageResponse.of(responses)));
 	}
 
@@ -202,6 +205,23 @@ public class CompanyController {
 
 		ProductResult result = companyService.getProduct(new GetProductCommand(companyId, productId));
 		FindProductResponse response = FindProductResponse.from(result);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@GetMapping("/{companyId}/products")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<PageResponse<SearchProductResponse>>> getProducts(
+		@PathVariable UUID companyId,
+		@RequestParam(required = false) List<UUID> categoryIds,
+		@ModelAttribute PageRequest pageRequest
+	) {
+		Page<ProductResult> results = companyService.getProducts(
+			new GetProductsCommand(companyId, categoryIds, pageRequest.toPageable()));
+
+		PageResponse<SearchProductResponse> response = PageResponse.of(
+			results.map(SearchProductResponse::from)
+		);
 
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}

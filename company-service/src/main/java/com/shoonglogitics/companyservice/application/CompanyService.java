@@ -16,6 +16,7 @@ import com.shoonglogitics.companyservice.application.command.DeleteCompanyComman
 import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.command.GetProductCommand;
+import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.dto.ProductResult;
@@ -160,5 +161,10 @@ public class CompanyService {
 			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
 		return ProductResult.from(product);
+	}
+
+	public Page<ProductResult> getProducts(GetProductsCommand command) {
+		Page<Product> products = companyRepository.findProductsByCompanyId(command.companyId(), command.categoryIds(), command.pageable());
+		return products.map(ProductResult::from);
 	}
 }
