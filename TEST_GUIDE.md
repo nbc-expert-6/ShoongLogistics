@@ -13,9 +13,8 @@
 아래 명령어를 통해 테스트용 DB 환경을 구성합니다.
 
 ### 루트 디렉토리에서 실행(docker-compose.yml)
+docker-compose up -d 명령어 실행
 ```
-docker-compose up -d
-
 version: '3.8'
 
 services:
