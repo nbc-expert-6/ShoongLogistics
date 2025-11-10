@@ -24,7 +24,7 @@ import com.shoonglogitics.companyservice.application.command.productcategory.Del
 import com.shoonglogitics.companyservice.application.command.productcategory.GetProductCategoriesCommand;
 import com.shoonglogitics.companyservice.application.command.productcategory.UpdateProductCategoryCommand;
 import com.shoonglogitics.companyservice.application.dto.productcategory.ProductCategoryResult;
-import com.shoonglogitics.companyservice.application.service.productcategory.ProductCategoryService;
+import com.shoonglogitics.companyservice.application.ProductCategoryService;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.PageRequest;

@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
-import com.shoonglogitics.companyservice.domain.company.repository.ProductCategoryRepository;
-import com.shoonglogitics.companyservice.domain.company.repository.StockRepository;
+import com.shoonglogitics.companyservice.domain.stock.repository.StockRepository;
+import com.shoonglogitics.companyservice.domain.productcategory.repository.ProductCategoryRepository;
 import com.shoonglogitics.companyservice.infrastructure.repository.CompanyRepositoryAdapter;
 import com.shoonglogitics.companyservice.infrastructure.repository.JpaCompanyRepository;
 import com.shoonglogitics.companyservice.infrastructure.repository.JpaProductCategoryRepository;

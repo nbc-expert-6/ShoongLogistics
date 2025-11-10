@@ -1,4 +1,4 @@
-package com.shoonglogitics.companyservice.application.service.productcategory;
+package com.shoonglogitics.companyservice.application;
 
 import java.util.NoSuchElementException;
 import java.util.UUID;
