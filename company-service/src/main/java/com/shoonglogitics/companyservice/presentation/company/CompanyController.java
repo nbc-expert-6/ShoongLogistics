@@ -158,7 +158,7 @@ public class CompanyController {
 		return ResponseEntity.ok().body(ApiResponse.success(response));
 	}
 
-	@PostMapping("/{companyId}")
+	@PostMapping("/{companyId}/products")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<CreateProductResponse>> createProduct(
 		@PathVariable UUID companyId,
