@@ -18,7 +18,7 @@ public record CreateHubResponse(
 		return CreateHubResponse.builder()
 			.hubId(hub.getId())
 			.name(hub.getName())
-			.address(String.valueOf(hub.getAddress()))
+			.address(hub.getAddress().getValue())
 			.latitude(hub.getLatitude())
 			.longitude(hub.getLongitude())
 			.build();

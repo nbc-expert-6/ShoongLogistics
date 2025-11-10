@@ -1,23 +1,19 @@
 services:
   postgres:
-    image: postgis/postgis:16-3.4
+    build: .  # 위 Dockerfile 경로
+    image: local/postgis-ko:16-3.4
     container_name: postgis-db
     restart: always
-    user: root  # 로케일 설치를 위해 root 필요
-    environment:
-      POSTGRES_USER:
-      POSTGRES_PASSWORD:
-    entrypoint: |
-      bash -c "
-      apt-get update && apt-get install -y locales &&
-      sed -i '/ko_KR.UTF-8/s/^# //g' /etc/locale.gen &&
-      locale-gen ko_KR.UTF-8 &&
-      su postgres -c 'postgres -D /var/lib/postgresql/data'
-      "
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwer1234!
+      POSTGRES_DB: hub_service
+      POSTGRES_INITDB_ARGS: "--locale=ko_KR.UTF-8 --encoding=UTF8"
     volumes:
       - postgres-dev-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
 
 volumes:
   postgres-dev-data:
