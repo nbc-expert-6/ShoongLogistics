@@ -23,6 +23,7 @@ import com.shoonglogitics.companyservice.application.CompanyService;
 import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.CreateProductCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
@@ -173,5 +174,20 @@ public class CompanyController {
 		);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@DeleteMapping("/{companyId}/products/{productId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<String>> deleteProduct(
+		@PathVariable UUID companyId,
+		@PathVariable UUID productId,
+		@AuthenticationPrincipal AuthUser authUser) {
+		DeleteProductCommand command = new DeleteProductCommand(authUser, companyId, productId);
+
+		companyService.deleteProduct(command);
+
+		String responseMessage = "상품이 정상적으로 삭제 되었습니다.";
+
+		return ResponseEntity.ok().body(ApiResponse.success(responseMessage));
 	}
 }
