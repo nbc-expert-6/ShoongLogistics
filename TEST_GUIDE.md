@@ -14,33 +14,6 @@
 
 # 루트 디렉토리에서 실행
 docker-compose up -d
-version: '3.8'
-
-services:
-  postgres:
-    build:
-      context: ./.github/actions/postgres-setup
-      dockerfile: Dockerfile
-    container_name: shoong-postgis
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: qwer1234!
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - shoong-network
-
-networks:
-  shoong-network:
-    driver: bridge
-
-
 
 
 ## ✅ 테스트 구성 요소
