@@ -12,36 +12,6 @@
 테스트 실행 전, 로컬 환경에서 **PostgreSQL 컨테이너**를 실행해야 합니다.  
 아래 명령어를 통해 테스트용 DB 환경을 구성합니다.
 
-### 1️⃣ Docker 컨테이너 실행
-
-  ```bash
-  # 루트 디렉토리에서 실행
-  docker-compose up -d
-  version: '3.8'
-  
-  services:
-    postgres:
-      build:
-        context: ./.github/actions/postgres-setup
-        dockerfile: Dockerfile
-      container_name: shoong-postgis
-      environment:
-        POSTGRES_DB: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: qwer1234!
-      ports:
-        - "5432:5432"
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U postgres"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-      networks:
-        - shoong-network
-  
-  networks:
-    shoong-network:
-      driver: bridge
 
 
 ## ✅ 테스트 구성 요소
