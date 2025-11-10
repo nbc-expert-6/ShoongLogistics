@@ -18,6 +18,7 @@ import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand
 import com.shoonglogitics.companyservice.application.command.GetProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.UpdateProductCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.dto.ProductResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
@@ -117,6 +118,18 @@ public class CompanyService {
 		company.deleteProduct(command.authUser().getUserId(), command.productId());
 	}
 
+	@Transactional
+	public UUID updateProduct(UpdateProductCommand command) {
+		Company company = getCompanyWithProductsByIdAndProductId(command.companyId(), command.productId());
+		validateCompanyManager(command.authUser(), command.companyId());
+		validateHubManager(command.authUser(), company.getHubId());
+
+		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
+		company.updateProduct(command.productId(), command.productCategoryId(), productInfo);
+
+		return command.productId();
+	}
+
 	private Company getCompanyById(UUID companyId) {
 		return companyRepository.findById(companyId)
 			.orElseThrow(() -> new NoSuchElementException("업체를 찾을 수 없습니다."));
@@ -155,8 +168,7 @@ public class CompanyService {
 	}
 
 	public ProductResult getProduct(GetProductCommand command) {
-		Company company = companyRepository.findByIdAndProductIdWithProduct(command.productId(), command.productId())
-			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+		Company company= getCompanyWithProductsByIdAndProductId(command.companyId(), command.productId());
 		Product product = company.getProductById(command.productId())
 			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
@@ -166,5 +178,10 @@ public class CompanyService {
 	public Page<ProductResult> getProducts(GetProductsCommand command) {
 		Page<Product> products = companyRepository.findProductsByCompanyId(command.companyId(), command.categoryIds(), command.pageable());
 		return products.map(ProductResult::from);
+	}
+
+	private Company getCompanyWithProductsByIdAndProductId(UUID companyId, UUID productId) {
+		return companyRepository.findByIdAndProductIdWithProduct(companyId, productId)
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 	}
 }

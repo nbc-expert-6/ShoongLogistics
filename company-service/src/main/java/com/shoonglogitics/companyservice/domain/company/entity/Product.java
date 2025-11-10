@@ -53,8 +53,13 @@ public class Product extends BaseEntity {
 		return product;
 	}
 
-	public void changeCategory(UUID newCategoryId) {
-		this.productCategoryId = newCategoryId;
+	public void update(UUID newCategoryId, ProductInfo newProductInfo) {
+		if (newCategoryId != null) {
+			this.productCategoryId = newCategoryId;
+		}
+		if (newProductInfo != null) {
+			this.productInfo = newProductInfo;
+		}
 	}
 
 	public String getName() {

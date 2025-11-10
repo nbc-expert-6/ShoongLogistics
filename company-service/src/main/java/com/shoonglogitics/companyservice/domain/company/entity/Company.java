@@ -127,6 +127,13 @@ public class Company extends BaseAggregateRoot<Company> {
 			.findFirst();
 	}
 
+	public void updateProduct(UUID productId, UUID newCategoryId, ProductInfo newProductInfo) {
+		Product product = getProductById(productId)
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
+
+		product.update(newCategoryId, newProductInfo);
+	}
+
 public Double getLongitude() {
 	return location != null ? location.getLongitude() : null;
 }

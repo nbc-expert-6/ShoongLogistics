@@ -2,6 +2,7 @@ package com.shoonglogitics.companyservice.infra.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,8 +36,6 @@ class CompanyRepositoryAdapterTest {
 	@Autowired
 	private JpaCompanyRepository jpaCompanyRepository;
 
-
-
 	@Test
 	@DisplayName("업체를 저장할 수 있다")
 	void save() {
@@ -61,15 +60,15 @@ class CompanyRepositoryAdapterTest {
 		Product product1 = Product.create(
 			UUID.randomUUID(),
 			ProductInfo.of("노트북",
-			1500000,
-			"고성능 업무용 노트북")
+				1500000,
+				"고성능 업무용 노트북")
 		);
 
 		Product product2 = Product.create(
 			UUID.randomUUID(),
 			ProductInfo.of("마우스",
-			50000,
-			"무선 마우스")
+				50000,
+				"무선 마우스")
 		);
 
 		company.getProducts().add(product1);
@@ -98,8 +97,8 @@ class CompanyRepositoryAdapterTest {
 		Product product = Product.create(
 			UUID.randomUUID(),
 			ProductInfo.of("노트북",
-			1500000,
-			"고성능 업무용 노트북")
+				1500000,
+				"고성능 업무용 노트북")
 		);
 		company.getProducts().add(product);
 
@@ -108,10 +107,11 @@ class CompanyRepositoryAdapterTest {
 		// When
 		Product foundProduct = savedCompany.getProducts().get(0);
 		UUID newCategoryId = UUID.randomUUID();
-		foundProduct.changeCategory(newCategoryId);
+		ProductInfo newProductInfo = ProductInfo.of("노트북", 1500000, "고성능 업무용 노트북");
 
-		Company updatedCompany = companyRepositoryAdapter.save(savedCompany);
-
+		savedCompany.updateProduct(foundProduct.getId(), newCategoryId, newProductInfo);
+		Company updatedCompany = companyRepositoryAdapter.findById(savedCompany.getId())
+			.orElseThrow(() -> new NoSuchElementException("업체를 찾을 수 없습니다."));
 		// Then
 		assertThat(updatedCompany.getProducts()).hasSize(1);
 		assertThat(updatedCompany.getProducts().get(0).getProductCategoryId())

@@ -29,6 +29,7 @@ import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand
 import com.shoonglogitics.companyservice.application.command.GetProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.UpdateProductCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
 import com.shoonglogitics.companyservice.application.dto.ProductResult;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
@@ -46,6 +47,8 @@ import com.shoonglogitics.companyservice.presentation.company.dto.SearchCompanyR
 import com.shoonglogitics.companyservice.presentation.company.dto.SearchProductResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyRequest;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateProductRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateProductResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -224,5 +227,29 @@ public class CompanyController {
 		);
 
 		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@PutMapping("/{companyId}/products/{productId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<UpdateProductResponse>> updateCompany(
+		@PathVariable UUID companyId,
+		@PathVariable UUID productId,
+		@Valid @RequestBody UpdateProductRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		UpdateProductCommand command = UpdateProductCommand.builder()
+			.authUser(authUser)
+			.companyId(companyId)
+			.productId(productId)
+			.productCategoryId(request.productCategoryId())
+			.name(request.name())
+			.price(request.price())
+			.description(request.description())
+			.build();
+
+		UUID id = companyService.updateProduct(command);
+
+		UpdateProductResponse response = new UpdateProductResponse(id, "상품이 정상적으로 수정 되었습니다.");
+
+		return ResponseEntity.ok().body(ApiResponse.success(response));
 	}
 }

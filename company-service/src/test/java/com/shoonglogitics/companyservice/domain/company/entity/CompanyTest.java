@@ -11,6 +11,7 @@ import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
+import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
 
 /**
  * 엔티티 테스트 - Company
@@ -146,6 +147,32 @@ class CompanyTest {
 
 		// Then
 		assertThat(zipCode).isEqualTo("06234");
+	}
+
+	@Test
+	@DisplayName("업체를 통해 상품 정보를 수정할 수 있다")
+	void updateProductThroughCompany() {
+		// Given
+		Company company = createTestCompany();
+		Product product = Product.create(
+			UUID.randomUUID(),
+			ProductInfo.of("노트북", 1500000, "고성능 노트북")
+		);
+		company.getProducts().add(product);
+		UUID newCategoryId = UUID.randomUUID();
+		// When
+		Product targetProduct = company.getProducts().get(0);
+		targetProduct.update(newCategoryId, ProductInfo.of("울트라북", 2000000, "초경량 울트라북"));
+
+		// Then
+		assertThat(company.getProducts()).isNotEmpty();
+		assertThat(company.getProducts().get(0).getProductCategoryId()).isEqualTo(newCategoryId);
+		assertThat(company.getProducts().get(0).getProductInfo().getName())
+			.isEqualTo("울트라북");
+		assertThat(company.getProducts().get(0).getProductInfo().getPrice())
+			.isEqualTo(2000000);
+		assertThat(company.getProducts().get(0).getProductInfo().getDescription())
+			.isEqualTo("초경량 울트라북");
 	}
 
 	private Company createTestCompany() {
