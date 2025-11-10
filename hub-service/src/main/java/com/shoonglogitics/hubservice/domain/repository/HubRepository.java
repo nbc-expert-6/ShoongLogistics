@@ -12,8 +12,6 @@ public interface HubRepository {
 
 	Optional<Hub> findById(UUID id);
 
-	void deleteById(UUID id);
-
 	List<Hub> findAll();
 
 }
