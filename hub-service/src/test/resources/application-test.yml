@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:postgresql://localhost:5432/hub_service_test
+    url: jdbc:postgresql://localhost:5432/hub_service
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: qwer1234!
