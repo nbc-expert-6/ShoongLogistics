@@ -26,6 +26,7 @@ import com.shoonglogitics.hubservice.domain.vo.HubType;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class HubRepositoryAdapterTest {
 
 	@Autowired
