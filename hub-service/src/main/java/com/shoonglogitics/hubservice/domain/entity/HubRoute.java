@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import com.shoonglogitics.hubservice.domain.entity.common.BaseEntity;
+import com.shoonglogitics.hubservice.domain.common.BaseEntity;
 import com.shoonglogitics.hubservice.domain.vo.Distance;
 import com.shoonglogitics.hubservice.domain.vo.Duration;
 import com.shoonglogitics.hubservice.domain.vo.HubId;
@@ -63,14 +63,10 @@ public class HubRoute extends BaseEntity {
 		route.distanceMeters = distance;
 		route.durationMinutes = duration;
 		route.routeType = type;
-		//reviewer 질문 : event 발행?
 		return route;
 	}
 
 	private static void validate(HubId departure, HubId arrival, Distance distance, Duration duration) {
-		if (departure == null || arrival == null) {
-			throw new IllegalArgumentException("출발/도착 허브는 필수입니다.");
-		}
 		if (departure.getValue().equals(arrival.getValue())) {
 			throw new IllegalArgumentException("출발 허브와 도착 허브는 같을 수 없습니다.");
 		}
