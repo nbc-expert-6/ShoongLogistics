@@ -38,7 +38,10 @@ import com.shoonglogitics.userservice.domain.vo.SlackId;
 import com.shoonglogitics.userservice.presentation.dto.request.PageSizeType;
 import com.shoonglogitics.userservice.security.JwtProvider;
 
+import io.micrometer.core.annotation.Timed;
+
 @Service
+@Timed(value = "my.user")
 public class UserService {
 
 	private final UserRepository userRepository;
