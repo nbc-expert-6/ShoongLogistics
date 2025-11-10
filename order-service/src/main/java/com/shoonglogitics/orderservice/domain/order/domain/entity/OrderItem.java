@@ -43,7 +43,6 @@ public class OrderItem extends BaseEntity {
 	@AttributeOverride(name = "value", column = @Column(name = "quantity"))
 	private Quentity quentity;
 
-	//Todo 생성시 검증 로직 추가
 	public static OrderItem create(ProductInfo productInfo, Quentity quentity) {
 		OrderItem orderItem = new OrderItem();
 		orderItem.productInfo = productInfo;

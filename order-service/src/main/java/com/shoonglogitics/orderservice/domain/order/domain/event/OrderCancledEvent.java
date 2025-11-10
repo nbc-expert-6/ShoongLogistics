@@ -1,8 +1,6 @@
-package com.shoonglogitics.orderservice.domain.order.domain.entity;
+package com.shoonglogitics.orderservice.domain.order.domain.event;
 
 import java.util.UUID;
-
-import com.shoonglogitics.orderservice.domain.order.domain.event.OrderDomainEvent;
 
 import lombok.Getter;
 
