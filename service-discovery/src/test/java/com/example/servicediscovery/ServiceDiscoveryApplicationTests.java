@@ -1,9 +1,9 @@
-package com.example.apigateway;
+package com.example.servicediscovery;
 
 import org.junit.jupiter.api.Test;
 
 //@SpringBootTest
-class ApiGatewayApplicationTests {
+class ServiceDiscoveryApplicationTests {
 
 	@Test
 	void contextLoads() {

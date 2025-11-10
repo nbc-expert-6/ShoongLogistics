@@ -2,9 +2,15 @@ spring:
   application:
     name: api-gateway
 
+  config:
+    import:
+      optional:configserver:http://localhost:8888
   main:
     web-application-type: reactive
   cloud:
+    config:
+      fail-fast: false
+
     gateway:
       server:
         webflux:
@@ -20,8 +26,16 @@ spring:
               predicates:
                 - Path=/api/v1/ai-delivery/**
 
-jwt:
-  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
-  expiration: 3600000
 server:
   port: 8000
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
