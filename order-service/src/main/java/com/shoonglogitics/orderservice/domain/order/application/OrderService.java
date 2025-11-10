@@ -18,8 +18,8 @@ import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQ
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
-import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderCancledEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCancledEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
 import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;

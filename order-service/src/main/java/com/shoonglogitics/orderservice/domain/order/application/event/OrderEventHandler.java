@@ -9,7 +9,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.shoonglogitics.orderservice.domain.order.application.service.DeliveryClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.dto.DeliveryInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderCancledEvent;
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCancledEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
 import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
