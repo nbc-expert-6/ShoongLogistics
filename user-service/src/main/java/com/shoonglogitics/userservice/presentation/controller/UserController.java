@@ -103,7 +103,7 @@ public class UserController {
 
 	// 회원가입 승인/거절
 	@PutMapping("/{id}/signup-status")
-	//@PreAuthorize("hasAnyRole('HUB_MANAGER', 'MASTER')")
+	@PreAuthorize("hasAnyRole('HUB_MANAGER', 'MASTER')")
 	public ResponseEntity<ApiResponse<Void>> updateSignupStatus(@PathVariable Long id,
 		@RequestBody UpdateSignupStatusRequest request) {
 		userService.updateSignupStatus(id, request.getStatus());
