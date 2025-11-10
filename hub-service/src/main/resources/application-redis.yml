@@ -1,0 +1,21 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # 1시간
+      cache-null-values: false
+      use-key-prefix: true
+      key-prefix: "hub-service:"
