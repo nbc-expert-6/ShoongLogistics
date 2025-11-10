@@ -15,8 +15,11 @@ import com.shoonglogitics.companyservice.application.command.CreateProductComman
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
+import com.shoonglogitics.companyservice.application.command.GetProductCommand;
+import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.dto.CompanyResult;
+import com.shoonglogitics.companyservice.application.dto.ProductResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
@@ -63,7 +66,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID updateCompany(UpdateCompanyCommand command) {
-		Company company= getCompanyById(command.companyId());
+		Company company = getCompanyById(command.companyId());
 		validateHubManager(command.authUser(), company.getHubId());
 		validateCompanyManager(command.authUser(), command.companyId());
 
@@ -101,7 +104,7 @@ public class CompanyService {
 		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
 
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
-		Product product= company.createProduct(command.productCategoryId(), productInfo);
+		Product product = company.createProduct(command.productCategoryId(), productInfo);
 		return product.getId();
 	}
 
@@ -116,11 +119,12 @@ public class CompanyService {
 
 	private Company getCompanyById(UUID companyId) {
 		return companyRepository.findById(companyId)
-			.orElseThrow(() -> new IllegalArgumentException("업체를 찾을 수 없습니다."));
+			.orElseThrow(() -> new NoSuchElementException("업체를 찾을 수 없습니다."));
 	}
 
 	private void validateHubManager(AuthUser authUser, UUID hubId) {
-		if (!authUser.getRole().equals(UserRoleType.HUB_MANAGER)) return;
+		if (!authUser.getRole().equals(UserRoleType.HUB_MANAGER))
+			return;
 
 		List<HubManagerInfo> managerInfos = userClient.getHubManagerInfos(hubId);
 		boolean isManager = managerInfos.stream()
@@ -135,7 +139,8 @@ public class CompanyService {
 	}
 
 	private void validateCompanyManager(AuthUser authUser, UUID companyId) {
-		if (!authUser.getRole().equals(UserRoleType.COMPANY_MANAGER)) return;
+		if (!authUser.getRole().equals(UserRoleType.COMPANY_MANAGER))
+			return;
 
 		List<CompanyManagerInfo> managerInfos = userClient.getCompanyManagerInfos(companyId);
 		boolean isManager = managerInfos.stream()
@@ -147,5 +152,19 @@ public class CompanyService {
 				"해당 업체의 담당자만 업체를 수정 할 수 있습니다."
 			);
 		}
+	}
+
+	public ProductResult getProduct(GetProductCommand command) {
+		Company company = companyRepository.findByIdAndProductIdWithProduct(command.productId(), command.productId())
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+		Product product = company.getProductById(command.productId())
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+
+		return ProductResult.from(product);
+	}
+
+	public Page<ProductResult> getProducts(GetProductsCommand command) {
+		Page<Product> products = companyRepository.findProductsByCompanyId(command.companyId(), command.categoryIds(), command.pageable());
+		return products.map(ProductResult::from);
 	}
 }
