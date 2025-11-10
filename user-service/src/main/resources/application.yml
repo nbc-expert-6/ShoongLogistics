@@ -16,4 +16,5 @@ spring:
       - datasource
       - eureka
       - actuator
+      - zipkin
     active: test
