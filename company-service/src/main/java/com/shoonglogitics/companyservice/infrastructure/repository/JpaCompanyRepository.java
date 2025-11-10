@@ -27,4 +27,14 @@ public interface JpaCompanyRepository extends JpaRepository<Company, UUID> {
 		@Param("type") CompanyType type,
 		Pageable pageable
 	);
+
+	@Query("SELECT c FROM Company c " +
+		"LEFT JOIN FETCH c.products p " +
+		"WHERE c.id = :companyId " +
+		"AND p.id = :productId " +
+		"AND p.deletedAt IS NULL")
+	Optional<Company> findByIdAndProductIdWithProduct(
+		@Param("companyId") UUID companyId,
+		@Param("productId") UUID productId
+	);
 }

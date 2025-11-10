@@ -56,4 +56,16 @@ public class Product extends BaseEntity {
 	public void changeCategory(UUID newCategoryId) {
 		this.productCategoryId = newCategoryId;
 	}
+
+	public String getName() {
+		return productInfo.getName();
+	}
+
+	public Integer getPrice() {
+		return productInfo.getPrice();
+	}
+
+	public String getDescription() {
+		return productInfo.getDescription();
+	}
 }

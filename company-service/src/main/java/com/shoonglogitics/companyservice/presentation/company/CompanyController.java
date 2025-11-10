@@ -25,8 +25,10 @@ import com.shoonglogitics.companyservice.application.command.CreateProductComman
 import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
-import com.shoonglogitics.companyservice.application.dto.CompanyResult;
+import com.shoonglogitics.companyservice.application.command.GetProductCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
+import com.shoonglogitics.companyservice.application.dto.CompanyResult;
+import com.shoonglogitics.companyservice.application.dto.ProductResult;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
@@ -37,6 +39,7 @@ import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyR
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductRequest;
 import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.FindCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.FindProductResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.ListCompanyResponse;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyRequest;
 import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyResponse;
@@ -189,5 +192,17 @@ public class CompanyController {
 		String responseMessage = "상품이 정상적으로 삭제 되었습니다.";
 
 		return ResponseEntity.ok().body(ApiResponse.success(responseMessage));
+	}
+
+	@GetMapping("/{companyId}/products/{productId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<FindProductResponse>> getProduct(
+		@PathVariable UUID companyId,
+		@PathVariable UUID productId) {
+
+		ProductResult result = companyService.getProduct(new GetProductCommand(companyId, productId));
+		FindProductResponse response = FindProductResponse.from(result);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }

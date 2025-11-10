@@ -115,17 +115,17 @@ public class Company extends BaseAggregateRoot<Company> {
 	}
 
 	public void deleteProduct(Long deletedBy, UUID productId) {
-		Product product = findProductById(productId)
+		Product product = getProductById(productId)
 			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
 
 		product.softDelete(deletedBy);
 	}
 
-private Optional<Product> findProductById(UUID productId) {
-	return products.stream()
-		.filter(p -> p.getId().equals(productId))
-		.findFirst();
-}
+	public Optional<Product> getProductById(UUID productId) {
+		return products.stream()
+			.filter(p -> p.getId().equals(productId))
+			.findFirst();
+	}
 
 public Double getLongitude() {
 	return location != null ? location.getLongitude() : null;

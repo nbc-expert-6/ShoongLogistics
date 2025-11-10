@@ -17,4 +17,6 @@ public interface CompanyRepository {
 	Optional<Company> findByNameAndZipCodeAndType(String name, String zipCode, CompanyType type);
 
 	Page<Company> getCompanies(UUID hubId, String name, CompanyType type, Pageable pageable);
+
+	Optional<Company> findByIdAndProductIdWithProduct(UUID companyId, UUID productId);
 }
