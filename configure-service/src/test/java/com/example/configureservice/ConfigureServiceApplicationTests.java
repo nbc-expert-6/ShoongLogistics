@@ -1,9 +1,9 @@
-package com.example.apigateway;
+package com.example.configureservice;
 
 import org.junit.jupiter.api.Test;
 
 //@SpringBootTest
-class ApiGatewayApplicationTests {
+class ConfigureServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
