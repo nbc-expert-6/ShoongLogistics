@@ -1,0 +1,7 @@
+spring:
+  config:
+    activate:
+      on-profile: test, local
+
+user-service:
+  url: http://localhost:8081
