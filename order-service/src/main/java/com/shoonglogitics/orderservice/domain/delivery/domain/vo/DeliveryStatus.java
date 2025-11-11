@@ -18,7 +18,7 @@ public enum DeliveryStatus {
 	HUB_TRANSIT("허브 이동중") {
 		@Override
 		public boolean canTransitionTo(DeliveryStatus newStatus) {
-			return newStatus == HUB_ARRIVED;
+			return newStatus == ARRIVAL_HUB_ARRIVED || newStatus == DESTINATION_HUB_ARRIVED;
 		}
 
 		@Override
@@ -26,7 +26,18 @@ public enum DeliveryStatus {
 			return false;
 		}
 	},
-	HUB_ARRIVED("목적지 허브 도착") {
+	ARRIVAL_HUB_ARRIVED("허브 도착") {
+		@Override
+		public boolean canTransitionTo(DeliveryStatus newStatus) {
+			return false;
+		}
+
+		@Override
+		public boolean canBeCancelled() {
+			return false;
+		}
+	},
+	DESTINATION_HUB_ARRIVED("목적지 허브 도착") {
 		@Override
 		public boolean canTransitionTo(DeliveryStatus newStatus) {
 			return newStatus == IN_DELIVERY;

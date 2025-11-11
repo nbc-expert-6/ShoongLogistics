@@ -33,7 +33,9 @@ import com.shoonglogitics.orderservice.domain.delivery.domain.repository.Deliver
 import com.shoonglogitics.orderservice.domain.delivery.domain.service.DeliveryDomainService;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryEstimate;
+import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.HubInfo;
+import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessHubShippingCommand;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.global.common.vo.ShipperType;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
@@ -138,6 +140,52 @@ public class DeliveryService {
 		Delivery delivery = getDeliveryById(command.deliveryId());
 		delivery.delete(command.userId());
 		return delivery.getId();
+	}
+
+	//허브 운송처리
+	//이전 경로가 배송이 끝났는지 확인
+	@Transactional
+	public UUID processHubShipping(ProcessHubShippingCommand command) {
+		Delivery delivery = getDeliveryById(command.deliveryId());
+		List<DeliveryRoute> deliveryRoutes = delivery.getDeliveryRoutes();
+
+		//대상 경로 찾기
+		DeliveryRoute targetRoute = deliveryRoutes.stream()
+			.filter(route -> route.getId().equals(command.deliveryRouteId()))
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("해당 배송경로를 찾을 수 없습니다."));
+
+		int targetSeq = targetRoute.getSequence();
+
+		//이전 허브 이동이 처리되었는지 검사
+		boolean allPreviousArrived = deliveryRoutes.stream()
+			.filter(route -> route.getSequence() < targetSeq)
+			.allMatch(route -> route.getStatus() == DeliveryStatus.ARRIVAL_HUB_ARRIVED);
+
+		if (!allPreviousArrived) {
+			throw new IllegalStateException("이전 허브 경로가 모두 도착 상태가 아닙니다.");
+		}
+
+		if (command.isDeparture()) {
+			// 출발 처리
+			targetRoute.departure();
+
+			//만약 첫 운송 시작이면 배송의 상태를 허브 운송중으로 변경
+			if (targetSeq == 1) {
+				delivery.startHubTransit();
+			}
+
+		} else {
+			// 도착 처리
+			targetRoute.arrive(command.distance(), command.duration());
+
+			//목적지 허브에 도착했다면 배송 상태를 목적지 허브 도착으로 변경
+			if (targetSeq == deliveryRoutes.size()) {
+				delivery.completeHubTransit();
+			}
+		}
+
+		return delivery.getDeliveryRoutes().get(targetSeq - 1).getId();
 	}
 
 	/*
