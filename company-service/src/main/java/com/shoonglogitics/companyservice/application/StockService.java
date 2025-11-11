@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shoonglogitics.companyservice.application.command.stock.CreateStockCommand;
 import com.shoonglogitics.companyservice.application.command.stock.DecreaseStockCommand;
 import com.shoonglogitics.companyservice.application.command.stock.DeleteStockCommand;
-import com.shoonglogitics.companyservice.application.command.stock.GetStocksCommand;
 import com.shoonglogitics.companyservice.application.command.stock.IncreaseStockCommand;
 import com.shoonglogitics.companyservice.application.dto.stock.StockHistoryResult;
 import com.shoonglogitics.companyservice.application.dto.stock.StockResult;
@@ -71,16 +70,7 @@ public class StockService {
 		return StockResult.from(stock);
 	}
 
-	public Page<StockResult> getStocks(GetStocksCommand command) {
-		Page<Stock> stocks = stockRepository.getStocks(
-			command.productId(),
-			command.toPageable()
-		);
-		return stocks.map(StockResult::from);
-	}
-
 	public Page<StockHistoryResult> getStockHistories(UUID stockId, PageRequest pageRequest) {
-		// 재고 존재 여부 확인
 		getStockById(stockId);
 
 		Page<StockHistory> histories = stockRepository.getStockHistories(stockId, pageRequest.toPageable());

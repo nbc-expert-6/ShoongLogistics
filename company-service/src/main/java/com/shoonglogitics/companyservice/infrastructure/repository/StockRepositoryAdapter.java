@@ -34,11 +34,6 @@ public class StockRepositoryAdapter implements StockRepository {
 	}
 
 	@Override
-	public Page<Stock> getStocks(UUID productId, Pageable pageable) {
-		return jpaStockRepository.getStocks(productId, pageable);
-	}
-
-	@Override
 	public Page<StockHistory> getStockHistories(UUID stockId, Pageable pageable) {
 		return jpaStockRepository.getStockHistories(stockId, pageable);
 	}

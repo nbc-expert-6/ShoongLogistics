@@ -105,7 +105,7 @@ public class CompanyService {
 		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
 
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
-		Product product = company.createProduct(command.productCategoryId(), productInfo);
+		Product product = company.createProduct(command.authUser().getUserId(), command.productCategoryId(), productInfo);
 		return product.getId();
 	}
 

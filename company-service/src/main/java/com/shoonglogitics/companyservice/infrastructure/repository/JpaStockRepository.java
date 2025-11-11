@@ -17,13 +17,6 @@ import com.shoonglogitics.companyservice.domain.stock.entity.StockHistory;
 public interface JpaStockRepository extends JpaRepository<Stock, UUID> {
 	Optional<Stock> findByProductId(UUID productId);
 
-	@Query("SELECT s FROM Stock s WHERE " +
-		"(:productId IS NULL OR s.productId = :productId)")
-	Page<Stock> getStocks(
-		@Param("productId") UUID productId,
-		Pageable pageable
-	);
-
 	@Query("SELECT sh FROM Stock s " +
 		"JOIN s.stockHistories sh " +
 		"WHERE s.id = :stockId " +

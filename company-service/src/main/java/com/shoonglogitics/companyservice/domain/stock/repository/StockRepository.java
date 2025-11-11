@@ -16,7 +16,5 @@ public interface StockRepository {
 
 	Optional<Stock> findByProductId(UUID productId);
 
-	Page<Stock> getStocks(UUID productId, Pageable pageable);
-
 	Page<StockHistory> getStockHistories(UUID stockId, Pageable pageable);
 }

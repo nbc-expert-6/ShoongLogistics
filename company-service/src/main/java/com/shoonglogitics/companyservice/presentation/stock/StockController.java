@@ -15,14 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shoonglogitics.companyservice.application.StockService;
 import com.shoonglogitics.companyservice.application.command.stock.CreateStockCommand;
 import com.shoonglogitics.companyservice.application.command.stock.DecreaseStockCommand;
 import com.shoonglogitics.companyservice.application.command.stock.DeleteStockCommand;
-import com.shoonglogitics.companyservice.application.command.stock.GetStocksCommand;
 import com.shoonglogitics.companyservice.application.command.stock.IncreaseStockCommand;
 import com.shoonglogitics.companyservice.application.dto.stock.StockHistoryResult;
 import com.shoonglogitics.companyservice.application.dto.stock.StockResult;
@@ -35,7 +33,6 @@ import com.shoonglogitics.companyservice.presentation.stock.dto.CreateStockRespo
 import com.shoonglogitics.companyservice.presentation.stock.dto.DecreaseStockRequest;
 import com.shoonglogitics.companyservice.presentation.stock.dto.FindStockResponse;
 import com.shoonglogitics.companyservice.presentation.stock.dto.IncreaseStockRequest;
-import com.shoonglogitics.companyservice.presentation.stock.dto.SearchStockResponse;
 import com.shoonglogitics.companyservice.presentation.stock.dto.StockHistoryResponse;
 
 import jakarta.validation.Valid;
@@ -58,7 +55,7 @@ public class StockController {
 		CreateStockCommand command = CreateStockCommand.builder()
 			.authUser(authUser)
 			.productId(request.productId())
-			.initialAmount(request.initialAmount())
+			.initialAmount(request.amount())
 			.build();
 
 		UUID stockId = stockService.createStock(command);
@@ -138,23 +135,6 @@ public class StockController {
 		FindStockResponse response = FindStockResponse.from(result);
 
 		return ResponseEntity.ok(ApiResponse.success(response));
-	}
-
-	@GetMapping
-	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
-	public ResponseEntity<ApiResponse<PageResponse<SearchStockResponse>>> getStocks(
-		@RequestParam(required = false) UUID productId,
-		@ModelAttribute PageRequest pageRequest) {
-
-		GetStocksCommand command = GetStocksCommand.builder()
-			.productId(productId)
-			.pageRequest(pageRequest)
-			.build();
-
-		Page<StockResult> results = stockService.getStocks(command);
-		Page<SearchStockResponse> responses = results.map(SearchStockResponse::from);
-
-		return ResponseEntity.ok(ApiResponse.success(PageResponse.of(responses)));
 	}
 
 	@GetMapping("/{stockId}/histories")

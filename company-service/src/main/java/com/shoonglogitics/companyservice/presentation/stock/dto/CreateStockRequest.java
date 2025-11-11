@@ -11,6 +11,6 @@ public record CreateStockRequest(
 	
 	@NotNull(message = "초기 재고 수량은 필수입니다.")
 	@Min(value = 0, message = "초기 재고 수량은 0 이상이어야 합니다.")
-	Integer initialAmount
+	Integer amount
 ) {
 }
