@@ -1,4 +1,4 @@
-package com.shoonglogitics.companyservice.domain.company.repository;
+package com.shoonglogitics.companyservice.domain.stock.repository;
 
 import com.shoonglogitics.companyservice.domain.stock.entity.Stock;
 
