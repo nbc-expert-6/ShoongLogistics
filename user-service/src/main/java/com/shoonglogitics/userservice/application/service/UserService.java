@@ -191,6 +191,9 @@ public class UserService {
 
 	public boolean canUpdateUser(String requesterRole, Long requesterId, Long targetUserId) {
 		if ("MASTER".equals(requesterRole)) {
+			if (!requesterId.equals(targetUserId)) {
+				throw new IllegalArgumentException("MASTER 권한 관리자도 본인만 수정 가능합니다.");
+			}
 			return true;
 		}
 
@@ -205,6 +208,9 @@ public class UserService {
 	// 추후 update, delete가 권한별로 달라질 수 있다는 확장성을 고려하여 일부러 분리
 	public boolean canDeleteUser(String requesterRole, Long requesterId, Long targetUserId) {
 		if ("MASTER".equals(requesterRole)) {
+			if (!requesterId.equals(targetUserId)) {
+				throw new IllegalArgumentException("MASTER 권한 관리자도 본인만 삭제 가능합니다.");
+			}
 			return true;
 		}
 
