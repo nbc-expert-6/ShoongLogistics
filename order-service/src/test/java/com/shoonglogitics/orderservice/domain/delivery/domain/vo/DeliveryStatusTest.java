@@ -8,35 +8,48 @@ import org.junit.jupiter.api.Test;
 class DeliveryStatusTest {
 
 	@Test
-	@DisplayName("허브 대기 상태는 허브 이동 상태로만 전환 가능해야 한다")
+	@DisplayName("허브 대기 상태는 허브 이동중 상태로만 전환 가능해야 한다")
 	void hubWaiting_canTransitionToHubTransit_ShouldBeTrue() {
 		DeliveryStatus status = DeliveryStatus.HUB_WAITING;
 
 		assertThat(status.canTransitionTo(DeliveryStatus.HUB_TRANSIT)).isTrue();
-		assertThat(status.canTransitionTo(DeliveryStatus.HUB_ARRIVED)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.ARRIVAL_HUB_ARRIVED)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.DESTINATION_HUB_ARRIVED)).isFalse();
 		assertThat(status.canTransitionTo(DeliveryStatus.IN_DELIVERY)).isFalse();
 		assertThat(status.canTransitionTo(DeliveryStatus.DELIVERED)).isFalse();
 	}
 
 	@Test
-	@DisplayName("허브 이동 상태는 목적지 허브 도착 상태로만 전환 가능해야 한다")
+	@DisplayName("허브 이동중 상태는 허브 도착 또는 목적지 허브 도착 상태로 전환 가능해야 한다")
 	void hubTransit_canTransitionToHubArrived_ShouldBeTrue() {
 		DeliveryStatus status = DeliveryStatus.HUB_TRANSIT;
 
-		assertThat(status.canTransitionTo(DeliveryStatus.HUB_ARRIVED)).isTrue();
+		assertThat(status.canTransitionTo(DeliveryStatus.ARRIVAL_HUB_ARRIVED)).isTrue();
+		assertThat(status.canTransitionTo(DeliveryStatus.DESTINATION_HUB_ARRIVED)).isTrue();
 		assertThat(status.canTransitionTo(DeliveryStatus.HUB_WAITING)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.IN_DELIVERY)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.DELIVERED)).isFalse();
+	}
+
+	@Test
+	@DisplayName("허브 도착 상태는 다른 상태로 전환할 수 없어야 한다")
+	void arrivalHubArrived_cannotTransitionToAnyStatus_ShouldBeFalse() {
+		DeliveryStatus status = DeliveryStatus.ARRIVAL_HUB_ARRIVED;
+
+		assertThat(status.canTransitionTo(DeliveryStatus.HUB_TRANSIT)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.DESTINATION_HUB_ARRIVED)).isFalse();
 		assertThat(status.canTransitionTo(DeliveryStatus.IN_DELIVERY)).isFalse();
 		assertThat(status.canTransitionTo(DeliveryStatus.DELIVERED)).isFalse();
 	}
 
 	@Test
 	@DisplayName("목적지 허브 도착 상태는 배송 중 상태로만 전환 가능해야 한다")
-	void hubArrived_canTransitionToInDelivery_ShouldBeTrue() {
-		DeliveryStatus status = DeliveryStatus.HUB_ARRIVED;
+	void destinationHubArrived_canTransitionToInDelivery_ShouldBeTrue() {
+		DeliveryStatus status = DeliveryStatus.DESTINATION_HUB_ARRIVED;
 
 		assertThat(status.canTransitionTo(DeliveryStatus.IN_DELIVERY)).isTrue();
-		assertThat(status.canTransitionTo(DeliveryStatus.HUB_WAITING)).isFalse();
 		assertThat(status.canTransitionTo(DeliveryStatus.HUB_TRANSIT)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.ARRIVAL_HUB_ARRIVED)).isFalse();
 		assertThat(status.canTransitionTo(DeliveryStatus.DELIVERED)).isFalse();
 	}
 
@@ -47,7 +60,7 @@ class DeliveryStatusTest {
 
 		assertThat(status.canTransitionTo(DeliveryStatus.DELIVERED)).isTrue();
 		assertThat(status.canTransitionTo(DeliveryStatus.HUB_WAITING)).isFalse();
-		assertThat(status.canTransitionTo(DeliveryStatus.HUB_ARRIVED)).isFalse();
+		assertThat(status.canTransitionTo(DeliveryStatus.HUB_TRANSIT)).isFalse();
 	}
 
 	@Test
@@ -65,7 +78,8 @@ class DeliveryStatusTest {
 	void testCancellable() {
 		assertThat(DeliveryStatus.HUB_WAITING.canBeCancelled()).isTrue();
 		assertThat(DeliveryStatus.HUB_TRANSIT.canBeCancelled()).isFalse();
-		assertThat(DeliveryStatus.HUB_ARRIVED.canBeCancelled()).isFalse();
+		assertThat(DeliveryStatus.ARRIVAL_HUB_ARRIVED.canBeCancelled()).isFalse();
+		assertThat(DeliveryStatus.DESTINATION_HUB_ARRIVED.canBeCancelled()).isFalse();
 		assertThat(DeliveryStatus.IN_DELIVERY.canBeCancelled()).isFalse();
 		assertThat(DeliveryStatus.DELIVERED.canBeCancelled()).isFalse();
 	}
@@ -75,7 +89,8 @@ class DeliveryStatusTest {
 	void testDescription() {
 		assertThat(DeliveryStatus.HUB_WAITING.getDescription()).isEqualTo("허브 대기중");
 		assertThat(DeliveryStatus.HUB_TRANSIT.getDescription()).isEqualTo("허브 이동중");
-		assertThat(DeliveryStatus.HUB_ARRIVED.getDescription()).isEqualTo("목적지 허브 도착");
+		assertThat(DeliveryStatus.ARRIVAL_HUB_ARRIVED.getDescription()).isEqualTo("허브 도착");
+		assertThat(DeliveryStatus.DESTINATION_HUB_ARRIVED.getDescription()).isEqualTo("목적지 허브 도착");
 		assertThat(DeliveryStatus.IN_DELIVERY.getDescription()).isEqualTo("배송중");
 		assertThat(DeliveryStatus.DELIVERED.getDescription()).isEqualTo("배송완료");
 	}
