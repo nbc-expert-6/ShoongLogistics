@@ -1,4 +1,4 @@
-package com.shoonglogitics.companyservice.application.dto;
+package com.shoonglogitics.companyservice.application.dto.company;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

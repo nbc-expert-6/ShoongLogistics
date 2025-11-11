@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.shoonglogitics.companyservice.infrastructure.external.dto.UserInfoFeignClientResponse;
-import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
 @FeignClient(name = "user-service", url = "${user-service.url}")
 public interface UserFeignClient {

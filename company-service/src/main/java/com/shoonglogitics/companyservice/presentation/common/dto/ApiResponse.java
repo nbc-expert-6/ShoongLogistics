@@ -1,4 +1,4 @@
-package com.shoonglogitics.companyservice.presentation.company.common.dto;
+package com.shoonglogitics.companyservice.presentation.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

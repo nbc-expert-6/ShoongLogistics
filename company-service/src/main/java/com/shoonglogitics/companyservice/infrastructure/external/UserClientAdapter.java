@@ -9,7 +9,7 @@ import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.UserInfoFeignClientResponse;
-import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
