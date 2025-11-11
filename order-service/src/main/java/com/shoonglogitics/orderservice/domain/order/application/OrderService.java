@@ -30,6 +30,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
 import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
@@ -135,6 +136,15 @@ public class OrderService {
 		publisher.publishEvent(new OrderCancledEvent(order.getId()));
 		return order.getId();
 	}
+
+	//결제 처리(현재는 상태만 변경)
+	@Transactional
+	public UUID pay(UUID orderId, AuthUser authUser) {
+		Order order = getOrderById(orderId);
+		order.pay();
+		return order.getId();
+	}
+
 	/*
 	내부용 유틸 함수들
 	 */

@@ -111,4 +111,15 @@ public class OrderController {
 		));
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(DeleteOrderResponse.from(deletedOrderId)));
 	}
+
+	@PostMapping("/{orderId}/payment")
+	public ResponseEntity<ApiResponse<UpdateOrderResponse>> createPayment(
+		@PathVariable("orderId") UUID orderId,
+		@AuthenticationPrincipal AuthUser authUser
+	) {
+		UUID updatedOrderId = orderService.pay(orderId, authUser);
+		UpdateOrderResponse response = UpdateOrderResponse.from(updatedOrderId);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response, "결제에 성공했습니다."));
+	}
+
 }
