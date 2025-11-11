@@ -2,6 +2,7 @@ package com.shoonglogitics.hubservice.domain.entity;
 
 import java.util.UUID;
 
+import com.shoonglogitics.hubservice.domain.common.BaseAggregateRoot;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.shoonglogitics.hubservice.domain.common.BaseEntity;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "p_hub_routes")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HubRoute extends BaseEntity {
+public class HubRoute extends BaseAggregateRoot<HubRoute> {
 
 	@Id
 	@UuidGenerator(style = UuidGenerator.Style.TIME)
@@ -47,7 +48,8 @@ public class HubRoute extends BaseEntity {
 
 	@Embedded
 	@AttributeOverride(name = "minutes", column = @Column(name = "duration_minutes"))
-	private Duration durationMinutes;
+	private Duration duration;
+
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "route_type", nullable = false, length = 20)
@@ -61,7 +63,6 @@ public class HubRoute extends BaseEntity {
 		route.departureHubId = departure;
 		route.arrivalHubId = arrival;
 		route.distanceMeters = distance;
-		route.durationMinutes = duration;
 		route.routeType = type;
 		return route;
 	}
