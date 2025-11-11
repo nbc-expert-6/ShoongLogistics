@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.shoonglogitics.hubservice.domain.entity.Hub;
+import com.shoonglogitics.hubservice.domain.vo.HubType;
 
 public interface HubRepository {
 
@@ -14,4 +15,7 @@ public interface HubRepository {
 
 	List<Hub> findAll();
 
+	List<Hub> findByHubType(HubType hubType);
+
+	Double calculateDistanceInMeters(UUID fromId, UUID toId);
 }
