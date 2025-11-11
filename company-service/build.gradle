@@ -43,6 +43,12 @@ dependencies {
     // Feign Client
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+    //redisson
+    implementation 'org.redisson:redisson:3.52.0'
+
+    //test-redis
+    testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

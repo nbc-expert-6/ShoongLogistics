@@ -5,6 +5,8 @@ spring:
 
 user-service:
   url: http://localhost:8081
+company-service:
+  url: http://localhost:8082
 
 ---
 
@@ -15,7 +17,8 @@ spring:
 
 user-service:
   url: http://dev-user-service:8081
-
+company-service:
+  url: http://localhost:8082
 ---
 
 spring:
@@ -25,3 +28,5 @@ spring:
 
 user-service:
   url: http://prod-user-service:8081
+company-service:
+  url: http://localhost:8082

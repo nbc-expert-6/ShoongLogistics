@@ -1,6 +1,6 @@
 package com.shoonglogitics.companyservice.application.command.productcategory;
 
-import com.shoonglogitics.companyservice.presentation.company.common.dto.PageRequest;
+import com.shoonglogitics.companyservice.presentation.common.dto.PageRequest;
 
 import lombok.Builder;
 

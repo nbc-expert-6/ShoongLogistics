@@ -19,8 +19,8 @@ import com.shoonglogitics.companyservice.application.command.GetProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateProductCommand;
-import com.shoonglogitics.companyservice.application.dto.CompanyResult;
-import com.shoonglogitics.companyservice.application.dto.ProductResult;
+import com.shoonglogitics.companyservice.application.dto.company.CompanyResult;
+import com.shoonglogitics.companyservice.application.dto.company.ProductResult;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
@@ -105,7 +105,7 @@ public class CompanyService {
 		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
 
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
-		Product product = company.createProduct(command.productCategoryId(), productInfo);
+		Product product = company.createProduct(command.authUser().getUserId(), command.productCategoryId(), productInfo);
 		return product.getId();
 	}
 

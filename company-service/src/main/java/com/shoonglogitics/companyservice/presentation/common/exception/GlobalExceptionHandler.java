@@ -1,4 +1,4 @@
-package com.shoonglogitics.companyservice.presentation.company.common.exception;
+package com.shoonglogitics.companyservice.presentation.common.exception;
 
 import java.util.NoSuchElementException;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
 import feign.FeignException;
 import jakarta.validation.ConstraintViolation;
