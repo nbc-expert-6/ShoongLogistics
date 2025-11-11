@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.shoonglogitics.hubservice.domain.vo.HubType;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.hubservice.domain.entity.Hub;
@@ -34,4 +35,19 @@ public class HubRepositoryAdapter implements HubRepository {
 		return jpaHubRepository.findAll().stream().filter(hub -> !hub.isDeleted())
 				.toList();
 	}
+
+
+	@Override
+	public List<Hub> findByHubType(HubType hubType) {
+		return jpaHubRepository.findByHubType(hubType).stream()
+				.filter(hub -> !hub.isDeleted())
+				.toList();
+	}
+
+	@Override
+	public Double calculateDistanceInMeters(UUID fromId, UUID toId) {
+		return jpaHubRepository.calculateDistanceInMeters(fromId, toId);
+	}
+
+
 }
