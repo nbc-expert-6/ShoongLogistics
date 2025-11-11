@@ -16,15 +16,34 @@ spring:
         webflux:
           routes:
             - id: user-service
-              uri: http://localhost:8081 #TODO : 8081???? ???, lb://USER-SERVICE? ????? ??
+              uri: lb://user-service #TODO : 8081???? ???, lb://USER-SERVICE? ????? ??
               predicates:
                 - Path=/api/v1/users/**
+
+            - id: company-service
+              uri: lb://company-service
+              predicates:
+                - Path=/api/v1/companies/**
+
+            - id: company-swagger
+              uri: lb://company-service
+              predicates:
+                - Path=/v3/api-docs/company-service
+              filters:
+                - RewritePath=/v3/api-docs/company-service, /v3/api-docs
 
             - id: notification-service
               uri:
                 http://localhost:8089
               predicates:
                 - Path=/api/v1/ai-delivery/**
+
+springdoc:
+    swagger-ui:
+      urls[0]:
+        name: company-service
+        url: /v3/api-docs/company-service
+      path: /docs
 
 server:
   port: 8000

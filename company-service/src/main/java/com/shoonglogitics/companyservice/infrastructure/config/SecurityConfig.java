@@ -33,6 +33,7 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/actuator/**").permitAll()  // health check
+				.requestMatchers("/v3/api-docs/**").permitAll() //swagger docs
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
