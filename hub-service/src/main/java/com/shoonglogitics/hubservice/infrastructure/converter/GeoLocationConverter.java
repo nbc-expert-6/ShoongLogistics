@@ -20,13 +20,13 @@ public class GeoLocationConverter implements AttributeConverter<GeoLocation, Poi
 
 	@Override
 	public GeoLocation convertToEntityAttribute(Point point) {
-		return GeoLocation.of(point.getX(), point.getY());
+		return GeoLocation.of(point.getY(), point.getX());
 	}
 
 	private static Point createPoint(GeoLocation geoLocation) {
 		GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 
-		Coordinate coordinate = new Coordinate(geoLocation.getLatitude(), geoLocation.getLongitude());
+		Coordinate coordinate = new Coordinate(geoLocation.getLongitude(), geoLocation.getLatitude());
 		return geometryFactory.createPoint(coordinate);
 	}
 
