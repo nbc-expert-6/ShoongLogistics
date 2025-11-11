@@ -9,3 +9,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
