@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.command.DeleteDeliveryCommand;
+import com.shoonglogitics.orderservice.domain.delivery.application.command.ProcessDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.command.UpdateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.FindDeliveryResult;
@@ -186,6 +187,20 @@ public class DeliveryService {
 		}
 
 		return delivery.getDeliveryRoutes().get(targetSeq - 1).getId();
+	}
+
+	//목적지 배송 처리
+	@Transactional
+	public UUID processDelivery(ProcessDeliveryCommand command) {
+		Delivery delivery = getDeliveryById(command.deliveryId());
+		if (command.isDeparture()) {
+			delivery.startDelivery();
+			//Todo 이벤트로 알림 서비스 호출
+		}
+		if (!command.isDeparture()) {
+			delivery.completeDelivery();
+		}
+		return delivery.getId();
 	}
 
 	/*

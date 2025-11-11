@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shoonglogitics.orderservice.domain.delivery.application.DeliveryService;
 import com.shoonglogitics.orderservice.domain.delivery.application.command.CreateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.command.DeleteDeliveryCommand;
+import com.shoonglogitics.orderservice.domain.delivery.application.command.ProcessDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.command.UpdateDeliveryCommand;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.CreateDeliveryResult;
 import com.shoonglogitics.orderservice.domain.delivery.application.dto.FindDeliveryResult;
@@ -31,6 +32,7 @@ import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.CreateDe
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.DeleteDeliveryResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.FindDeliveryResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ListDeliveryRouteResponse;
+import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessDeliveryRequest;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessHubShippingCommand;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessHubShippingRequest;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessHubShippingResponse;
@@ -137,4 +139,16 @@ public class DeliveryController {
 	}
 
 	//배송 출발 & 도착 처리
+	@PostMapping("/{deliveryId}/deliver")
+	public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> processDelivery(
+		@AuthenticationPrincipal AuthUser authUser,
+		@PathVariable("deliveryId") UUID deliveryId,
+		@RequestBody ProcessDeliveryRequest request
+	) {
+		UUID updatedDeliveryId = deliveryService.processDelivery(ProcessDeliveryCommand.from(
+			deliveryId, request.isDeparture(), authUser
+		));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(ApiResponse.success(UpdateDeliveryResponse.from(updatedDeliveryId)));
+	}
 }
