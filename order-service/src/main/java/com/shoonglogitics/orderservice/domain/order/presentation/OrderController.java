@@ -36,6 +36,7 @@ import com.shoonglogitics.orderservice.global.common.dto.PageResponse;
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
 import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class OrderController {
 
 	@PostMapping
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	@Operation(summary = "주문 생성 API")
 	public ResponseEntity<ApiResponse<CreateOrderResponse>> createOrder(
 		@Valid @RequestBody CreateOrderRequest request,
 		@AuthenticationPrincipal AuthUser authUser) {
@@ -64,6 +66,7 @@ public class OrderController {
 
 	@GetMapping("/{orderId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	@Operation(summary = "주문 단건 조회 API")
 	public ResponseEntity<ApiResponse<FindOrderResponse>> getOrder(
 		@PathVariable UUID orderId
 	) {
@@ -75,6 +78,7 @@ public class OrderController {
 	//주문 목록 조회
 	@GetMapping
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	@Operation(summary = "주문 목록 조회 API")
 	public ResponseEntity<ApiResponse<PageResponse<ListOrderResponse>>> listOrders(
 		@AuthenticationPrincipal AuthUser authUser,
 		@ModelAttribute PageRequest pageRequest
@@ -88,6 +92,7 @@ public class OrderController {
 	//주문 수정
 	@PutMapping("/{orderId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	@Operation(summary = "주문 수정 조회 API")
 	public ResponseEntity<ApiResponse<UpdateOrderResponse>> updateOrder(
 		@PathVariable("orderId") UUID orderId,
 		@AuthenticationPrincipal AuthUser authUser,
@@ -102,6 +107,7 @@ public class OrderController {
 	//주문 삭제
 	@DeleteMapping("/{orderId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	@Operation(summary = "주문 취소 API")
 	public ResponseEntity<ApiResponse<DeleteOrderResponse>> deleteOrder(
 		@AuthenticationPrincipal AuthUser authUser,
 		@PathVariable("orderId") UUID orderId
@@ -113,6 +119,7 @@ public class OrderController {
 	}
 
 	@PostMapping("/{orderId}/payment")
+	@Operation(summary = "결제 처리 API")
 	public ResponseEntity<ApiResponse<UpdateOrderResponse>> createPayment(
 		@PathVariable("orderId") UUID orderId,
 		@AuthenticationPrincipal AuthUser authUser

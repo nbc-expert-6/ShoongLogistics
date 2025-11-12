@@ -43,6 +43,7 @@ import com.shoonglogitics.orderservice.global.common.dto.PageResponse;
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
 import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -54,6 +55,7 @@ public class DeliveryController {
 
 	@PostMapping
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	@Operation(summary = "배송 생성 API(이벤트에 의해 실행)")
 	public ResponseEntity<ApiResponse<CreateDeliveryResponse>> createDelivery(
 		@RequestBody CreateDeliveryRequest request, @AuthenticationPrincipal AuthUser authUser
 	) {
@@ -67,6 +69,7 @@ public class DeliveryController {
 	//배송 정보 조회
 	@GetMapping("/orders/{orderId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	@Operation(summary = "배송 정보 조회 API")
 	public ResponseEntity<ApiResponse<FindDeliveryResponse>> getDelivery(
 		@PathVariable("orderId") UUID orderId
 	) {
@@ -78,6 +81,7 @@ public class DeliveryController {
 	//배송 경로 조회
 	@GetMapping("/{deliveryId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	@Operation(summary = "배송 경로 조회 API")
 	public ResponseEntity<ApiResponse<PageResponse<ListDeliveryRouteResponse>>> getDeliveries(
 		@PathVariable("deliveryId") UUID deliveryId,
 		@ModelAttribute PageRequest pageRequest
@@ -91,6 +95,7 @@ public class DeliveryController {
 	//배송 정보 수정
 	@PutMapping("/{deliveryId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	@Operation(summary = "배송 정보 수정 API")
 	public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> updateDelivery(
 		@PathVariable("deliveryId") UUID deliveryId,
 		@RequestBody UpdateDeliveryRequest request,
@@ -105,6 +110,7 @@ public class DeliveryController {
 	//배송 삭제
 	@DeleteMapping("/{deliveryId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	@Operation(summary = "배송 삭제 API")
 	public ResponseEntity<ApiResponse<DeleteDeliveryResponse>> deleteDelivery(
 		@PathVariable("deliveryId") UUID deliveryId,
 		@AuthenticationPrincipal AuthUser authUser
@@ -118,6 +124,7 @@ public class DeliveryController {
 
 	//허브 출발 & 도착 처리
 	@PatchMapping("/{deliveryId}/delivery-routes/{deliveryRouteId}/shipping")
+	@Operation(summary = "허브 출발, 도착 처리 API")
 	public ResponseEntity<ApiResponse<ProcessHubShippingResponse>> processHubShipping(
 		@AuthenticationPrincipal AuthUser authUser,
 		@PathVariable("deliveryId") UUID deliveryId,
@@ -140,6 +147,7 @@ public class DeliveryController {
 
 	//배송 출발 & 도착 처리
 	@PostMapping("/{deliveryId}/deliver")
+	@Operation(summary = "배송 출발, 도착 처리 API")
 	public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> processDelivery(
 		@AuthenticationPrincipal AuthUser authUser,
 		@PathVariable("deliveryId") UUID deliveryId,
