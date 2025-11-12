@@ -32,7 +32,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
 import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
 import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
@@ -152,7 +152,7 @@ public class OrderService {
 	 */
 
 	//orderId로 주문 조회
-	private Order getOrderById(UUID orderId) {
+	public Order getOrderById(UUID orderId) {
 		return orderRepository.findById(orderId).orElseThrow(
 			() -> new IllegalArgumentException("주문 정보를 찾을 수 없습니다.")
 		);
@@ -179,7 +179,7 @@ public class OrderService {
 				}
 				return OrderItem.create(
 					ProductInfo.of(cmd.productId(), Money.of(info.price())),
-					Quentity.of(cmd.quantity())
+					Quantity.of(cmd.quantity())
 				);
 			})
 			.toList();
@@ -213,7 +213,7 @@ public class OrderService {
 			//실제 감소 재고는 상품의 주문 수량
 			companyClient.decreaseStock(
 				info.stockId(),
-				item.getQuentity().getValue(),
+				item.getQuantity().getValue(),
 				authUser.getUserId(),
 				authUser.getRole()
 			);

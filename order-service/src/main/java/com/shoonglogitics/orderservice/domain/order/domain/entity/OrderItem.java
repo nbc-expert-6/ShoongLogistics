@@ -7,7 +7,7 @@ import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
 import com.shoonglogitics.orderservice.global.common.entity.BaseEntity;
 
 import jakarta.persistence.AttributeOverride;
@@ -41,16 +41,16 @@ public class OrderItem extends BaseEntity {
 
 	@Embedded
 	@AttributeOverride(name = "value", column = @Column(name = "quantity"))
-	private Quentity quentity;
+	private Quantity quantity;
 
-	public static OrderItem create(ProductInfo productInfo, Quentity quentity) {
+	public static OrderItem create(ProductInfo productInfo, Quantity quantity) {
 		OrderItem orderItem = new OrderItem();
 		orderItem.productInfo = productInfo;
-		orderItem.quentity = quentity;
+		orderItem.quantity = quantity;
 		return orderItem;
 	}
 
 	public Money calculateTotalPrice() {
-		return productInfo.getPrice().multiply(quentity.getValue());
+		return productInfo.getPrice().multiply(quantity.getValue());
 	}
 }

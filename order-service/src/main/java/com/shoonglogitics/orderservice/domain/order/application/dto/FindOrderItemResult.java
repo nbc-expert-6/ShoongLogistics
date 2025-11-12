@@ -16,7 +16,7 @@ public record FindOrderItemResult(
 			orderItem.getId(),
 			orderItem.getProductInfo().getProductId(),
 			orderItem.getProductInfo().getPrice().getAmount(),
-			orderItem.getQuentity().getValue()
+			orderItem.getQuantity().getValue()
 		);
 	}
 }

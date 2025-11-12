@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.shoonglogitics.orderservice.domain.order.application.OrderService;
 import com.shoonglogitics.orderservice.domain.order.application.service.DeliveryClient;
+import com.shoonglogitics.orderservice.domain.order.application.service.NotificationClient;
 import com.shoonglogitics.orderservice.domain.order.application.service.dto.DeliveryInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCancledEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
@@ -24,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderEventHandler {
 
 	private final DeliveryClient deliveryClient;
+	private final OrderService orderService;
+	private final NotificationClient notificationClient;
 
 	/*
 	주문 생성 이벤트 처리
@@ -104,4 +108,29 @@ public class OrderEventHandler {
 			}
 		}
 	}
+
+	// //결제 후 알림발송 이벤트
+	// @Async
+	// @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+	// public void handleOrderPaid(OrderPaidEvent event) {
+	// 	//배송 생성 요청
+	// 	//최소한의 정보를 보내고 배송을 생성할 때 Order에 요청하여 정보를 받아가도록 설계
+	// 	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	// 	if (authentication == null || !authentication.isAuthenticated()) {
+	// 		throw new IllegalStateException("인증되지 않은 요청입니다.");
+	// 	}
+	// 	Object principal = authentication.getPrincipal();
+	//
+	// 	if (principal instanceof AuthUser authUser) {
+	// 		try {
+	// 			Long userId = authUser.getUserId();
+	// 			UserRoleType role = authUser.getRole();
+	// 			Order order = orderService.getOrderById(event.getOrderId());
+	// 			notificationClient.sendOrderPaidNotification(
+	// 				, userId, role);
+	// 		} catch (Exception e) {
+	// 			log.error("배송 조회 및 수정 중 에러 발생 error: {}", e.getMessage());
+	// 		}
+	// 	}
+	// }
 }

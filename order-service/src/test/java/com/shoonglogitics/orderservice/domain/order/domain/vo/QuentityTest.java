@@ -16,10 +16,10 @@ class QuentityTest {
 		int value = 5;
 
 		// When
-		Quentity quentity = Quentity.of(value);
+		Quantity quantity = Quantity.of(value);
 
 		// Then
-		assertThat(quentity.getValue()).isEqualTo(value);
+		assertThat(quantity.getValue()).isEqualTo(value);
 	}
 
 	@ParameterizedTest
@@ -27,7 +27,7 @@ class QuentityTest {
 	@DisplayName("1 미만의 수량으로 Quentity 객체를 생성하면 예외가 발생해야 한다")
 	void quentity_withInvalidValue_ShouldThrowException(int invalidValue) {
 		// Given & When & Then
-		assertThatThrownBy(() -> Quentity.of(invalidValue))
+		assertThatThrownBy(() -> Quantity.of(invalidValue))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("주문 수량은 최소 1개 이상이어야 합니다.");
 	}
