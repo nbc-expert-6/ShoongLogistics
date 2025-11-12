@@ -1,7 +1,9 @@
 package com.shoonglogitics.orderservice.domain.order.application;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import com.shoonglogitics.orderservice.domain.order.application.command.CreateOr
 import com.shoonglogitics.orderservice.domain.order.application.command.DeleteOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.StockInfo;
 import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
@@ -85,9 +88,6 @@ public class OrderService {
 			orderItems
 		);
 
-		//재고 차감 요청
-		companyClient.decreaseStock(orderItems);
-
 		//응답
 		Order createdOrder = orderRepository.save(order);
 
@@ -137,11 +137,15 @@ public class OrderService {
 		return order.getId();
 	}
 
-	//결제 처리(현재는 상태만 변경)
+	//결제 처리
+	//상품 재고 걈소 요청
 	@Transactional
 	public UUID pay(UUID orderId, AuthUser authUser) {
 		Order order = getOrderById(orderId);
 		order.pay();
+
+		//재고 차감 요청
+		decreaseStock(order.getOrderItems(), authUser);
 		return order.getId();
 	}
 
@@ -184,5 +188,28 @@ public class OrderService {
 
 	private void validateOrder(List<OrderItem> orderItems, Money totalPrice) {
 		orderDomainService.validateOrder(orderItems, totalPrice);
+	}
+
+	private void decreaseStock(List<OrderItem> orderItems, AuthUser authUser) {
+		//상품 id로 재고 정보 및 주문상품에 접근하기 위해 Map에 저장
+		Map<UUID, StockInfo> stockInfoMap = orderItems.stream()
+			.map(item -> companyClient.getStockInfo(item.getProductInfo().getProductId(),
+				authUser.getUserId(), authUser.getRole()))
+			.collect(Collectors.toMap(StockInfo::productId, info -> info));
+
+		//재고 감소
+		orderItems.forEach(item -> {
+			StockInfo info = stockInfoMap.get(item.getProductInfo().getProductId());
+			if (info == null) {
+				throw new IllegalStateException("해당 상품의 재고 정보를 찾을 수 없습니다: " + item.getProductInfo().getProductId());
+			}
+			//실제 감소 재고는 상품의 주문 수량
+			companyClient.decreaseStock(
+				info.stockId(),
+				item.getQuentity().getValue(),
+				authUser.getUserId(),
+				authUser.getRole()
+			);
+		});
 	}
 }
