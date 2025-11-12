@@ -32,8 +32,8 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                         //.requestMatchers("/actuator/**").permitAll()  // health check
                         //.anyRequest().authenticated()
-                )
-                .addFilterBefore(gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                );
+                //.addFilterBefore(gatewayAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
