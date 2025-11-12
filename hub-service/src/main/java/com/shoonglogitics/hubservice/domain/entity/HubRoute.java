@@ -56,26 +56,24 @@ public class HubRoute extends BaseAggregateRoot<HubRoute> {
 	private RouteType routeType;
 
 	public static HubRoute create(HubId departure, HubId arrival,
-		Distance distance, Duration duration, RouteType type) {
-		validate(departure, arrival, distance, duration);
+		Distance distance, RouteType type) {
+		validate(departure, arrival, distance);
 
 		HubRoute route = new HubRoute();
 		route.departureHubId = departure;
 		route.arrivalHubId = arrival;
 		route.distanceMeters = distance;
+		route.duration = Duration.fromDistance(distance);
 		route.routeType = type;
 		return route;
 	}
 
-	private static void validate(HubId departure, HubId arrival, Distance distance, Duration duration) {
+	private static void validate(HubId departure, HubId arrival, Distance distance) {
 		if (departure.getValue().equals(arrival.getValue())) {
 			throw new IllegalArgumentException("출발 허브와 도착 허브는 같을 수 없습니다.");
 		}
 		if (distance == null || distance.getMeters() <= 0) {
 			throw new IllegalArgumentException("이동거리는 0보다 커야 합니다.");
-		}
-		if (duration == null || duration.getMinutes() <= 0) {
-			throw new IllegalArgumentException("소요시간은 0보다 커야 합니다.");
 		}
 	}
 
