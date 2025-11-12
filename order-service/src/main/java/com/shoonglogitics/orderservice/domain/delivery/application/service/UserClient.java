@@ -9,5 +9,5 @@ import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 public interface UserClient {
 	List<ShipperInfo> getShippers(UUID hubId, Long aLong, UserRoleType role);
 
-	void changeShippersIsAvailable(List<UUID> shippers, Long userId, UserRoleType role);
+	void changeShippersIsAvailable(List<Long> shippers, Long userId, UserRoleType role);
 }

@@ -118,8 +118,8 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 	}
 
 	//배송 생성 이벤트에 상태변경 요청할 담당자 목록 생성
-	private List<UUID> createAssginedShippers(List<DeliveryRoute> deliveryRoutes, UUID shipperId) {
-		List<UUID> assginedShippers = new ArrayList<>();
+	private List<Long> createAssginedShippers(List<DeliveryRoute> deliveryRoutes, Long shipperId) {
+		List<Long> assginedShippers = new ArrayList<>();
 		deliveryRoutes.stream().map(deliveryRoute -> shipperInfo.getShipperId()).forEach(assginedShippers::add);
 		assginedShippers.add(shipperId);
 		return assginedShippers;
@@ -127,7 +127,7 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 
 	public void update(
 		String request,
-		UUID shipperId,
+		Long shipperId,
 		String shipperName,
 		String shipperPhoneNumber,
 		String shipperSlackId

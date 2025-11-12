@@ -18,7 +18,7 @@ class DeliveryRouteTest {
 	@DisplayName("DeliveryRoute 생성 시 모든 필수 필드가 정상적으로 설정되어야 한다")
 	void deliveryRoute_create_shouldSetAllFieldsCorrectly() {
 		// Given
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo arrivalHub = HubInfo.of(UUID.randomUUID());
 		int sequence = 1;
@@ -40,7 +40,7 @@ class DeliveryRouteTest {
 	@DisplayName("DeliveryRoute 생성 시 필수 값이 null이면 예외가 발생해야 한다")
 	void deliveryRoute_create_withNullFields_shouldThrowException() {
 		// Given
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo hub = HubInfo.of(UUID.randomUUID());
 		DeliveryEstimate estimate = DeliveryEstimate.of(1000, 30);
 

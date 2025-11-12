@@ -40,7 +40,7 @@ class DeliveryRepositoryAdapterTest {
 	@DisplayName("Delivery를 저장하면 DB에 정상적으로 저장되어야 한다")
 	void saveDelivery_ShouldPersistDelivery() {
 		DeliveryRepositoryAdapter adapter = new DeliveryRepositoryAdapter(jpaDeliveryRepository);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
@@ -69,7 +69,7 @@ class DeliveryRepositoryAdapterTest {
 	@DisplayName("DeliveryRoute를 조회하면 페이징된 결과가 반환되어야 한다")
 	void getDeliveryRoutes_ShouldReturnPagedResults() {
 		DeliveryRepositoryAdapter adapter = new DeliveryRepositoryAdapter(jpaDeliveryRepository);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route1 = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
@@ -116,7 +116,7 @@ class DeliveryRepositoryAdapterTest {
 	@DisplayName("여러 Delivery를 저장하고 ID로 조회하면 각각 정상적으로 반환되어야 한다")
 	void saveMultipleDeliveries_ShouldReturnCorrectlyById() {
 		DeliveryRepositoryAdapter adapter = new DeliveryRepositoryAdapter(jpaDeliveryRepository);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo hub1 = HubInfo.of(UUID.randomUUID());
 		HubInfo hub2 = HubInfo.of(UUID.randomUUID());
 

@@ -13,7 +13,7 @@ public record FindDeliveryResponse(
 	String address,
 	String addressDetail,
 	String zipCode,
-	UUID shipperId,
+	Long shipperId,
 	String shipperName,
 	String shipperPhoneNumber,
 	String receiverSlackId,

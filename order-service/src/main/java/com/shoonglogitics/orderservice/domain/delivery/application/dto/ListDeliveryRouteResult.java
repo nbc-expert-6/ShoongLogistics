@@ -7,7 +7,7 @@ import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 
 public record ListDeliveryRouteResult(
 	UUID deliveryRouteId,
-	UUID shipperId,
+	Long shipperId,
 	String shipperName,
 	String shipperPhoneNumber,
 	String shipperSlackId,
