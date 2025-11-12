@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: order-service
+  config:
+    import:
+      optional:configserver:http://localhost:8888
+    activate:
+      on-profile: test, local, dev
+  cloud:
+    config:
+      fail-fast: false
