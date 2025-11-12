@@ -160,7 +160,7 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 		this.deliveryRoutes.forEach(deliveryRoute -> {
 			deliveryRoute.softDelete(userId);
 		});
-
+		this.status = DeliveryStatus.CANCLED;
 		this.softDelete(userId);
 	}
 
