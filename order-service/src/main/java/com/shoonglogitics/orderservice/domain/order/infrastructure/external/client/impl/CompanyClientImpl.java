@@ -7,10 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
+import com.shoonglogitics.orderservice.domain.order.application.dto.OrderItemInfo;
 import com.shoonglogitics.orderservice.domain.order.application.dto.StockInfo;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.client.feign.CompanyFeignClient;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeginStockDecreaseRequest;
+import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignProductResponse;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignStockInfoResponse;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.mapper.CompanyMapper;
 import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
@@ -47,5 +49,13 @@ public class CompanyClientImpl implements CompanyClient {
 		ResponseEntity<ApiResponse<FeignStockInfoResponse>> response = companyFeignClient.getStockInfo(productId,
 			userId, role);
 		return CompanyMapper.toStockInfo(response.getBody().data());
+	}
+
+	@Override
+	public OrderItemInfo getOrderItemInfos(UUID supplierCompanyId, UUID productId, Long userId, UserRoleType role) {
+		ResponseEntity<ApiResponse<FeignProductResponse>> response = companyFeignClient.getOrderItemInfos(
+			supplierCompanyId, productId, userId, role
+		);
+		return CompanyMapper.toOrderItemInfo(response.getBody().data());
 	}
 }

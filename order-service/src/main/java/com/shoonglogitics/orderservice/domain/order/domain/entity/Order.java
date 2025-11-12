@@ -155,7 +155,5 @@ public class Order extends BaseAggregateRoot<Order> {
 	public void pay() {
 		changeStatus(OrderStatus.PAID);
 		this.paidAt = LocalDateTime.now();
-
-		changeStatus(OrderStatus.SHIPPED);
 	}
 }
