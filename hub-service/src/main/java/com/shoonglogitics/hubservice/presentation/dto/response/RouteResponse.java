@@ -71,6 +71,8 @@ public class RouteResponse implements Serializable {
     public static class RouteSegmentResponse implements Serializable {
         private static final long serialVersionUID = 1L;
 
+
+        private int sequence;
         private UUID departureHubId;
         private UUID arrivalHubId;
         private int distanceMeters;
@@ -78,6 +80,7 @@ public class RouteResponse implements Serializable {
 
         public static RouteSegmentResponse from(RouteResult.RouteSegment segment) {
             return RouteSegmentResponse.builder()
+                    .sequence(segment.getSequence())
                     .departureHubId(segment.getDepartureHubId())
                     .arrivalHubId(segment.getArrivalHubId())
                     .distanceMeters(segment.getDistanceMeters())
