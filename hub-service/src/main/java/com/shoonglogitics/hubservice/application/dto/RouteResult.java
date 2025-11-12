@@ -41,7 +41,7 @@ public class RouteResult implements Serializable {
         );
 
         List<RouteSegment> routes = List.of(
-                new RouteSegment(fromId, toId, distanceMeters, durationMinutes)
+                new RouteSegment(1, fromId, toId, distanceMeters, durationMinutes)
         );
 
         return RouteResult.builder()
@@ -72,8 +72,8 @@ public class RouteResult implements Serializable {
         );
 
         List<RouteSegment> routes = List.of(
-                new RouteSegment(fromId, relayId, firstLegDistance, firstLegDuration),
-                new RouteSegment(relayId, toId, secondLegDistance, secondLegDuration)
+                new RouteSegment(1, fromId, relayId, firstLegDistance, firstLegDuration),
+                new RouteSegment(2, relayId, toId, secondLegDistance, secondLegDuration)
         );
 
         return RouteResult.builder()
@@ -110,6 +110,7 @@ public class RouteResult implements Serializable {
     public static class RouteSegment implements Serializable {
         private static final long serialVersionUID = 1L;
 
+        private int sequence;
         private UUID departureHubId;
         private UUID arrivalHubId;
         private int distanceMeters;
