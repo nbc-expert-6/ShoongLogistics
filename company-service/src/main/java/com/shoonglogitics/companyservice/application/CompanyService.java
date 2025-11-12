@@ -100,20 +100,16 @@ public class CompanyService {
 
 	@Transactional
 	public UUID createProduct(CreateProductCommand command) {
+		validateProductCategory(command.productCategoryId(), command.authUser().getUserId());
 		Company company = getCompanyById(command.companyId());
 
 		validateCompanyManager(command.authUser(), command.companyId());
 		validateHubManager(command.authUser(), company.getHubId());
 
-		ProductCategoryInfo categoryInfo = productCategoryClient.getProductCategoryInfo(command.productCategoryId(),
-			command.authUser().getUserId());
-		if (categoryInfo == null || !categoryInfo.productCategoryId().equals(command.productCategoryId())) {
-			throw new IllegalArgumentException("잘못된 카테고리 등록 요청입니다.");
-		}
-
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
 		Product product = company.createProduct(command.authUser().getUserId(), command.productCategoryId(),
 			productInfo);
+		companyRepository.flush();
 		return product.getId();
 	}
 
@@ -128,6 +124,7 @@ public class CompanyService {
 
 	@Transactional
 	public UUID updateProduct(UpdateProductCommand command) {
+		validateProductCategory(command.productCategoryId(), command.authUser().getUserId());
 		Company company = getCompanyWithProductsByIdAndProductId(command.companyId(), command.productId());
 		validateCompanyManager(command.authUser(), command.companyId());
 		validateHubManager(command.authUser(), company.getHubId());
@@ -172,6 +169,14 @@ public class CompanyService {
 				HttpStatus.FORBIDDEN,
 				"해당 업체의 담당자만 업체를 수정 할 수 있습니다."
 			);
+		}
+	}
+
+	private void validateProductCategory(UUID productCategoryId, Long userId) {
+		ProductCategoryInfo categoryInfo = productCategoryClient.getProductCategoryInfo(productCategoryId,
+			userId);
+		if (categoryInfo == null || !categoryInfo.productCategoryId().equals(productCategoryId)) {
+			throw new IllegalArgumentException("잘못된 카테고리 등록 요청입니다.");
 		}
 	}
 

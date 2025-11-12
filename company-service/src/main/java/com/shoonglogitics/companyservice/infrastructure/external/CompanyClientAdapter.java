@@ -24,7 +24,7 @@ public class CompanyClientAdapter implements CompanyClient {
 	public List<ProductInfo> getProductInfos(UUID productCategoryId, Long userId) {
 		ApiResponse<List<ProductInfoFeignClientResponse>> response = companyFeignClient.getProducts(
 			List.of(productCategoryId), userId,
-			UserRoleType.MASTER.getAuthority());
+			UserRoleType.MASTER);
 
 		if (!response.success() || response.data() == null) {
 			log.warn("상품 조회 실패 - message: {}", response.message());
