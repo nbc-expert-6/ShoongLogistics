@@ -15,6 +15,7 @@ import com.shoonglogitics.orderservice.domain.order.application.command.CreateOr
 import com.shoonglogitics.orderservice.domain.order.application.command.DeleteOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.OrderItemInfo;
 import com.shoonglogitics.orderservice.domain.order.application.dto.StockInfo;
 import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
@@ -52,14 +53,11 @@ public class OrderService {
 
 	@Transactional
 	public UUID createOrder(CreateOrderCommand command) {
-		//주문자 검증(외부 호출 후 검증)
-		validateCustomer(command.userId(), command.role());
-
-		//주문 상품 검증(외부 호출 후 값 비교)
-		validateItems(command.orderItems());
+		//주문 상품 정보 받아오기
+		List<OrderItemInfo> orderItemInfos = getOrderItemInfos(command, command.userId(), command.role());
 
 		//주문상품 엔티티 생성
-		List<OrderItem> orderItems = createItems(command.orderItems());
+		List<OrderItem> orderItems = createItems(command.orderItems(), orderItemInfos);
 
 		//총 주문 금액 vo 생성
 		Money totalPrice = Money.of(command.totalPrice());
@@ -161,29 +159,38 @@ public class OrderService {
 	}
 
 	//문제가 없다면 엔티티로 만들어서 반환, 문제가 생기면 예외 발생
-	private List<OrderItem> createItems(List<CreateOrderItemCommand> createOrderItemCommands) {
+	private List<OrderItem> createItems(
+		List<CreateOrderItemCommand> createOrderItemCommands,
+		List<OrderItemInfo> orderItemInfos) {
+
 		if (createOrderItemCommands == null || createOrderItemCommands.isEmpty()) {
 			throw new IllegalArgumentException("주문 항목은 최소 1개 이상이어야 합니다.");
 		}
+
+		//가격정보 등록
+		Map<UUID, OrderItemInfo> infoMap = orderItemInfos.stream()
+			.collect(Collectors.toMap(OrderItemInfo::productId, info -> info));
+
 		return createOrderItemCommands.stream()
-			.map(cmd -> OrderItem.create(
-				ProductInfo.of(cmd.productId(), Money.of(cmd.price())),
-				Quentity.of(cmd.quantity())
-			)).toList();
+			.map(cmd -> {
+				OrderItemInfo info = infoMap.get(cmd.productId());
+				if (info == null) {
+					throw new IllegalArgumentException("상품 정보가 존재하지 않습니다: " + cmd.productId());
+				}
+				return OrderItem.create(
+					ProductInfo.of(cmd.productId(), Money.of(info.price())),
+					Quentity.of(cmd.quantity())
+				);
+			})
+			.toList();
 	}
 
-	//회원 서비스와 통신을 통해 유효한 회원인지 검증
-	//문제가 생기면 예외 발생
-	private void validateCustomer(Long userId, UserRoleType role) {
-		//Todo: 클라이언트를 통해 외부 통신 후 로직수행
-		userClient.canOrder(userId, role);
-	}
+	private List<OrderItemInfo> getOrderItemInfos(CreateOrderCommand command, Long userId,
+		UserRoleType role) {
+		return command.orderItems().stream()
+			.map(item -> companyClient.getOrderItemInfos(command.supplierCompanyId(), item.productId(), userId, role))
+			.toList();
 
-	private void validateItems(List<CreateOrderItemCommand> orderItems) {
-		//Todo: 클라이언트를 통해 외부 통신 후 로직수행
-		//회원 컨텍스트에 해당 상품의 업체id로 담당자 id를 조회해오기
-		//업체 담당자가 수정하는 것처럼 요청
-		companyClient.validateItems(orderItems);
 	}
 
 	private void validateOrder(List<OrderItem> orderItems, Money totalPrice) {
