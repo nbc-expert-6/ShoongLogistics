@@ -3,6 +3,6 @@ package com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.
 import java.util.List;
 
 public record FeignRouteResponse(
-	List<FeignHubResponse> segments
+	List<FeignHubResponse> routes
 ) {
 }

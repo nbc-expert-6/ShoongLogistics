@@ -6,7 +6,7 @@ public record ProcessHubShippingRequest(
 	UUID deliveryId,
 	UUID deliveryRouteId,
 	Boolean isDeparture,
-	Long distance,
+	Integer distance,
 	Integer duration
 ) {
 

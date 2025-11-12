@@ -5,8 +5,8 @@ import java.util.UUID;
 public record FeignHubResponse(
 	UUID departureHubId,
 	UUID arrivalHubId,
-	int sequence,
-	Long distance,
-	int duration
+	Integer sequence,
+	Integer distanceMeters,
+	Integer durationMinutes
 ) {
 }
