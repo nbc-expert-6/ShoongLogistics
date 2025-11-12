@@ -3,9 +3,9 @@ package com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.
 import java.util.UUID;
 
 public record FeignHubResponse(
+	Integer sequence,
 	UUID departureHubId,
 	UUID arrivalHubId,
-	Integer sequence,
 	Integer distanceMeters,
 	Integer durationMinutes
 ) {
