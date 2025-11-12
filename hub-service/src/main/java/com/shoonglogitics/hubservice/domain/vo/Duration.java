@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class Duration implements Comparable<Duration>{
     private static final long WORKING_HOURS_MINUTES = 540;
     private static final long MIN_MINUTES = 0;
+    private static final double SPEED_AVG = 60.0;
 
     private final long minutes;
 
@@ -84,6 +85,13 @@ public class Duration implements Comparable<Duration>{
             throw new IllegalArgumentException("비교 대상은 null일 수 없습니다");
         }
         return Long.compare(this.minutes, other.minutes);
+    }
+
+    public static Duration fromDistance(Distance distance) {
+        double distanceKm = distance.getMeters() / 1000.0;
+        double hours = distanceKm / SPEED_AVG;
+        int minutes = (int) Math.round(hours * 60);
+        return new Duration(minutes);
     }
 
 }
