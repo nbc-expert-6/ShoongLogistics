@@ -17,4 +17,5 @@ spring:
       - eureka
       - actuator
       - zipkin
+      - swagger
     active: test

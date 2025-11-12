@@ -16,9 +16,16 @@ spring:
         webflux:
           routes:
             - id: user-service
-              uri: lb://user-service #TODO : 8081???? ???, lb://USER-SERVICE? ????? ??
+              uri: lb://user-service
               predicates:
                 - Path=/api/v1/users/**
+
+            - id: user-swagger
+              uri: lb://user-service
+              predicates:
+                - Path=/v3/api-docs/user-service
+              filters:
+                - RewritePath=/v3/api-docs/user-service, /v3/api-docs
 
             - id: company-service
               uri: lb://company-service
@@ -39,11 +46,15 @@ spring:
                 - Path=/api/v1/ai-delivery/**
 
 springdoc:
-    swagger-ui:
-      urls[0]:
-        name: company-service
-        url: /v3/api-docs/company-service
-      path: /docs
+  swagger-ui:
+    urls[0]:
+      name: company-service
+      url: /v3/api-docs/company-service
+    path: /docs
+
+    urls[1]:
+      name: user-service
+      url: /v3/api-docs/user-service
 
 server:
   port: 8000
