@@ -25,7 +25,7 @@ class DeliveryTest {
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
-			DeliveryEstimate.of(1000L, 30));
+			DeliveryEstimate.of(1000, 30));
 		List<DeliveryRoute> routes = List.of(route);
 		String request = "조심히 배송";
 
@@ -48,7 +48,7 @@ class DeliveryTest {
 		Address address = Address.of("서울시 강남구", "1층", "12345", null);
 		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
 		HubInfo hub = HubInfo.of(UUID.randomUUID());
-		DeliveryRoute route = DeliveryRoute.create(shipper, hub, hub, 1, DeliveryEstimate.of(1000L, 30));
+		DeliveryRoute route = DeliveryRoute.create(shipper, hub, hub, 1, DeliveryEstimate.of(1000, 30));
 		List<DeliveryRoute> routes = List.of(route);
 
 		assertThatThrownBy(() -> Delivery.create(null, address, shipper, hub, hub, "req", routes))
@@ -81,7 +81,7 @@ class DeliveryTest {
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
-			DeliveryEstimate.of(1000L, 30));
+			DeliveryEstimate.of(1000, 30));
 		Delivery delivery = Delivery.create(orderId, address, shipper, departureHub, destinationHub, "oldReq",
 			List.of(route));
 
@@ -102,7 +102,7 @@ class DeliveryTest {
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
-			DeliveryEstimate.of(1000L, 30));
+			DeliveryEstimate.of(1000, 30));
 		Delivery delivery = Delivery.create(orderId, address, shipper, departureHub, destinationHub, "req",
 			List.of(route));
 		delivery.update("req", shipper.getShipperId(), null, null, null);
