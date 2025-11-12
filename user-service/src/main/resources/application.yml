@@ -19,3 +19,7 @@ spring:
       - zipkin
       - swagger
     active: test
+
+jwt:
+  secret: "asda2sdaidasdsa5d67sa56d75267d5675s67d5a67w567d56wa"          # JWT 서명에 사용할 비밀키
+  expiration: 3600000

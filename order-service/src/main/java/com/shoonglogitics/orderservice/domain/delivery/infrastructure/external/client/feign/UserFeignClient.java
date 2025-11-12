@@ -23,4 +23,11 @@ public interface UserFeignClient {
 	ResponseEntity<ApiResponse<List<FeignUserResponse>>> getShippers(
 		@RequestParam("hubId") UUID hubId,
 		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role);
+
+	@GetMapping("/internal-users")
+	ResponseEntity<ApiResponse<List<FeignUserResponse>>> getInternalUsers(
+		@RequestParam(required = false) UUID hubId,
+		@RequestParam(required = false) UUID companyId,
+		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role
+	);
 }
