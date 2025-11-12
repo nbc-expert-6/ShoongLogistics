@@ -3,5 +3,10 @@ spring:
     include:
       - service
       - datasource
+      - actuator
+      - config
+      - eureka
+      - swagger
+      - zipkin
 server:
   port: ${SERVER_PORT:8080}

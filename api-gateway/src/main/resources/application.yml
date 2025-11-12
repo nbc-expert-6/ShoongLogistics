@@ -45,6 +45,18 @@ spring:
               predicates:
                 - Path=/api/v1/ai-delivery/**
 
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/v1/orders/**,/api/v1/deliveries/**
+
+            - id: order-swagger
+              uri: lb://order-service
+              predicates:
+                - Path=/v3/api-docs/order-service
+              filters:
+                - RewritePath=/v3/api-docs/order-service, /v3/api-docs
+
 springdoc:
   swagger-ui:
     path: /docs
@@ -53,6 +65,8 @@ springdoc:
         url: /v3/api-docs/company-service
       - name: user-service
         url: /v3/api-docs/user-service
+      - name: order-service
+        url: /v3/api-docs/order-service
 
 server:
   port: 8000
