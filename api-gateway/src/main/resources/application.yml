@@ -45,6 +45,19 @@ spring:
               predicates:
                 - Path=/api/v1/ai-delivery/**
 
+
+            - id: hub-service
+              uri: lb://hub-service
+              predicates:
+                - Path=/api/v1/hubs/**,/api/v1/hub-routes/**
+
+            - id: hub-swagger
+              uri: lb://hub-service
+              predicates:
+                - Path=/v3/api-docs/hub-service
+              filters:
+                - RewritePath=/v3/api-docs/hub-service, /v3/api-docs
+
             - id: order-service
               uri: lb://order-service
               predicates:
@@ -65,6 +78,8 @@ springdoc:
         url: /v3/api-docs/company-service
       - name: user-service
         url: /v3/api-docs/user-service
+      - name: hub-service
+        url: /v3/api-docs/hub-service
       - name: order-service
         url: /v3/api-docs/order-service
 
