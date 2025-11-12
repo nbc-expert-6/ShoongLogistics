@@ -44,7 +44,7 @@ class DeliveryRepositoryAdapterTest {
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
-			DeliveryEstimate.of(1000L, 30));
+			DeliveryEstimate.of(1000, 30));
 
 		Delivery delivery = Delivery.create(
 			UUID.randomUUID(),
@@ -73,9 +73,9 @@ class DeliveryRepositoryAdapterTest {
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route1 = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
-			DeliveryEstimate.of(1000L, 30));
+			DeliveryEstimate.of(1000, 30));
 		DeliveryRoute route2 = DeliveryRoute.create(shipper, departureHub, destinationHub, 2,
-			DeliveryEstimate.of(2000L, 60));
+			DeliveryEstimate.of(2000, 60));
 
 		Delivery delivery = Delivery.create(
 			UUID.randomUUID(),
@@ -127,7 +127,7 @@ class DeliveryRepositoryAdapterTest {
 			hub1,
 			hub2,
 			null,
-			List.of(DeliveryRoute.create(shipper, hub1, hub2, 1, DeliveryEstimate.of(1000L, 30)))
+			List.of(DeliveryRoute.create(shipper, hub1, hub2, 1, DeliveryEstimate.of(1000, 30)))
 		);
 
 		Delivery delivery2 = Delivery.create(
@@ -137,7 +137,7 @@ class DeliveryRepositoryAdapterTest {
 			hub2,
 			hub1,
 			null,
-			List.of(DeliveryRoute.create(shipper, hub2, hub1, 1, DeliveryEstimate.of(2000L, 45)))
+			List.of(DeliveryRoute.create(shipper, hub2, hub1, 1, DeliveryEstimate.of(2000, 45)))
 		);
 
 		adapter.save(delivery1);
