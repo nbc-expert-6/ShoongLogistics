@@ -229,6 +229,22 @@ public class CompanyController {
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
+	@GetMapping("/products")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<PageResponse<SearchProductResponse>>> searchProducts(
+		@RequestParam(required = false) List<UUID> categoryIds,
+		@ModelAttribute PageRequest pageRequest
+	) {
+		Page<ProductResult> results = companyService.getProducts(
+			new GetProductsCommand(null, categoryIds, pageRequest.toPageable()));
+
+		PageResponse<SearchProductResponse> response = PageResponse.of(
+			results.map(SearchProductResponse::from)
+		);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
 	@PutMapping("/{companyId}/products/{productId}")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
 	public ResponseEntity<ApiResponse<UpdateProductResponse>> updateCompany(

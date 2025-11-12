@@ -14,7 +14,11 @@ import com.shoonglogitics.companyservice.infrastructure.external.dto.CreateStock
 import com.shoonglogitics.companyservice.infrastructure.security.HeaderType;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
-@FeignClient(name = "company-service", url = "${company-service.url}")
+@FeignClient(
+	name = "company-service",
+	contextId = "stockFeignClient",
+	url = "${company-service.url}"
+)
 public interface StockFeignClient {
 	/**
 	 * 재고 등록 API

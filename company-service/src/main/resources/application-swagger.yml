@@ -1,3 +1,8 @@
 springdoc:
   group:
     name: company-service
+
+spring:
+  config:
+    activate:
+      on-profile: test, local, dev
