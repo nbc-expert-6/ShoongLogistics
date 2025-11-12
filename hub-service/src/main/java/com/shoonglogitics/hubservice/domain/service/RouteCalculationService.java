@@ -42,7 +42,9 @@ public class RouteCalculationService {
 
             return RouteResult.createDirect(
                     fromHub.getId(),
+                    fromHub.getName(),
                     toHub.getId(),
+                    toHub.getName(),
                     distance.getMeters()
             );
         }
@@ -58,8 +60,11 @@ public class RouteCalculationService {
 
         return RouteResult.createRelay(
                 fromHub.getId(),
+                fromHub.getName(),
                 relayHub.getId(),
+                relayHub.getName(),
                 toHub.getId(),
+                toHub.getName(),
                 firstLegDistance.getMeters(),
                 secondLegDistance.getMeters()
         );
