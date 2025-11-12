@@ -7,7 +7,7 @@ public enum DeliveryStatus {
 	HUB_WAITING("허브 대기중") {
 		@Override
 		public boolean canTransitionTo(DeliveryStatus newStatus) {
-			return newStatus == HUB_TRANSIT;
+			return newStatus == HUB_TRANSIT || newStatus == CANCLED;
 		}
 
 		@Override
@@ -63,6 +63,18 @@ public enum DeliveryStatus {
 		@Override
 		public boolean canTransitionTo(DeliveryStatus newStatus) {
 			return false; // 완료 상태에서 전이 불가
+		}
+
+		@Override
+		public boolean canBeCancelled() {
+			return false;
+		}
+	},
+
+	CANCLED("배송 취소") {
+		@Override
+		public boolean canTransitionTo(DeliveryStatus newStatus) {
+			return false; // 취소 상태에서 전이 불가
 		}
 
 		@Override

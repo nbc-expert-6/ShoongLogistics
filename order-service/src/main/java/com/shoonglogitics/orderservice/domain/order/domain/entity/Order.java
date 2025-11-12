@@ -148,14 +148,15 @@ public class Order extends BaseAggregateRoot<Order> {
 		this.orderItems.forEach(orderItem -> {
 			orderItem.softDelete(userId);
 		});
-
+		this.status = OrderStatus.CANCELLED;
 		this.softDelete(userId);
 
 	}
 
 	public void pay() {
-		changeStatus(OrderStatus.PAID);
+		this.status = OrderStatus.PAID;
 		this.paidAt = LocalDateTime.now();
+		this.status = OrderStatus.SHIPPED;
 
 		this.registerEvent(new OrderPaidEvent(this.id));
 	}
