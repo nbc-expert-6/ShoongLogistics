@@ -1,7 +1,5 @@
 package com.shoonglogitics.orderservice.domain.delivery.domain.vo;
 
-import java.util.UUID;
-
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class ShipperInfo {
-	private UUID shipperId;
+	private Long shipperId;
 	private String shipperName;
 	private String shipperPhoneNumber;
 	private String shipperSlackId;
 
-	public static ShipperInfo of(UUID shipperId, String shipperName, String shipperPhoneNumber, String shipperSlackId) {
+	public static ShipperInfo of(Long shipperId, String shipperName, String shipperPhoneNumber, String shipperSlackId) {
 		ShipperInfo shipperInfo = new ShipperInfo();
 		shipperInfo.shipperId = shipperId;
 		shipperInfo.shipperName = shipperName;
@@ -26,7 +24,7 @@ public class ShipperInfo {
 	}
 
 	public void update(
-		UUID shipperId,
+		Long shipperId,
 		String shipperName,
 		String shipperPhoneNumber,
 		String shipperSlackId

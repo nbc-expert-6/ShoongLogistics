@@ -34,7 +34,7 @@ public class UserClientImpl implements UserClient {
 
 	//넘겨받은 배송 담당자들의 상태 변경 요청
 	@Override
-	public void changeShippersIsAvailable(List<UUID> shippers, Long userId, UserRoleType role) {
+	public void changeShippersIsAvailable(List<Long> shippers, Long userId, UserRoleType role) {
 		//Todo: 실제 수정 엔드포인트 호출
 
 	}

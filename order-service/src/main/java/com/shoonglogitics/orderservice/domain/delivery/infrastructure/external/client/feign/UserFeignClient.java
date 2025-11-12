@@ -24,7 +24,7 @@ public interface UserFeignClient {
 		@RequestParam("hubId") UUID hubId,
 		@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") UserRoleType role);
 
-	@GetMapping("/internal-users")
+	@GetMapping("/api/v1/users/internal")
 	ResponseEntity<ApiResponse<List<FeignUserResponse>>> getInternalUsers(
 		@RequestParam(required = false) UUID hubId,
 		@RequestParam(required = false) UUID companyId,

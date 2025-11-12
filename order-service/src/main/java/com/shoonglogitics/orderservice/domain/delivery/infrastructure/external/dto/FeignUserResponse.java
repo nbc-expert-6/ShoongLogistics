@@ -5,12 +5,12 @@ import java.util.UUID;
 import com.shoonglogitics.orderservice.global.common.vo.ShipperType;
 
 public record FeignUserResponse(
-	UUID shipperId,
+	Long userId,
 	UUID hubId,
-	String shipperName,
-	String shipperPhoneNumber,
+	String name,
+	String phoneNumber,
 	String slackId,
-	ShipperType type,
+	ShipperType shipperType,
 	int order,
 	boolean isShippingAvailable
 ) {

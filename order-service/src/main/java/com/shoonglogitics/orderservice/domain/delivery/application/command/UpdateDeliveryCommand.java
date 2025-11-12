@@ -11,7 +11,7 @@ public record UpdateDeliveryCommand(
 	Long userId,
 	UserRoleType role,
 	String request,
-	UUID shipperId,
+	Long shipperId,
 	String shipperName,
 	String shipperPhoneNumber,
 	String shipperSlackId

@@ -10,12 +10,12 @@ public final class UserMapper {
 	public static List<ShipperInfo> toCreateDeliveryShipperInfo(
 		List<FeignUserResponse> response) {
 		return response.stream().map(r -> ShipperInfo.from(
-			r.shipperId(),
+			r.userId(),
 			r.hubId(),
-			r.shipperName(),
-			r.shipperPhoneNumber(),
+			r.name(),
+			r.phoneNumber(),
 			r.slackId(),
-			r.type(),
+			r.shipperType(),
 			r.order(),
 			r.isShippingAvailable()
 		)).toList();

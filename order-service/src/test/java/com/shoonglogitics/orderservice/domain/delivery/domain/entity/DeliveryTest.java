@@ -21,7 +21,7 @@ class DeliveryTest {
 	void delivery_create_shouldSetAllFieldsCorrectly() {
 		UUID orderId = UUID.randomUUID();
 		Address address = Address.of("서울시 강남구", "1층", "12345", null);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
@@ -46,7 +46,7 @@ class DeliveryTest {
 	void delivery_create_withNullFields_shouldThrowException() {
 		UUID orderId = UUID.randomUUID();
 		Address address = Address.of("서울시 강남구", "1층", "12345", null);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo hub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, hub, hub, 1, DeliveryEstimate.of(1000, 30));
 		List<DeliveryRoute> routes = List.of(route);
@@ -77,7 +77,7 @@ class DeliveryTest {
 	void delivery_update_shouldModifyFields() {
 		UUID orderId = UUID.randomUUID();
 		Address address = Address.of("서울시 강남구", "1층", "12345", null);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
@@ -98,7 +98,7 @@ class DeliveryTest {
 	void delivery_update_whenDelivered_shouldThrowException() {
 		UUID orderId = UUID.randomUUID();
 		Address address = Address.of("서울시 강남구", "1층", "12345", null);
-		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
+		ShipperInfo shipper = ShipperInfo.of(1L, "홍길동", "010-1234-5678", "hong123");
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo destinationHub = HubInfo.of(UUID.randomUUID());
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, destinationHub, 1,
