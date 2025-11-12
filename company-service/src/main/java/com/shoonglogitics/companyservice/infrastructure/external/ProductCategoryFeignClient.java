@@ -11,7 +11,11 @@ import com.shoonglogitics.companyservice.infrastructure.external.dto.ProductCate
 import com.shoonglogitics.companyservice.infrastructure.security.HeaderType;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
-@FeignClient(name = "company-service", url = "${company-service.url}")
+@FeignClient(
+	name = "company-service",
+	contextId = "productCategoryFeignClient",
+	url = "${company-service.url}"
+)
 public interface ProductCategoryFeignClient {
 	@GetMapping("/api/v1/product-categories/{productCategoryId}")
 	ApiResponse<ProductCategoryInfoFeignClientResponse> getProductCategory(@PathVariable("productCategoryId") UUID productCategoryId,

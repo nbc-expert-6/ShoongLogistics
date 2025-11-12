@@ -12,7 +12,11 @@ import com.shoonglogitics.companyservice.infrastructure.external.dto.ProductInfo
 import com.shoonglogitics.companyservice.infrastructure.security.HeaderType;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
-@FeignClient(name = "company-service", url = "${company-service.url}")
+@FeignClient(
+	name = "company-service",
+	contextId = "companyFeignClient",
+	url = "${company-service.url}"
+)
 public interface CompanyFeignClient {
 	@GetMapping("/api/v1/companies/products}")
 	ApiResponse<List<ProductInfoFeignClientResponse>> getProducts(
