@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -17,48 +18,70 @@ public class RouteResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String routeType;
-    private String routeDescription;
-    private List<SegmentResponse> segments;
-    private double totalDistanceKm;
+    private UUID startHubId;
+    private String startHubName;
+    private UUID endHubId;
+    private String endHubName;
+    private int totalDistanceMeters;
+    private int totalDurationMinutes;
+    private List<WaypointResponse> waypoints;
+    private List<RouteSegmentResponse> routes;
 
     public static RouteResponse from(RouteResult result) {
         return RouteResponse.builder()
-                .routeType(result.getRouteType())
-                .routeDescription(getDescriptionFromType(result.getRouteType()))
-                .segments(result.getSegments().stream()
-                        .map(SegmentResponse::from)
+                .startHubId(result.getStartHubId())
+                .startHubName(result.getStartHubName())
+                .endHubId(result.getEndHubId())
+                .endHubName(result.getEndHubName())
+                .totalDistanceMeters(result.getTotalDistanceMeters())
+                .totalDurationMinutes(result.getTotalDurationMinutes())
+                .waypoints(result.getWaypoints().stream()
+                        .map(WaypointResponse::from)
                         .toList())
-                .totalDistanceKm(Math.round(result.getTotalDistanceMeters() / 100.0) / 10.0)
+                .routes(result.getRoutes().stream()
+                        .map(RouteSegmentResponse::from)
+                        .toList())
                 .build();
-    }
-
-    private static String getDescriptionFromType(String routeType) {
-        return switch (routeType) {
-            case "DIRECT" -> "직접배송";
-            case "RELAY" -> "중계배송";
-            case "CENTRAL_HUB" -> "중앙허브 경유";
-            default -> routeType;
-        };
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SegmentResponse implements Serializable {
-
+    public static class WaypointResponse implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private String departureHubId;
-        private String arrivalHubId;
-        private double distanceKm;
+        private int sequence;
+        private UUID hubId;
+        private String hubName;
 
-        public static SegmentResponse from(RouteResult.RouteSegment segment) {
-            return SegmentResponse.builder()
-                    .departureHubId(segment.getDepartureHubId().toString())
-                    .arrivalHubId(segment.getArrivalHubId().toString())
-                    .distanceKm(Math.round(segment.getDistanceKm() * 10.0) / 10.0)
+        public static WaypointResponse from(RouteResult.Waypoint waypoint) {
+            return WaypointResponse.builder()
+                    .sequence(waypoint.getSequence())
+                    .hubId(waypoint.getHubId())
+                    .hubName(waypoint.getHubName())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RouteSegmentResponse implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private UUID departureHubId;
+        private UUID arrivalHubId;
+        private int distanceMeters;
+        private int durationMinutes;
+
+        public static RouteSegmentResponse from(RouteResult.RouteSegment segment) {
+            return RouteSegmentResponse.builder()
+                    .departureHubId(segment.getDepartureHubId())
+                    .arrivalHubId(segment.getArrivalHubId())
+                    .distanceMeters(segment.getDistanceMeters())
+                    .durationMinutes(segment.getDurationMinutes())
                     .build();
         }
     }

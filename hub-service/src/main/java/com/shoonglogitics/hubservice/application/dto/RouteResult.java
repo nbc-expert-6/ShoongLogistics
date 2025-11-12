@@ -19,46 +19,100 @@ public class RouteResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String routeType; // RouteType -> String으로 변경
-    private List<RouteSegment> segments;
+    private UUID startHubId;
+    private String startHubName;
+    private UUID endHubId;
+    private String endHubName;
     private int totalDistanceMeters;
+    private int totalDurationMinutes;
+    private List<Waypoint> waypoints;
+    private List<RouteSegment> routes;
 
-    public static RouteResult createDirect(UUID fromId, UUID toId, int distanceMeters) {
+    public static RouteResult createDirect(
+            UUID fromId, String fromName,
+            UUID toId, String toName,
+            int distanceMeters) {
+
+        int durationMinutes = calculateDuration(distanceMeters);
+
+        List<Waypoint> waypoints = List.of(
+                new Waypoint(1, fromId, fromName),
+                new Waypoint(2, toId, toName)
+        );
+
+        List<RouteSegment> routes = List.of(
+                new RouteSegment(fromId, toId, distanceMeters, durationMinutes)
+        );
+
         return RouteResult.builder()
-                .routeType(RouteType.DIRECT.name()) // enum을 String으로
-                .segments(List.of(new RouteSegment(fromId, toId, distanceMeters)))
+                .startHubId(fromId)
+                .startHubName(fromName)
+                .endHubId(toId)
+                .endHubName(toName)
                 .totalDistanceMeters(distanceMeters)
+                .totalDurationMinutes(durationMinutes)
+                .waypoints(waypoints)
+                .routes(routes)
                 .build();
     }
 
     public static RouteResult createRelay(
-            UUID fromId, UUID relayId, UUID toId,
+            UUID fromId, String fromName,
+            UUID relayId, String relayName,
+            UUID toId, String toName,
             int firstLegDistance, int secondLegDistance) {
 
+        int firstLegDuration = calculateDuration(firstLegDistance);
+        int secondLegDuration = calculateDuration(secondLegDistance);
+
+        List<Waypoint> waypoints = List.of(
+                new Waypoint(1, fromId, fromName),
+                new Waypoint(2, relayId, relayName),
+                new Waypoint(3, toId, toName)
+        );
+
+        List<RouteSegment> routes = List.of(
+                new RouteSegment(fromId, relayId, firstLegDistance, firstLegDuration),
+                new RouteSegment(relayId, toId, secondLegDistance, secondLegDuration)
+        );
+
         return RouteResult.builder()
-                .routeType(RouteType.RELAY.name()) // enum을 String으로
-                .segments(List.of(
-                        new RouteSegment(fromId, relayId, firstLegDistance),
-                        new RouteSegment(relayId, toId, secondLegDistance)
-                ))
+                .startHubId(fromId)
+                .startHubName(fromName)
+                .endHubId(toId)
+                .endHubName(toName)
                 .totalDistanceMeters(firstLegDistance + secondLegDistance)
+                .totalDurationMinutes(firstLegDuration + secondLegDuration)
+                .waypoints(waypoints)
+                .routes(routes)
                 .build();
+    }
+    private static int calculateDuration(int distanceMeters) {
+        double distanceKm = distanceMeters / 1000.0;
+        double hours = distanceKm / 60.0;
+        return (int) Math.round(hours * 60);
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Waypoint implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private int sequence;
+        private UUID hubId;
+        private String hubName;
     }
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RouteSegment implements Serializable {
-
         private static final long serialVersionUID = 1L;
 
         private UUID departureHubId;
         private UUID arrivalHubId;
         private int distanceMeters;
-
-        @JsonIgnore
-        public double getDistanceKm() {
-            return distanceMeters / 1000.0;
-        }
+        private int durationMinutes;
     }
 }

@@ -31,7 +31,6 @@ public class HubRouteTest {
                 departureHubId,
                 arrivalHubId,
                 distance,
-                duration,
                 routeType
         );
 
@@ -39,7 +38,6 @@ public class HubRouteTest {
         assertThat(hubRoute.getDepartureHubId()).isEqualTo(departureHubId);
         assertThat(hubRoute.getArrivalHubId()).isEqualTo(arrivalHubId);
         assertThat(hubRoute.getDistanceMeters()).isEqualTo(distance);
-        assertThat(hubRoute.getDurationMinutes()).isEqualTo(duration);
         assertThat(hubRoute.getRouteType()).isEqualTo(routeType);
     }
 
@@ -59,7 +57,6 @@ public class HubRouteTest {
                 departureHubId,
                 arrivalHubId,
                 distance,
-                duration,
                 routeType
         ))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -81,7 +78,6 @@ public class HubRouteTest {
                 departureHubId,
                 arrivalHubId,
                 distance,
-                duration,
                 routeType
         ))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -102,7 +98,6 @@ public class HubRouteTest {
                 departureHubId,
                 arrivalHubId,
                 distance,
-                duration,
                 RouteType.DIRECT
         );
 

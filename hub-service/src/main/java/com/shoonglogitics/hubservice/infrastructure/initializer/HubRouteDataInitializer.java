@@ -63,15 +63,10 @@ public class HubRouteDataInitializer implements CommandLineRunner {
                             ? RouteType.DIRECT
                             : RouteType.RELAY;
 
-
-
-
-
                     HubRoute route = HubRoute.create(
                             HubId.of(from.getId()),
                             HubId.of(to.getId()),
                     distance,
-                    Duration.ofMinutes(60),
                     routeType
                     );
 
