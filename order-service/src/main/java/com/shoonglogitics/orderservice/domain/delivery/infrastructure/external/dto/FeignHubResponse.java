@@ -6,7 +6,7 @@ public record FeignHubResponse(
 	UUID departureHubId,
 	UUID arrivalHubId,
 	int sequence,
-	Long estimateDistance,
-	int estimatedDuration
+	Long distance,
+	int duration
 ) {
 }

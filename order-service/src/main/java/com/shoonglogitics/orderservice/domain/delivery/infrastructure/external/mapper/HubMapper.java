@@ -18,8 +18,8 @@ public final class HubMapper {
 				r.departureHubId(),
 				r.arrivalHubId(),
 				r.sequence(),
-				r.estimateDistance(),
-				r.estimatedDuration()
+				r.distance(),
+				r.duration()
 			))
 			.toList();
 	}
