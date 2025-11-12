@@ -1,3 +1,10 @@
 springdoc:
   group:
     name: company-service
+  swagger-ui:
+    enabled: false
+
+spring:
+  config:
+    activate:
+      on-profile: test, local, dev

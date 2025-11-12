@@ -30,7 +30,7 @@ spring:
             - id: company-service
               uri: lb://company-service
               predicates:
-                - Path=/api/v1/companies/**
+                - Path=/api/v1/companies/**,/api/v1/product-categories/**,/api/v1/stocks/**,/api/v1/products/**
 
             - id: company-swagger
               uri: lb://company-service
@@ -47,14 +47,12 @@ spring:
 
 springdoc:
   swagger-ui:
-    urls[0]:
-      name: company-service
-      url: /v3/api-docs/company-service
     path: /docs
-
-    urls[1]:
-      name: user-service
-      url: /v3/api-docs/user-service
+    urls:
+      - name: company-service
+        url: /v3/api-docs/company-service
+      - name: user-service
+        url: /v3/api-docs/user-service
 
 server:
   port: 8000
