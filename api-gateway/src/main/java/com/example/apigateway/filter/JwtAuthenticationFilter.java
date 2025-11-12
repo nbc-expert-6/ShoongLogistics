@@ -31,13 +31,12 @@ public class JwtAuthenticationFilter implements WebFilter {
 		"/api/v1/users/internal",
 		"/api/v1/ai-delivery/advice",
 		"/swagger-ui/**",
-		"/swagger-ui.html",
-		"/swagger-ui/index.html",
 		"/webjars/**",
 		"/swagger-resources",
 		"/v3/api-docs/**",
 		"/favicon.ico",
 		"/actuator",
+		"/.well-known/**",	//chrome에서 개발자 도구 관련 요청
 		"/company-service/**",
 		"/docs/**",
 		"/springdoc/**"
