@@ -46,7 +46,7 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 	}
 
 	@Override
-	public Page<Product> findProductsByCompanyId(UUID companyId, List<UUID> productCategoryIds, Pageable pageable) {
+	public Page<Product> searchProducts(UUID companyId, List<UUID> productCategoryIds, Pageable pageable) {
 		return jpaCompanyRepository.findProductsByCompanyId(companyId, productCategoryIds, pageable);
 	}
 

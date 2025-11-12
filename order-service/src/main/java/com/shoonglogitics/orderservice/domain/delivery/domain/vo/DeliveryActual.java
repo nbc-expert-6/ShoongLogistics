@@ -10,23 +10,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class DeliveryActual {
-    @Column(name = "actual_distance")
-    private Long distance;
-    @Column(name = "actual_duration")
-    private Integer duration;
+	@Column(name = "actual_distance")
+	private Long distance;
+	@Column(name = "actual_duration")
+	private Integer duration;
 
-    public static DeliveryActual of(Long distance, Integer duration) {
-        if (distance < 0) {
-            throw new IllegalArgumentException("거리는 0 이상이어야 합니다. 단위: 미터");
-        }
-        if (duration < 0) {
-            throw new IllegalArgumentException("소요시간은 0 이상이어야 합니다. 단위: 분");
-        }
+	public static DeliveryActual of(Long distance, Integer duration) {
+		if (distance < 0) {
+			throw new IllegalArgumentException("거리는 0 이상이어야 합니다. 단위: 미터");
+		}
+		if (duration < 0) {
+			throw new IllegalArgumentException("소요시간은 0 이상이어야 합니다. 단위: 분");
+		}
 
-        DeliveryActual actual = new DeliveryActual();
-        actual.distance = distance;
-        actual.duration = duration;
-        return actual;
-    }
+		DeliveryActual actual = new DeliveryActual();
+		actual.distance = distance;
+		actual.duration = duration;
+		return actual;
+	}
 
 }

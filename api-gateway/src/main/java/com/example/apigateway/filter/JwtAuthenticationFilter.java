@@ -29,7 +29,17 @@ public class JwtAuthenticationFilter implements WebFilter {
 		"/api/v1/users/login",
 		"/api/v1/users/signup",
 		"/api/v1/users/internal",
-		"/api/v1/ai-delivery/advice"
+		"/api/v1/ai-delivery/advice",
+		"/swagger-ui/**",
+		"/webjars/**",
+		"/swagger-resources",
+		"/v3/api-docs/**",
+		"/favicon.ico",
+		"/actuator",
+		"/.well-known/**",	//chrome에서 개발자 도구 관련 요청
+		"/company-service/**",
+		"/docs/**",
+		"/springdoc/**"
 	);
 
 	private static ServerHttpRequest createCustomRequest(ServerWebExchange exchange, String userId,
@@ -41,7 +51,18 @@ public class JwtAuthenticationFilter implements WebFilter {
 	}
 
 	private boolean isWhiteListPath(String requestPath) {
-		return whiteList.contains(requestPath) || requestPath.contains("internal");
+		return whiteList.stream().anyMatch(pattern -> {
+			// 정확히 일치
+			if (pattern.equals(requestPath)) {
+				return true;
+			}
+			if (pattern.endsWith("/**")) {
+				String prefix = pattern.substring(0, pattern.length() - 3);
+				return requestPath.startsWith(prefix);
+			}
+
+			return requestPath.contains("internal");
+		});
 	}
 
 	private String extractToken(String accessToken) {

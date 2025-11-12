@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
+import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.UserInfoFeignClientResponse;
-import com.shoonglogitics.companyservice.presentation.company.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,15 @@ public class UserClientAdapter implements UserClient {
 			.toList();
 	}
 
+	/**
+	 * @param userId 삭제할 업체 담당자 유저 ID
+	 * @return 업체 담당자 삭제 요청 성공 여부
+	 */
+	@Override
+	public boolean deleteCompanyManager(Long userId) {
+		return userFeignClient.deleteUser(userId, userId, UserRoleType.MASTER.getAuthority()).success();
+	}
+
 	private HubManagerInfo toHubManagerInfo(UserInfoFeignClientResponse response) {
 		return new HubManagerInfo(
 			response.userId(),
@@ -60,12 +70,4 @@ public class UserClientAdapter implements UserClient {
 		);
 	}
 
-	/**
-	 * @param userId 삭제할 업체 담당자 유저 ID
-	 * @return 업체 담당자 삭제 요청 성공 여부
-	 */
-	@Override
-	public boolean deleteCompanyManager(Long userId) {
-		return userFeignClient.deleteUser(userId).success();
-	}
 }

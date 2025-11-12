@@ -18,11 +18,14 @@ import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand
 import com.shoonglogitics.companyservice.application.command.GetProductCommand;
 import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
 import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
-import com.shoonglogitics.companyservice.application.dto.CompanyResult;
-import com.shoonglogitics.companyservice.application.dto.ProductResult;
+import com.shoonglogitics.companyservice.application.command.UpdateProductCommand;
+import com.shoonglogitics.companyservice.application.dto.company.CompanyResult;
+import com.shoonglogitics.companyservice.application.dto.company.ProductResult;
+import com.shoonglogitics.companyservice.application.service.ProductCategoryClient;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
+import com.shoonglogitics.companyservice.application.service.dto.ProductCategoryInfo;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
@@ -41,6 +44,7 @@ import lombok.RequiredArgsConstructor;
 public class CompanyService {
 	private final CompanyRepository companyRepository;
 	private final UserClient userClient;
+	private final ProductCategoryClient productCategoryClient;
 
 	@Transactional
 	public UUID createCompany(CreateCompanyCommand command) {
@@ -101,10 +105,15 @@ public class CompanyService {
 		validateCompanyManager(command.authUser(), command.companyId());
 		validateHubManager(command.authUser(), company.getHubId());
 
-		//TODO: productCategory api 완성되면 카테고리쪽에 api로 id존재 여부 확인 필요
+		ProductCategoryInfo categoryInfo = productCategoryClient.getProductCategoryInfo(command.productCategoryId(),
+			command.authUser().getUserId());
+		if (categoryInfo == null || !categoryInfo.productCategoryId().equals(command.productCategoryId())) {
+			throw new IllegalArgumentException("잘못된 카테고리 등록 요청입니다.");
+		}
 
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
-		Product product = company.createProduct(command.productCategoryId(), productInfo);
+		Product product = company.createProduct(command.authUser().getUserId(), command.productCategoryId(),
+			productInfo);
 		return product.getId();
 	}
 
@@ -115,6 +124,18 @@ public class CompanyService {
 		validateCompanyManager(command.authUser(), command.companyId());
 
 		company.deleteProduct(command.authUser().getUserId(), command.productId());
+	}
+
+	@Transactional
+	public UUID updateProduct(UpdateProductCommand command) {
+		Company company = getCompanyWithProductsByIdAndProductId(command.companyId(), command.productId());
+		validateCompanyManager(command.authUser(), command.companyId());
+		validateHubManager(command.authUser(), company.getHubId());
+
+		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
+		company.updateProduct(command.productId(), command.productCategoryId(), productInfo);
+
+		return command.productId();
 	}
 
 	private Company getCompanyById(UUID companyId) {
@@ -155,8 +176,7 @@ public class CompanyService {
 	}
 
 	public ProductResult getProduct(GetProductCommand command) {
-		Company company = companyRepository.findByIdAndProductIdWithProduct(command.productId(), command.productId())
-			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+		Company company = getCompanyWithProductsByIdAndProductId(command.companyId(), command.productId());
 		Product product = company.getProductById(command.productId())
 			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
@@ -164,7 +184,13 @@ public class CompanyService {
 	}
 
 	public Page<ProductResult> getProducts(GetProductsCommand command) {
-		Page<Product> products = companyRepository.findProductsByCompanyId(command.companyId(), command.categoryIds(), command.pageable());
+		Page<Product> products = companyRepository.searchProducts(command.companyId(), command.categoryIds(),
+			command.pageable());
 		return products.map(ProductResult::from);
+	}
+
+	private Company getCompanyWithProductsByIdAndProductId(UUID companyId, UUID productId) {
+		return companyRepository.findByIdAndProductIdWithProduct(companyId, productId)
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 	}
 }

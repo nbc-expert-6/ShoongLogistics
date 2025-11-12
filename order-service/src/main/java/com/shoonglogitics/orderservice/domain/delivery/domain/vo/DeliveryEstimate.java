@@ -10,22 +10,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class DeliveryEstimate {
-    @Column(name = "estimated_distance")
-    private Long distance;
-    @Column(name = "estimated_duration")
-    private Integer duration;
+	@Column(name = "estimated_distance")
+	private Long distance;
+	@Column(name = "estimated_duration")
+	private Integer duration;
 
-    public static DeliveryEstimate of(Long distance, Integer duration) {
-        if (distance < 0) {
-            throw new IllegalArgumentException("거리는 0 이상이어야 합니다. 단위: 미터");
-        }
-        if (duration < 0) {
-            throw new IllegalArgumentException("소요시간은 0 이상이어야 합니다. 단위: 분");
-        }
+	public static DeliveryEstimate of(Long distance, Integer duration) {
+		if (distance < 0) {
+			throw new IllegalArgumentException("거리는 0 이상이어야 합니다. 단위: 미터");
+		}
+		if (duration < 0) {
+			throw new IllegalArgumentException("소요시간은 0 이상이어야 합니다. 단위: 분");
+		}
 
-        DeliveryEstimate estimate = new DeliveryEstimate();
-        estimate.distance = distance;
-        estimate.duration = duration;
-        return estimate;
-    }
+		DeliveryEstimate estimate = new DeliveryEstimate();
+		estimate.distance = distance;
+		estimate.duration = duration;
+		return estimate;
+	}
 }

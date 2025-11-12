@@ -163,4 +163,32 @@ public class Delivery extends BaseAggregateRoot<Delivery> {
 
 		this.softDelete(userId);
 	}
+
+	public void startHubTransit() {
+		if (!this.status.canTransitionTo(DeliveryStatus.HUB_TRANSIT)) {
+			throw new IllegalStateException("허브 운송 대기 상태에서만 허브 운송처리 할 수 있습니다.");
+		}
+		this.status = DeliveryStatus.HUB_TRANSIT;
+	}
+
+	public void completeHubTransit() {
+		if (!this.status.canTransitionTo(DeliveryStatus.DESTINATION_HUB_ARRIVED)) {
+			throw new IllegalStateException("허브 운송 중인 상태에서만 목적지 허브 도착처리 할 수 있습니다.");
+		}
+		this.status = DeliveryStatus.DESTINATION_HUB_ARRIVED;
+	}
+
+	public void startDelivery() {
+		if (!this.status.canTransitionTo(DeliveryStatus.IN_DELIVERY)) {
+			throw new IllegalStateException("허브 운송이 완료된 상태에서만 배송 출발처리 할 수 있습니다.");
+		}
+		this.status = DeliveryStatus.IN_DELIVERY;
+	}
+
+	public void completeDelivery() {
+		if (!this.status.canTransitionTo(DeliveryStatus.DELIVERED)) {
+			throw new IllegalStateException("배송중인 상태에서만 배송 완료처리 할 수 있습니다.");
+		}
+		this.status = DeliveryStatus.DELIVERED;
+	}
 }

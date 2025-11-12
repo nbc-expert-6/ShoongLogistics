@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.userservice.UserServiceApplication;
@@ -37,7 +37,7 @@ import jakarta.persistence.EntityManager;
 
 @SpringBootTest(classes = UserServiceApplication.class)
 @Transactional
-@Profile(value = "test")
+@ActiveProfiles("test")
 class UserServiceTest {
 
 	@Autowired
@@ -335,10 +335,11 @@ class UserServiceTest {
 	}
 
 	@Test
-	@DisplayName("canUpdateUser / canDeleteUser 권한 체크 - MASTER 항상 true")
+	@DisplayName("canUpdateUser / canDeleteUser 권한 체크 - MASTER 본인 외 수정 불가")
 	void canUpdateAndDelete_master() {
-		assertThat(userService.canUpdateUser("MASTER", 1L, 2L)).isTrue();
-		assertThat(userService.canDeleteUser("MASTER", 1L, 2L)).isTrue();
+		assertThatThrownBy(() -> userService.canUpdateUser("MASTER", 1L, 2L))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("MASTER 권한 관리자도 본인만 수정 가능합니다.");
 	}
 
 	@Test

@@ -42,6 +42,9 @@ public abstract class BaseEntity implements BaseAuditEntity {
 
 	@Override
 	public void softDelete(Long userId) {
+		if (deletedAt != null) {
+			throw new IllegalArgumentException("이미 삭제된 데이터입니다.");
+		}
 		this.deletedAt = LocalDateTime.now();
 		this.deletedBy = userId;
 	}

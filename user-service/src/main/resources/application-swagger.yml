@@ -1,0 +1,10 @@
+springdoc:
+  group:
+    name: user-service
+  swagger-ui:
+    enabled: false
+
+spring:
+  config:
+    activate:
+      on-profile: test, local, dev

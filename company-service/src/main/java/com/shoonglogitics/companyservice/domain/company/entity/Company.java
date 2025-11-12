@@ -12,6 +12,8 @@ import org.hibernate.annotations.Where;
 import com.shoonglogitics.companyservice.domain.common.entity.BaseAggregateRoot;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.company.event.CompanyDeletedEvent;
+import com.shoonglogitics.companyservice.domain.company.event.ProductCreatedEvent;
+import com.shoonglogitics.companyservice.domain.company.event.ProductDeletedEvent;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
@@ -108,9 +110,11 @@ public class Company extends BaseAggregateRoot<Company> {
 		this.type = type;
 	}
 
-	public Product createProduct(UUID productCategoryId, ProductInfo productInfo) {
+	public Product createProduct(Long createdBy, UUID productCategoryId, ProductInfo productInfo) {
 		Product product = Product.create(productCategoryId, productInfo);
 		this.products.add(product);
+
+		this.registerEvent(new ProductCreatedEvent(createdBy, this.id));
 		return product;
 	}
 
@@ -119,12 +123,20 @@ public class Company extends BaseAggregateRoot<Company> {
 			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
 
 		product.softDelete(deletedBy);
+		this.registerEvent(new ProductDeletedEvent(deletedBy, productId));
 	}
 
 	public Optional<Product> getProductById(UUID productId) {
 		return products.stream()
 			.filter(p -> p.getId().equals(productId))
 			.findFirst();
+	}
+
+	public void updateProduct(UUID productId, UUID newCategoryId, ProductInfo newProductInfo) {
+		Product product = getProductById(productId)
+			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
+
+		product.update(newCategoryId, newProductInfo);
 	}
 
 public Double getLongitude() {

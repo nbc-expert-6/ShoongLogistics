@@ -17,6 +17,8 @@ import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -62,6 +64,7 @@ public class DeliveryRoute extends BaseEntity {
 	DeliveryActual actual;
 
 	@Column(name = "status", nullable = false)
+	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
 
 	public static DeliveryRoute create(
@@ -95,6 +98,20 @@ public class DeliveryRoute extends BaseEntity {
 		route.estimate = estimate;
 		route.status = DeliveryStatus.HUB_WAITING;
 		return route;
+	}
+
+	public void departure() {
+		if (this.status.canTransitionTo(DeliveryStatus.HUB_TRANSIT)) {
+			this.status = DeliveryStatus.HUB_TRANSIT;
+		}
+	}
+
+	public void arrive(Long distance, Integer duration) {
+		if (!this.status.canTransitionTo(DeliveryStatus.ARRIVAL_HUB_ARRIVED)) {
+			throw new IllegalStateException("허브 운송중인 상태에서만 도착 처리 할 수 있습니다.");
+		}
+		this.status = DeliveryStatus.ARRIVAL_HUB_ARRIVED;
+		this.actual = DeliveryActual.of(distance, duration);
 	}
 
 }

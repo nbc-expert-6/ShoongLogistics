@@ -151,4 +151,11 @@ public class Order extends BaseAggregateRoot<Order> {
 		this.softDelete(userId);
 
 	}
+
+	public void pay() {
+		changeStatus(OrderStatus.PAID);
+		this.paidAt = LocalDateTime.now();
+
+		changeStatus(OrderStatus.SHIPPED);
+	}
 }

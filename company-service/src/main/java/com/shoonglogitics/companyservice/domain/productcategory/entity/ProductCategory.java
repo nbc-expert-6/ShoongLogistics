@@ -26,6 +26,21 @@ public class ProductCategory extends BaseAggregateRoot<ProductCategory> {
 	@Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name", nullable = false, unique = true)
 	private String name;
+
+	public static ProductCategory create(String name) {
+		ProductCategory productCategory = new ProductCategory();
+		productCategory.name = name;
+		return productCategory;
+	}
+
+	public void update(String name) {
+		this.name = name;
+	}
+
+	public void delete(Long deletedBy) {
+
+		this.softDelete(deletedBy);
+	}
 }

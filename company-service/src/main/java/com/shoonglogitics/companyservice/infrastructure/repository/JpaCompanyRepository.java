@@ -42,12 +42,12 @@ public interface JpaCompanyRepository extends JpaRepository<Company, UUID> {
 
 	@Query("SELECT p FROM Company c " +
 		"JOIN c.products p " +
-		"WHERE c.id = :companyId " +
+		"WHERE (:companyId IS NULL OR c.id = :companyId) " +
 		"AND p.deletedAt IS NULL " +
 		"AND (:productCategoryIds IS NULL OR p.productCategoryId IN :productCategoryIds)")
 	Page<Product> findProductsByCompanyId(
 		@Param("companyId") UUID companyId,
-		@Param("categoryId") List<UUID> productCategoryIds,
+		@Param("productCategoryIds") List<UUID> productCategoryIds,
 		Pageable pageable
 	);
 }

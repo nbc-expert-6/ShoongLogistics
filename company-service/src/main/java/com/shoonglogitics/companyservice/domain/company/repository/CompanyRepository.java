@@ -22,5 +22,5 @@ public interface CompanyRepository {
 
 	Optional<Company> findByIdAndProductIdWithProduct(UUID companyId, UUID productId);
 
-	Page<Product> findProductsByCompanyId(UUID companyId, List<UUID> productCategoryId, Pageable pageable);
+	Page<Product> searchProducts(UUID companyId, List<UUID> productCategoryId, Pageable pageable);
 }
