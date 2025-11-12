@@ -106,7 +106,7 @@ public class DeliveryRoute extends BaseEntity {
 		}
 	}
 
-	public void arrive(Long distance, Integer duration) {
+	public void arrive(Integer distance, Integer duration) {
 		if (!this.status.canTransitionTo(DeliveryStatus.ARRIVAL_HUB_ARRIVED)) {
 			throw new IllegalStateException("허브 운송중인 상태에서만 도착 처리 할 수 있습니다.");
 		}

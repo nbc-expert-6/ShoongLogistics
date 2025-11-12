@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class DeliveryEstimate {
 	@Column(name = "estimated_distance")
-	private Long distance;
+	private Integer distance;
 	@Column(name = "estimated_duration")
 	private Integer duration;
 
-	public static DeliveryEstimate of(Long distance, Integer duration) {
+	public static DeliveryEstimate of(Integer distance, Integer duration) {
 		if (distance < 0) {
 			throw new IllegalArgumentException("거리는 0 이상이어야 합니다. 단위: 미터");
 		}

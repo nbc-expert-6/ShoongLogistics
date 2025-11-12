@@ -6,14 +6,14 @@ public record RoutesInfo(
 	UUID departureHubId,
 	UUID arrivalHubId,
 	int sequence,
-	Long estimateDistance,
+	int estimateDistance,
 	int estimatedDuration
 ) {
 	public static RoutesInfo from(
 		UUID departureHubId,
 		UUID arrivalHubId,
 		int sequence,
-		Long estimateDistance,
+		int estimateDistance,
 		int estimatedDuration
 	) {
 		return new RoutesInfo(

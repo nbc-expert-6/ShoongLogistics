@@ -8,7 +8,7 @@ public record ProcessHubShippingCommand(
 	UUID deliveryId,
 	UUID deliveryRouteId,
 	Boolean isDeparture,
-	Long distance,
+	Integer distance,
 	Integer duration,
 	AuthUser authUser
 ) {
@@ -16,7 +16,7 @@ public record ProcessHubShippingCommand(
 		UUID deliveryId,
 		UUID deliveryRouteId,
 		Boolean isDeparture,
-		Long distance,
+		Integer distance,
 		Integer duration,
 		AuthUser authUser
 	) {

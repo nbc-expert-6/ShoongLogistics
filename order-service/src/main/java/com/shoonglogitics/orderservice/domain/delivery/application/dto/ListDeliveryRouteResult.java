@@ -14,9 +14,9 @@ public record ListDeliveryRouteResult(
 	UUID departureHubId,
 	UUID arrivalHubId,
 	Integer sequence,
-	Long estimatedDistance,
+	Integer estimatedDistance,
 	Integer estimatedDuration,
-	Long actualDistance,
+	Integer actualDistance,
 	Integer actualDuration,
 	DeliveryStatus status
 ) {

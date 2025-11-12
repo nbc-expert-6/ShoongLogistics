@@ -29,7 +29,7 @@ public class HubClientImpl implements HubClient {
 		ResponseEntity<ApiResponse<FeignRouteResponse>> response = hubFeignClient.getShippingRoutes(
 			ListShippingRoutesRequest.from(departureHubId, destinationHubId), userId, role
 		);
-		return HubMapper.toCreateDeliveryRoutesInfo(response.getBody().data().segments());
+		return HubMapper.toCreateDeliveryRoutesInfo(response.getBody().data().routes());
 		// return HubMapper.toCreateDeliveryRoutesInfoDummy();
 	}
 }
