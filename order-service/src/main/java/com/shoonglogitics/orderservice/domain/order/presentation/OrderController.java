@@ -119,6 +119,7 @@ public class OrderController {
 	}
 
 	@PostMapping("/{orderId}/payment")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
 	@Operation(summary = "결제 처리 API")
 	public ResponseEntity<ApiResponse<UpdateOrderResponse>> createPayment(
 		@PathVariable("orderId") UUID orderId,

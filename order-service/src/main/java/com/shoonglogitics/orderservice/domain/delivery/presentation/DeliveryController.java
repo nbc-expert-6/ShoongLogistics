@@ -124,6 +124,7 @@ public class DeliveryController {
 
 	//허브 출발 & 도착 처리
 	@PatchMapping("/{deliveryId}/delivery-routes/{deliveryRouteId}/shipping")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER')")
 	@Operation(summary = "허브 출발, 도착 처리 API")
 	public ResponseEntity<ApiResponse<ProcessHubShippingResponse>> processHubShipping(
 		@AuthenticationPrincipal AuthUser authUser,
@@ -147,6 +148,7 @@ public class DeliveryController {
 
 	//배송 출발 & 도착 처리
 	@PostMapping("/{deliveryId}/deliver")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER')")
 	@Operation(summary = "배송 출발, 도착 처리 API")
 	public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> processDelivery(
 		@AuthenticationPrincipal AuthUser authUser,
