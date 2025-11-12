@@ -40,7 +40,7 @@ public class ProductCategory extends BaseAggregateRoot<ProductCategory> {
 	}
 
 	public void delete(Long deletedBy) {
-		//TODO: 삭제 정책 논의 필요(상품이 가지고있는 기존 카테고리를 어떻게 처리할지)
+
 		this.softDelete(deletedBy);
 	}
 }
