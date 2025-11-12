@@ -14,7 +14,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.OrderStatus;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
 
 class OrderTest {
 
@@ -27,7 +27,7 @@ class OrderTest {
 		Address address = Address.of("서울시", "강남구 123", "12345",
 			null); // GeoLocation 테스트용 null 가능
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
-		OrderItem orderItem = OrderItem.create(productInfo, Quentity.of(2));
+		OrderItem orderItem = OrderItem.create(productInfo, Quantity.of(2));
 		Money totalPrice = Money.of(new BigDecimal("2000"));
 
 		// When
@@ -50,7 +50,7 @@ class OrderTest {
 		CompanyInfo supplier = CompanyInfo.of(companyId, "SameCo");
 		Address address = Address.of("서울시", "강남구 123", "12345", null);
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
-		OrderItem orderItem = OrderItem.create(productInfo, Quentity.of(1));
+		OrderItem orderItem = OrderItem.create(productInfo, Quantity.of(1));
 		Money totalPrice = Money.of(new BigDecimal("1000"));
 
 		// When & Then
@@ -68,7 +68,7 @@ class OrderTest {
 		CompanyInfo supplier = CompanyInfo.of(UUID.randomUUID(), "SupplierCo");
 		Address address = Address.of("서울시", "강남구 123", "12345", null);
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
-		OrderItem orderItem = OrderItem.create(productInfo, Quentity.of(1));
+		OrderItem orderItem = OrderItem.create(productInfo, Quantity.of(1));
 		Money totalPrice = Money.of(new BigDecimal("1000"));
 		Order order = Order.create(1L, receiver, supplier, "request", "deliveryRequest",
 			totalPrice, address, List.of(orderItem));
@@ -88,7 +88,7 @@ class OrderTest {
 		CompanyInfo supplier = CompanyInfo.of(UUID.randomUUID(), "SupplierCo");
 		Address address = Address.of("서울시", "강남구 123", "12345", null);
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
-		OrderItem orderItem = OrderItem.create(productInfo, Quentity.of(1));
+		OrderItem orderItem = OrderItem.create(productInfo, Quantity.of(1));
 		Money totalPrice = Money.of(new BigDecimal("1000"));
 		Order order = Order.create(1L, receiver, supplier, "request", "deliveryRequest",
 			totalPrice, address, List.of(orderItem));
@@ -110,7 +110,7 @@ class OrderTest {
 		CompanyInfo supplier = CompanyInfo.of(UUID.randomUUID(), "SupplierCo");
 		Address address = Address.of("서울시", "강남구 123", "12345", null);
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
-		OrderItem orderItem = OrderItem.create(productInfo, Quentity.of(1));
+		OrderItem orderItem = OrderItem.create(productInfo, Quantity.of(1));
 		Money totalPrice = Money.of(new BigDecimal("1000"));
 		Order order = Order.create(1L, receiver, supplier, "request", "deliveryRequest",
 			totalPrice, address, List.of(orderItem));

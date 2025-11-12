@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
 
 class OrderItemTest {
 
@@ -21,14 +21,14 @@ class OrderItemTest {
 	void createOrderItem_withValidQuentity_shouldBeCreated(int quantity) {
 		// Given
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
-		Quentity quentity = Quentity.of(quantity);
+		Quantity quentity = Quantity.of(quantity);
 
 		// When
 		OrderItem orderItem = OrderItem.create(productInfo, quentity);
 
 		// Then
 		assertThat(orderItem).isNotNull();
-		assertThat(orderItem.getQuentity().getValue()).isEqualTo(quantity);
+		assertThat(orderItem.getQuantity().getValue()).isEqualTo(quantity);
 	}
 
 	@ParameterizedTest
@@ -39,7 +39,7 @@ class OrderItemTest {
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000")));
 
 		// When & Then
-		assertThatThrownBy(() -> OrderItem.create(productInfo, Quentity.of(quantity)))
+		assertThatThrownBy(() -> OrderItem.create(productInfo, Quantity.of(quantity)))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("주문 수량은 최소 1개 이상이어야 합니다");
 	}
@@ -51,8 +51,8 @@ class OrderItemTest {
 		// Given
 		BigDecimal price = new BigDecimal(priceStr);
 		ProductInfo productInfo = ProductInfo.of(UUID.randomUUID(), Money.of(price));
-		Quentity quentity = Quentity.of(3);
-		OrderItem orderItem = OrderItem.create(productInfo, quentity);
+		Quantity quantity = Quantity.of(3);
+		OrderItem orderItem = OrderItem.create(productInfo, quantity);
 
 		// When
 		Money totalPrice = orderItem.calculateTotalPrice();

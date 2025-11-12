@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
 
 class OrderDomainServiceTest {
 
@@ -23,9 +23,9 @@ class OrderDomainServiceTest {
 	void validateOrder_withValidItems_shouldPass() {
 		// Given
 		OrderItem item1 = OrderItem.create(ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000"))),
-			Quentity.of(1));
+			Quantity.of(1));
 		OrderItem item2 = OrderItem.create(ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("2000"))),
-			Quentity.of(1));
+			Quantity.of(1));
 		Money total = Money.of(new BigDecimal("3000"));
 		List<OrderItem> items = List.of(item1, item2);
 
@@ -52,9 +52,9 @@ class OrderDomainServiceTest {
 	void validateOrder_withMismatchedTotal_shouldThrowException() {
 		// Given
 		OrderItem item1 = OrderItem.create(ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000"))),
-			Quentity.of(1));
+			Quantity.of(1));
 		OrderItem item2 = OrderItem.create(ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("2000"))),
-			Quentity.of(1));
+			Quantity.of(1));
 		Money total = Money.of(new BigDecimal("5000")); // 틀린 금액
 		List<OrderItem> items = List.of(item1, item2);
 

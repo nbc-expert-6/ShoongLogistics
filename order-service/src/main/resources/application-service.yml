@@ -13,6 +13,8 @@ hub-service:
   url: http://localhost:8083
 delivery-service:
   url: http://localhost:8080
+notification-service:
+  url: http://localhost:8084
 ---
 
 spring:
@@ -30,6 +32,8 @@ hub-service:
   url: http://dev-hub-service:8083
 delivery-service:
   url: http://dev-delivery-service:8080
+notification-service:
+  url: http://dev-notification-service:8084
 ---
 
 spring:
@@ -47,3 +51,5 @@ hub-service:
   url: http://prod-hub-service:8083
 delivery-service:
   url: http://prod-delivery-service:8080
+notification-service:
+  url: http://prod-notification-service:8084

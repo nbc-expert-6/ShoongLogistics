@@ -24,7 +24,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
-import com.shoonglogitics.orderservice.domain.order.domain.vo.Quentity;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.repository.audit.TestAuditorConfig;
 import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
 import com.shoonglogitics.orderservice.global.common.vo.PageSizeType;
@@ -169,7 +169,7 @@ class OrderRepositoryAdapterTest {
 	private OrderItem createOrderItem() {
 		return OrderItem.create(
 			ProductInfo.of(UUID.randomUUID(), Money.of(new BigDecimal("1000"))),
-			Quentity.of(1)
+			Quantity.of(1)
 		);
 	}
 
