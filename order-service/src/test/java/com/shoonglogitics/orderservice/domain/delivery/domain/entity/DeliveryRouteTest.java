@@ -22,7 +22,7 @@ class DeliveryRouteTest {
 		HubInfo departureHub = HubInfo.of(UUID.randomUUID());
 		HubInfo arrivalHub = HubInfo.of(UUID.randomUUID());
 		int sequence = 1;
-		DeliveryEstimate estimate = DeliveryEstimate.of(1000L, 30);
+		DeliveryEstimate estimate = DeliveryEstimate.of(1000, 30);
 
 		// When
 		DeliveryRoute route = DeliveryRoute.create(shipper, departureHub, arrivalHub, sequence, estimate);
@@ -42,7 +42,7 @@ class DeliveryRouteTest {
 		// Given
 		ShipperInfo shipper = ShipperInfo.of(UUID.randomUUID(), "홍길동", "010-1234-5678", "hong123");
 		HubInfo hub = HubInfo.of(UUID.randomUUID());
-		DeliveryEstimate estimate = DeliveryEstimate.of(1000L, 30);
+		DeliveryEstimate estimate = DeliveryEstimate.of(1000, 30);
 
 		// When&Then
 		assertThatThrownBy(() -> DeliveryRoute.create(null, hub, hub, 1, estimate))
