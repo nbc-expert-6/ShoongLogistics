@@ -58,8 +58,9 @@ public class HubService {
 	public void deleteHub(UUID hubId, Long userId) {
 		Hub hub = hubRepository.findById(hubId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 허브 입니다."));
 
-		//todo : 허브가 삭제되면 허브 라우트도 삭제되어야 한다. (등록되어있는 허브 찾아서 해당 라우트 삭제)
 		hub.deactivate(userId);
+
+		hubRepository.save(hub);
 
 	}
 }
