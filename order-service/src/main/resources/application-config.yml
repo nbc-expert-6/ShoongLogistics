@@ -9,3 +9,23 @@ spring:
   cloud:
     config:
       fail-fast: false
+
+swagger:
+  server:
+    url: http://localhost:8000
+---
+spring:
+  application:
+    name: order-service
+  config:
+    import:
+      optional:configserver:http://configure-service:8888
+    activate:
+      on-profile: docker
+  cloud:
+    config:
+      fail-fast: false
+
+swagger:
+  server:
+    url: http://api-gateway:8000

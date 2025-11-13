@@ -4,3 +4,15 @@ spring:
   sleuth:
     sampler:
       probability: 1.0 # sleuth가 요청을 얼마나 자주 추적할것인지, prod일때는 0.1~0.3으로 낮추기
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  zipkin:
+    base-url: http://zipkin:9411
+  sleuth:
+    sampler:
+      probability: 1.0 # sleuth가 요청을 얼마나 자주 추적할것인지, prod일때는 0.1~0.3으로 낮추기

@@ -9,3 +9,19 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: false
+
+  client:
+    service-url:
+      defaultZone: http://service-discovery:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true

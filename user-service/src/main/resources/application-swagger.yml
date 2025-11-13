@@ -7,4 +7,4 @@ springdoc:
 spring:
   config:
     activate:
-      on-profile: test, local, dev
+      on-profile: test, local, dev, docker
