@@ -25,11 +25,53 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    // eureka client
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // spring config
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // PostgresSQL
+    runtimeOnly 'org.postgresql:postgresql'
+    //zipkin
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
+    // Hibernate Spatial
+    implementation 'org.hibernate.orm:hibernate-spatial:6.6.4.Final'
+    // Java Topology Suite
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Feign Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    //redisson
+    implementation 'org.redisson:redisson:3.52.0'
+    //test-redis
+    testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
+    //prometheus
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+//spring boot 3.5.x -> spring cloud 2025.0.x 호환
+ext {
+    set('springCloudVersion', "2025.0.0")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {

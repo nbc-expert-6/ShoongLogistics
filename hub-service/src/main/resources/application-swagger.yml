@@ -1,0 +1,10 @@
+springdoc:
+  group:
+    name: hub-service
+  swagger-ui:
+    enabled: true
+
+spring:
+  config:
+    activate:
+      on-profile: test, local, dev, docker

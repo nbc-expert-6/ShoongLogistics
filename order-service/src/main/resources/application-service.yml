@@ -1,0 +1,74 @@
+spring:
+  config:
+    activate:
+      on-profile: test, local
+
+user-service:
+  url: http://localhost:8081
+order-service:
+  url: http://localhost:8080
+company-service:
+  url: http://localhost:8082
+hub-service:
+  url: http://localhost:19092
+delivery-service:
+  url: http://localhost:8080
+notification-service:
+  url: http://localhost:8084
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+user-service:
+  url: http://dev-user-service:8081
+order-service:
+  url: http://dev-order-service:8080
+company-service:
+  url: http://dev-company-service:8082
+hub-service:
+  url: http://dev-hub-service:19092
+delivery-service:
+  url: http://dev-delivery-service:8080
+notification-service:
+  url: http://dev-notification-service:8084
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+user-service:
+  url: http://prod-user-service:8081
+order-service:
+  url: http://prod-order-service:8080
+company-service:
+  url: http://prod-company-service:8082
+hub-service:
+  url: http://prod-hub-service:19092
+delivery-service:
+  url: http://prod-delivery-service:8080
+notification-service:
+  url: http://prod-notification-service:8084
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+user-service:
+  url: http://user-service:8081
+order-service:
+  url: http://order-service:8080
+company-service:
+  url: http://company-service:8082
+hub-service:
+  url: http://hub-service:19092
+delivery-service:
+  url: http://order-service:8080
+notification-service:
+  url: http://notification-service:8089

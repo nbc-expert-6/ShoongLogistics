@@ -1,0 +1,271 @@
+package com.shoonglogitics.companyservice.presentation.company;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.shoonglogitics.companyservice.application.CompanyService;
+import com.shoonglogitics.companyservice.application.command.CreateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.CreateProductCommand;
+import com.shoonglogitics.companyservice.application.command.DeleteCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.DeleteProductCommand;
+import com.shoonglogitics.companyservice.application.command.GetCompaniesCommand;
+import com.shoonglogitics.companyservice.application.command.GetProductCommand;
+import com.shoonglogitics.companyservice.application.command.GetProductsCommand;
+import com.shoonglogitics.companyservice.application.command.UpdateCompanyCommand;
+import com.shoonglogitics.companyservice.application.command.UpdateProductCommand;
+import com.shoonglogitics.companyservice.application.dto.company.CompanyResult;
+import com.shoonglogitics.companyservice.application.dto.company.ProductResult;
+import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
+import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.PageRequest;
+import com.shoonglogitics.companyservice.presentation.common.dto.PageResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.CreateCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.CreateProductResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.FindCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.FindProductResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.SearchCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.SearchProductResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateCompanyResponse;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateProductRequest;
+import com.shoonglogitics.companyservice.presentation.company.dto.UpdateProductResponse;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/v1/companies")
+@RequiredArgsConstructor
+@Validated
+public class CompanyController {
+	private final CompanyService companyService;
+
+	@PostMapping
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	public ResponseEntity<ApiResponse<CreateCompanyResponse>> createCompany(
+		@Valid @RequestBody CreateCompanyRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		CreateCompanyCommand command = CreateCompanyCommand.builder()
+			.authUser(authUser)
+			.hubId(request.hubId())
+			.name(request.name())
+			.address(request.address())
+			.addressDetail(request.addressDetail())
+			.zipCode(request.zipCode())
+			.latitude(request.latitude())
+			.longitude(request.longitude())
+			.type(request.type())
+			.build();
+
+		UUID companyId = companyService.createCompany(command);
+		CreateCompanyResponse response = new CreateCompanyResponse(
+			companyId,
+			"업체가 정상적으로 생성 되었습니다."
+		);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@DeleteMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	public ResponseEntity<ApiResponse<String>> deleteCompany(
+		@PathVariable UUID companyId,
+		@RequestParam UUID hubId,
+		@AuthenticationPrincipal AuthUser authUser) {
+		DeleteCompanyCommand command = new DeleteCompanyCommand(authUser, companyId, hubId);
+
+		companyService.deleteCompany(command);
+
+		String responseMessage = "업체가 정상적으로 삭제 되었습니다.";
+
+		return ResponseEntity.ok().body(ApiResponse.success(responseMessage));
+	}
+
+	@GetMapping
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<PageResponse<SearchCompanyResponse>>> getCompanies(
+		@RequestParam(required = false) UUID hubId,
+		@RequestParam(required = false) String name,
+		@RequestParam(required = false) CompanyType type,
+		@ModelAttribute PageRequest pageRequest) {
+
+		GetCompaniesCommand command = GetCompaniesCommand.builder()
+			.hubId(hubId)
+			.name(name)
+			.type(type)
+			.pageRequest(pageRequest)
+			.build();
+		Page<CompanyResult> results = companyService.getCompanies(command);
+
+		Page<SearchCompanyResponse> responses = results.map(SearchCompanyResponse::from);
+		return ResponseEntity.ok(ApiResponse.success(PageResponse.of(responses)));
+	}
+
+	@GetMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<FindCompanyResponse>> getCompany(
+		@PathVariable UUID companyId) {
+
+		CompanyResult result = companyService.getCompany(companyId);
+		FindCompanyResponse response = FindCompanyResponse.from(result);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@PutMapping("/{companyId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<UpdateCompanyResponse>> updateCompany(
+		@PathVariable UUID companyId,
+		@Valid @RequestBody UpdateCompanyRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		UpdateCompanyCommand command = UpdateCompanyCommand.builder()
+			.companyId(companyId)
+			.authUser(authUser)
+			.name(request.name())
+			.address(request.address())
+			.addressDetail(request.addressDetail())
+			.zipCode(request.zipCode())
+			.latitude(request.latitude())
+			.longitude(request.longitude())
+			.type(request.type())
+			.build();
+
+		UUID id = companyService.updateCompany(command);
+		UpdateCompanyResponse response = new UpdateCompanyResponse(
+			id,
+			"업체가 정상적으로 수정 되었습니다."
+		);
+
+		return ResponseEntity.ok().body(ApiResponse.success(response));
+	}
+
+	@PostMapping("/{companyId}/products")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<CreateProductResponse>> createProduct(
+		@PathVariable UUID companyId,
+		@Valid @RequestBody CreateProductRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		CreateProductCommand command = CreateProductCommand.builder()
+			.authUser(authUser)
+			.companyId(companyId)
+			.productCategoryId(request.productCategoryId())
+			.name(request.name())
+			.price(request.price())
+			.description(request.description())
+			.build();
+
+		UUID productId = companyService.createProduct(command);
+		CreateProductResponse response = new CreateProductResponse(
+			productId,
+			"업체에 상품이 정상적으로 생성 되었습니다."
+		);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@DeleteMapping("/{companyId}/products/{productId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<String>> deleteProduct(
+		@PathVariable UUID companyId,
+		@PathVariable UUID productId,
+		@AuthenticationPrincipal AuthUser authUser) {
+		DeleteProductCommand command = new DeleteProductCommand(authUser, companyId, productId);
+
+		companyService.deleteProduct(command);
+
+		String responseMessage = "상품이 정상적으로 삭제 되었습니다.";
+
+		return ResponseEntity.ok().body(ApiResponse.success(responseMessage));
+	}
+
+	@GetMapping("/{companyId}/products/{productId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<FindProductResponse>> getProduct(
+		@PathVariable UUID companyId,
+		@PathVariable UUID productId) {
+
+		ProductResult result = companyService.getProduct(new GetProductCommand(companyId, productId));
+		FindProductResponse response = FindProductResponse.from(result);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@GetMapping("/{companyId}/products")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<PageResponse<SearchProductResponse>>> getProducts(
+		@PathVariable UUID companyId,
+		@RequestParam(required = false) List<UUID> categoryIds,
+		@ModelAttribute PageRequest pageRequest
+	) {
+		Page<ProductResult> results = companyService.getProducts(
+			new GetProductsCommand(companyId, categoryIds, pageRequest.toPageable()));
+
+		PageResponse<SearchProductResponse> response = PageResponse.of(
+			results.map(SearchProductResponse::from)
+		);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@GetMapping("/products")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'SHIPPER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<PageResponse<SearchProductResponse>>> searchProducts(
+		@RequestParam(required = false) List<UUID> categoryIds,
+		@ModelAttribute PageRequest pageRequest
+	) {
+		Page<ProductResult> results = companyService.getProducts(
+			new GetProductsCommand(null, categoryIds, pageRequest.toPageable()));
+
+		PageResponse<SearchProductResponse> response = PageResponse.of(
+			results.map(SearchProductResponse::from)
+		);
+
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@PutMapping("/{companyId}/products/{productId}")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER', 'COMPANY_MANAGER')")
+	public ResponseEntity<ApiResponse<UpdateProductResponse>> updateCompany(
+		@PathVariable UUID companyId,
+		@PathVariable UUID productId,
+		@Valid @RequestBody UpdateProductRequest request,
+		@AuthenticationPrincipal AuthUser authUser) {
+		UpdateProductCommand command = UpdateProductCommand.builder()
+			.authUser(authUser)
+			.companyId(companyId)
+			.productId(productId)
+			.productCategoryId(request.productCategoryId())
+			.name(request.name())
+			.price(request.price())
+			.description(request.description())
+			.build();
+
+		UUID id = companyService.updateProduct(command);
+
+		UpdateProductResponse response = new UpdateProductResponse(id, "상품이 정상적으로 수정 되었습니다.");
+
+		return ResponseEntity.ok().body(ApiResponse.success(response));
+	}
+}

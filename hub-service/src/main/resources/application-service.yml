@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: test, local
+
+user-service:
+  url: http://localhost:8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+user-service:
+  url: http://user-service:8081

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: hub-service
+  config:
+    import:
+      optional:configserver:http://localhost:8888
+    activate:
+      on-profile: test, local, dev
+  cloud:
+    config:
+      fail-fast: false
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import:
+      optional:configserver:http://configure-service:8888

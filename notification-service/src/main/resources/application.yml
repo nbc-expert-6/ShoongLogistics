@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: notification-service
+
+  profiles:
+    include:
+      - openai
+      - slack
+      - datasource
+    active: test
+
+server:
+  port: 8089

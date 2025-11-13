@@ -1,0 +1,31 @@
+package com.shoonglogitics.hubservice.presentation.dto.request;
+
+import com.shoonglogitics.hubservice.domain.vo.HubType;
+
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record CreateHubRequest(
+
+	@NotBlank(message = "허브 이름은 필수 입니다.")
+	String name,
+
+	@NotBlank(message = "주소는 필수 입니다.")
+	String address,
+
+	@NotNull(message = "위도는 필수입니다.")
+	@DecimalMin(value = "-90.0", message = "위도는 -90 이상이어야 합니다.")
+	@DecimalMax(value = "90.0", message = "위도는 90 이하여야 합니다.")
+	Double latitude,
+
+	@NotNull(message = "경도는 필수입니다.")
+	@DecimalMin(value = "-180.0", message = "경도는 -180 이상이어야 합니다.")
+	@DecimalMax(value = "180.0", message = "경도는 180 이하여야 합니다.")
+	Double longitude,
+
+	@NotNull(message = "허브 타입은 필수입니다.")
+	HubType hubType
+) {
+}

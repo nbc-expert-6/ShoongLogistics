@@ -1,0 +1,222 @@
+package com.shoonglogitics.orderservice.domain.order.application;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
+import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
+import com.shoonglogitics.orderservice.domain.order.application.command.DeleteOrderCommand;
+import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
+import com.shoonglogitics.orderservice.domain.order.application.dto.OrderItemInfo;
+import com.shoonglogitics.orderservice.domain.order.application.dto.StockInfo;
+import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
+import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
+import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
+import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
+import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
+import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCancledEvent;
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
+import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
+import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
+import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
+import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j(topic = "order-service")
+@RequiredArgsConstructor
+public class OrderService {
+	private final OrderRepository orderRepository;
+	private final OrderDomainService orderDomainService;
+	private final ApplicationEventPublisher publisher;
+
+	private final UserClient userClient;
+	private final CompanyClient companyClient;
+
+	@Transactional
+	public UUID createOrder(CreateOrderCommand command) {
+		//주문 상품 정보 받아오기
+		List<OrderItemInfo> orderItemInfos = getOrderItemInfos(command, command.userId(), command.role());
+
+		//주문상품 엔티티 생성
+		List<OrderItem> orderItems = createItems(command.orderItems(), orderItemInfos);
+
+		//총 주문 금액 vo 생성
+		Money totalPrice = Money.of(command.totalPrice());
+
+		//주문 가능한지 검증(상품이 1개 이상이고, 상품총액과 총 결제금액의 일치여부)
+		validateOrder(orderItems, totalPrice);
+
+		//주소 vo 생성
+		Address address = Address.of(
+			command.address(), command.addressDetail(), command.zipCode(),
+			GeoLocation.of(command.latitude(), command.longitude()));
+
+		//수령업체, 공급업체 정보 vo 생성
+		CompanyInfo receiverInfo = CompanyInfo.of(command.receiverCompanyId(), command.receiverCompanyName());
+		CompanyInfo supplierInfo = CompanyInfo.of(command.supplierCompanyId(), command.supplierCompanyName());
+
+		//정보 조합하여 order 엔티티 생성
+		Order order = Order.create(
+			command.userId(),
+			receiverInfo,
+			supplierInfo,
+			command.request(),
+			command.deliveryRequest(),
+			totalPrice,
+			address,
+			orderItems
+		);
+
+		//응답
+		Order createdOrder = orderRepository.save(order);
+
+		return createdOrder.getId();
+	}
+
+	//orderid로 상세조회
+	public FindOrderResult getOrder(UUID orderId) {
+		Order order = getOrderById(orderId);
+		return FindOrderResult.from(order);
+	}
+
+	//목록조회
+	public Page<ListOrderResult> listOrders(ListOrderQuery query) {
+		Page<Order> orders = getOrdersByRole(query.role(), query.userId(), query.pageRequest());
+		return orders.map(ListOrderResult::from);
+	}
+
+	private Page<Order> getOrdersByRole(UserRoleType role, Long userId, PageRequest pageRequest) {
+		if (role == UserRoleType.MASTER) {
+			return orderRepository.getOrdersByMaster(pageRequest);
+		} else {
+			return orderRepository.getOrdersByUserId(userId, pageRequest);
+		}
+	}
+
+	//주문 수정(요청사항, 배송요청사항)
+	@Transactional
+	public UUID updateOrder(UpdateOrderCommand command) {
+		Order order = getOrderById(command.orderId());
+		order.update(command.request(), command.deliveryRequest());
+		//배송 수정 이벤트 발행
+		publisher.publishEvent(new OrderUpdatedEvent(order.getId(), order.getDeliveryRequest()));
+		return order.getId();
+	}
+
+	//주문 삭제
+	@Transactional
+	public UUID cancleOrder(DeleteOrderCommand command) {
+		Order order = getOrderById(command.orderId());
+		order.delete(
+			command.userId()
+		);
+
+		//배송 삭제 이벤트 발행
+		publisher.publishEvent(new OrderCancledEvent(order.getId()));
+		return order.getId();
+	}
+
+	//결제 처리
+	//상품 재고 걈소 요청
+	@Transactional
+	public UUID pay(UUID orderId, AuthUser authUser) {
+		Order order = getOrderById(orderId);
+		order.pay();
+
+		//재고 차감 요청
+		decreaseStock(order.getOrderItems(), authUser);
+		return order.getId();
+	}
+
+	/*
+	내부용 유틸 함수들
+	 */
+
+	//orderId로 주문 조회
+	public Order getOrderById(UUID orderId) {
+		return orderRepository.findById(orderId).orElseThrow(
+			() -> new IllegalArgumentException("주문 정보를 찾을 수 없습니다.")
+		);
+	}
+
+	//문제가 없다면 엔티티로 만들어서 반환, 문제가 생기면 예외 발생
+	private List<OrderItem> createItems(
+		List<CreateOrderItemCommand> createOrderItemCommands,
+		List<OrderItemInfo> orderItemInfos) {
+
+		if (createOrderItemCommands == null || createOrderItemCommands.isEmpty()) {
+			throw new IllegalArgumentException("주문 항목은 최소 1개 이상이어야 합니다.");
+		}
+
+		//가격정보 등록
+		Map<UUID, OrderItemInfo> infoMap = orderItemInfos.stream()
+			.collect(Collectors.toMap(OrderItemInfo::productId, info -> info));
+
+		return createOrderItemCommands.stream()
+			.map(cmd -> {
+				OrderItemInfo info = infoMap.get(cmd.productId());
+				if (info == null) {
+					throw new IllegalArgumentException("상품 정보가 존재하지 않습니다: " + cmd.productId());
+				}
+				return OrderItem.create(
+					ProductInfo.of(cmd.productId(), Money.of(info.price())),
+					Quantity.of(cmd.quantity())
+				);
+			})
+			.toList();
+	}
+
+	private List<OrderItemInfo> getOrderItemInfos(CreateOrderCommand command, Long userId,
+		UserRoleType role) {
+		return command.orderItems().stream()
+			.map(item -> companyClient.getOrderItemInfos(command.supplierCompanyId(), item.productId(), userId, role))
+			.toList();
+
+	}
+
+	private void validateOrder(List<OrderItem> orderItems, Money totalPrice) {
+		orderDomainService.validateOrder(orderItems, totalPrice);
+	}
+
+	private void decreaseStock(List<OrderItem> orderItems, AuthUser authUser) {
+		//상품 id로 재고 정보 및 주문상품에 접근하기 위해 Map에 저장
+		Map<UUID, StockInfo> stockInfoMap = orderItems.stream()
+			.map(item -> companyClient.getStockInfo(item.getProductInfo().getProductId(),
+				authUser.getUserId(), authUser.getRole()))
+			.collect(Collectors.toMap(StockInfo::productId, info -> info));
+
+		//재고 감소
+		orderItems.forEach(item -> {
+			StockInfo info = stockInfoMap.get(item.getProductInfo().getProductId());
+			if (info == null) {
+				throw new IllegalStateException("해당 상품의 재고 정보를 찾을 수 없습니다: " + item.getProductInfo().getProductId());
+			}
+			//실제 감소 재고는 상품의 주문 수량
+			companyClient.decreaseStock(
+				info.stockId(),
+				item.getQuantity().getValue(),
+				authUser.getUserId(),
+				authUser.getRole()
+			);
+		});
+	}
+}

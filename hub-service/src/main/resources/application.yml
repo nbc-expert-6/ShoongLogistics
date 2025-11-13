@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    include:
+      - datasource
+      - service
+      - redis
+      - actuator
+      - eureka
+      - zipkin
+      - config
+      - swagger
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+  application:
+    name: hub-service
+
+server:
+  port: 19092
