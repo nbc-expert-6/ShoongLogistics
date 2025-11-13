@@ -35,8 +35,8 @@ public class JwtAuthenticationFilter implements WebFilter {
 		"/swagger-resources",
 		"/v3/api-docs/**",
 		"/favicon.ico",
-		"/actuator",
-		"/.well-known/**",	//chrome에서 개발자 도구 관련 요청
+		"/actuator/**",
+		"/.well-known/**",    //chrome에서 개발자 도구 관련 요청
 		"/company-service/**",
 		"/docs/**",
 		"/springdoc/**"

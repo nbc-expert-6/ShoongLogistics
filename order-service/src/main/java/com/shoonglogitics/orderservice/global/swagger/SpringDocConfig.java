@@ -35,20 +35,4 @@ public class SpringDocConfig {
 					.scheme("bearer")
 					.bearerFormat("JWT")));
 	}
-	//
-	// @Bean
-	// public GroupedOpenApi orderApi() {
-	// 	return GroupedOpenApi.builder()
-	// 		.group("order-service")
-	// 		.pathsToMatch("/api/v1/orders/**") // 주문 관련 엔드포인트
-	// 		.build();
-	// }
-	//
-	// @Bean
-	// public GroupedOpenApi deliveryApi() {
-	// 	return GroupedOpenApi.builder()
-	// 		.group("delivery-service")
-	// 		.pathsToMatch("/api/v1/deliveries/**") // 배송 관련 엔드포인트
-	// 		.build();
-	// }
 }

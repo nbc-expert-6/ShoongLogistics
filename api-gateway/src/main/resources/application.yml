@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: actuator
   application:
     name: api-gateway
   main:
@@ -11,6 +13,34 @@ spring:
       server:
         webflux:
           routes:
+            # --- swagger 라우팅 설정 ---
+            - id: order-service-docs
+              uri: lb://order-service
+              predicates:
+                - Path=/v3/api-docs/order-service
+              filters:
+                - RewritePath=/v3/api-docs/order-service(?<segment>.*), /v3/api-docs${segment}
+            - id: user-service-docs
+              uri: lb://user-service
+              predicates:
+                - Path=/v3/api-docs/user-service
+              filters:
+                - RewritePath=/v3/api-docs/user-service(?<segment>.*), /v3/api-docs${segment}
+
+            - id: company-service-docs
+              uri: lb://company-service
+              predicates:
+                - Path=/v3/api-docs/company-service
+              filters:
+                - RewritePath=/v3/api-docs/company-service(?<segment>.*), /v3/api-docs${segment}
+
+            - id: hub-service-docs
+              uri: lb://hub-service
+              predicates:
+                - Path=/v3/api-docs/hub-service
+              filters:
+                - RewritePath=/v3/api-docs/hub-service(?<segment>.*), /v3/api-docs${segment}
+            # --- 서비스 라우팅 설정 ---
             - id: user-service
               uri: lb://user-service
               predicates:
@@ -38,7 +68,7 @@ server:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    prefer-ip-address: true
+    prefer-ip-address: false
   client:
     fetch-registry: true
     register-with-eureka: true
@@ -57,7 +87,6 @@ springdoc:
         url: /v3/api-docs/hub-service
       - name: order-service
         url: /v3/api-docs/order-service
-
 ---
 
 spring:
@@ -67,6 +96,8 @@ spring:
       optional:configserver:http://configure-service:8888
 
 eureka:
+  instance:
+    prefer-ip-address: false
   client:
     service-url:
       defaultZone: http://service-discovery:8761/eureka

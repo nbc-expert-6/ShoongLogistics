@@ -69,6 +69,6 @@ company-service:
 hub-service:
   url: http://hub-service:19092
 delivery-service:
-  url: http://delivery-service:8080
+  url: http://order-service:8080
 notification-service:
   url: http://notification-service:8089
