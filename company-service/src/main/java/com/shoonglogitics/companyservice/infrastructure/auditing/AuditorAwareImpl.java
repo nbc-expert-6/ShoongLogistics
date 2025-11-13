@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
+
 @Component
 public class AuditorAwareImpl implements AuditorAware<Long> {
 
@@ -17,12 +19,11 @@ public class AuditorAwareImpl implements AuditorAware<Long> {
 		if (authentication == null || !authentication.isAuthenticated()) {
 			return Optional.empty();
 		}
+		Object principal = authentication.getPrincipal();
 
-		try {
-			String userId = (String) authentication.getPrincipal();
-			return Optional.of(Long.parseLong(userId));
-		} catch (Exception e) {
-			return Optional.empty();
+		if (principal instanceof AuthUser authUser) {
+			return Optional.of(authUser.getUserId());
 		}
+		return Optional.empty();
 	}
 }

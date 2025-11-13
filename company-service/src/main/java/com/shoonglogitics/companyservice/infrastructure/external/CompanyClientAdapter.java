@@ -10,6 +10,7 @@ import com.shoonglogitics.companyservice.application.service.dto.ProductInfo;
 import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.ProductInfoFeignClientResponse;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class CompanyClientAdapter implements CompanyClient {
 
 	@Override
 	public List<ProductInfo> getProductInfos(UUID productCategoryId, Long userId) {
-		ApiResponse<List<ProductInfoFeignClientResponse>> response = companyFeignClient.getProducts(
+		ApiResponse<PageResponse<ProductInfoFeignClientResponse>> response = companyFeignClient.getProducts(
 			List.of(productCategoryId), userId,
 			UserRoleType.MASTER);
 
@@ -30,9 +31,23 @@ public class CompanyClientAdapter implements CompanyClient {
 			log.warn("상품 조회 실패 - message: {}", response.message());
 			throw new IllegalArgumentException(response.message());
 		}
-		return response.data().stream()
+		return response.data().getContent().stream()
 			.map(this::toProductInfo)
 			.toList();
+	}
+
+	@Override
+	public boolean hasProductsInCategory(UUID productCategoryId, Long userId) {
+		try {
+			ApiResponse<PageResponse<ProductInfoFeignClientResponse>> response = companyFeignClient.getProducts(List.of(productCategoryId), userId, UserRoleType.MASTER);
+			return response.success()
+				&& !response.data().getContent().isEmpty();
+
+		} catch (Exception e) {
+			log.warn("상품 존재 여부 확인 실패 - categoryId: {}, userId: {}",
+				productCategoryId, userId, e);
+			return false;
+		}
 	}
 
 	private ProductInfo toProductInfo(ProductInfoFeignClientResponse response) {

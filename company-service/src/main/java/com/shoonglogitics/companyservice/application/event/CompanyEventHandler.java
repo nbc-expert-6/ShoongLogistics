@@ -36,6 +36,6 @@ public class CompanyEventHandler {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleProductDeleted(ProductDeletedEvent event) {
-		stockClient.deleteStock(event.getProductId(), event.getUserId());
+		stockClient.deleteStock(event.getStockId(), event.getUserId());
 	}
 }

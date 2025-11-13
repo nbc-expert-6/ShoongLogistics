@@ -110,20 +110,19 @@ public class Company extends BaseAggregateRoot<Company> {
 		this.type = type;
 	}
 
-	public Product createProduct(Long createdBy, UUID productCategoryId, ProductInfo productInfo) {
-		Product product = Product.create(productCategoryId, productInfo);
+	public Product createProduct(Long createdBy, Product product) {
 		this.products.add(product);
 		this.registerEvent(new ProductCreatedEvent(createdBy, product.getId()));
 
 		return product;
 	}
 
-	public void deleteProduct(Long deletedBy, UUID productId) {
+	public void deleteProduct(Long deletedBy, UUID productId, UUID stockId) {
 		Product product = getProductById(productId)
 			.orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다: " + productId));
 
 		product.softDelete(deletedBy);
-		this.registerEvent(new ProductDeletedEvent(deletedBy, productId));
+		this.registerEvent(new ProductDeletedEvent(deletedBy, stockId));
 	}
 
 	public Optional<Product> getProductById(UUID productId) {
