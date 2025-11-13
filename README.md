@@ -4,7 +4,7 @@
 
 - **프로젝트 목적**: ShoongLogistics는 단순한 주문.배달 서비스에서 나아가 기업 간 물류 관리와 배송 프로세스를 운영할 수 있는 MSA 기반 플랫폼을 목표로 개발되었습니다.
 - **주요 기능**: 회원 인증.인가(JWT 기반), 주문 및 배달 관리, 허브 및 업체 관리
-- **개발 기간**: 2025/10/31 ~ 2025/11/13
+- **개발 기간**: 2025/10/31 ~ 2025/11/13 ( 2 weeks )
 
 ---
 
@@ -25,8 +25,9 @@
 ### 3. 주문 및 배달 서비스
 
 - 주문 생성 및 상태 관리
-- 배달자 자동 매칭
-- 허브 간 물류 이동 경로 관리
+- 배송 생성 및 상태 관리
+- 배송담당자 할당
+- 허브 간 물류 이동 기록 관리
 
 ### 4. 업체 및 상품 서비스
 
@@ -45,12 +46,12 @@
 
 ## 👥 팀원 역할 분담
 
-| 이름   | 역할   | 담당 내용                        |
-|------|------|------------------------------|
-| 강태성  | 팀장   | 주문 및 배달 서비스 담당, 추가작성         |
-| 이나라힘 | 테크리더 | 업체 및 상품 서비스 담당, 추가작성         |
-| 김다애  | 팀원   | 허브 서비스 담당, 추가작성              |
-| 이수현  | 팀원   | 회원 서비스 담당, 모니터링 및 메트릭 인프라 설정 |
+| 이름   | 역할   | 담당 내용                          |
+|------|------|--------------------------------|
+| 강태성  | 팀장   | 주문 및 배달 서비스 담당, 배포환경 구성, 팀문서화  |
+| 이나라힘 | 테크리더 | 업체 및 상품 서비스 담당, 부하 테스트, 인프라 설정 |
+| 김다애  | 팀원   | 허브 서비스 담당, 발표자료 작성             |
+| 이수현  | 팀원   | 회원 서비스 담당, 모니터링 및 메트릭 인프라 설정   |
 
 ---
 
@@ -69,42 +70,36 @@
 - PostgreSQL 16 이상
 - Gradle 8.14.3 이상
 
-### 데이터베이스 준비
+### 실행방법
 
-- PostgreSQL에 프로젝트용 DB 생성
-- PostGIS 확장 설치 (허브 위치 조회 등 공간 데이터 사용 시 필요)
-  'docker-compose.yml' 예시는 아래와 같습니다
+> __1. 프로젝트 클론__
+<br>
 
-```yaml
-version: '3.8'
+> __2. 프로젝트.zip파일 압축 해제__
+<br>
 
-services:
-  postgres:
-    image: postgis/postgis:16-3.4
-    container_name: postgis-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres_username
-      POSTGRES_PASSWORD: postgres_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-```
+> __3. notification-service 루트경로에 있는 .env를 클론받은 notification-service 루트경로로 복사__
+<br>
 
-### 실행 방법
+> __4. 실행중인 컨테이너들 종료 후 루트 프로젝트에 위치한 docker-compose 실행__
+<br>
 
-```
-./gradlew clean build -x test
-java -jar build/libs/shoong-logistics-0.0.1-SNAPSHOT.jar
-java -jar build/libs/*.jar
-```
+> __5. hub-service 루트경로에 위치한 .http파일 실행하여 초기 허브 데이터 삽입__
+<br>
+
+> __6. hub-service 컨테이너 재실행하여 허브 간 운송경로 데이터 생성__
 
 ---
 
 ## 🗂 ERD
 
 <img width="2973" height="1615" alt="Image" src="https://github.com/user-attachments/assets/8722a581-f1b9-4289-8c68-f05b38fb5f04" />
+
+---
+
+## 시스템 아키텍쳐
+
+<img width="2475" height="1307" alt="image" src="https://github.com/user-attachments/assets/b2b6c9e6-91ee-47f3-a234-f16d382c6ac5" />
 
 ---
 
