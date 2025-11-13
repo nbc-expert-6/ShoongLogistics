@@ -1,6 +1,5 @@
 package com.shoonglogitics.companyservice.application;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -14,7 +13,6 @@ import com.shoonglogitics.companyservice.application.command.productcategory.Get
 import com.shoonglogitics.companyservice.application.command.productcategory.UpdateProductCategoryCommand;
 import com.shoonglogitics.companyservice.application.dto.productcategory.ProductCategoryResult;
 import com.shoonglogitics.companyservice.application.service.CompanyClient;
-import com.shoonglogitics.companyservice.application.service.dto.ProductInfo;
 import com.shoonglogitics.companyservice.domain.productcategory.entity.ProductCategory;
 import com.shoonglogitics.companyservice.domain.productcategory.repository.ProductCategoryRepository;
 
@@ -52,12 +50,13 @@ public class ProductCategoryService {
 
 	@Transactional
 	public void deleteProductCategory(DeleteProductCategoryCommand command) {
-		List<ProductInfo> productInfos = companyClient.getProductInfos(command.productCategoryId(), command.authUser().getUserId());
-		if (productInfos.isEmpty()) {
+		ProductCategory productCategory = getProductCategoryById(command.productCategoryId());
+
+		boolean hasProducts = companyClient.hasProductsInCategory(command.productCategoryId(), command.authUser().getUserId());
+		if (hasProducts) {
 			throw new IllegalStateException("해당 카테고리에 등록된 상품이 존재하여 삭제할 수 없습니다.");
 		}
 
-		ProductCategory productCategory = getProductCategoryById(command.productCategoryId());
 		productCategory.delete(command.authUser().getUserId());
 	}
 

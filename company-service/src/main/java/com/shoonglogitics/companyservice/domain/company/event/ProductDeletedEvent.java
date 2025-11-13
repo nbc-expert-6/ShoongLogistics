@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 public class ProductDeletedEvent extends CompanyDomainEvent {
 	private Long userId;
-	private UUID productId;
+	private UUID stockId;
 
-	public ProductDeletedEvent(Long userId, UUID productId) {
+	public ProductDeletedEvent(Long userId, UUID stockId) {
 		super();
 		this.userId = userId;
-		this.productId = productId;
+		this.stockId = stockId;
 	}
 }

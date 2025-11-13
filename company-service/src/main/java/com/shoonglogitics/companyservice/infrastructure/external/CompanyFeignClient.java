@@ -12,6 +12,7 @@ import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.ProductInfoFeignClientResponse;
 import com.shoonglogitics.companyservice.infrastructure.security.HeaderType;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
+import com.shoonglogitics.companyservice.presentation.common.dto.PageResponse;
 
 @FeignClient(
 	name = "company-service",
@@ -20,7 +21,7 @@ import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 )
 public interface CompanyFeignClient {
 	@GetMapping("/api/v1/companies/products")
-	ApiResponse<List<ProductInfoFeignClientResponse>> getProducts(
+	ApiResponse<PageResponse<ProductInfoFeignClientResponse>> getProducts(
 		@RequestParam List<UUID> categoryIds,
 		@RequestHeader(HeaderType.USER_ID) Long currentUserId,
 		@RequestHeader(HeaderType.USER_ROLE) UserRoleType role);

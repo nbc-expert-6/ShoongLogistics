@@ -22,16 +22,19 @@ import com.shoonglogitics.companyservice.application.command.UpdateProductComman
 import com.shoonglogitics.companyservice.application.dto.company.CompanyResult;
 import com.shoonglogitics.companyservice.application.dto.company.ProductResult;
 import com.shoonglogitics.companyservice.application.service.ProductCategoryClient;
+import com.shoonglogitics.companyservice.application.service.StockClient;
 import com.shoonglogitics.companyservice.application.service.UserClient;
 import com.shoonglogitics.companyservice.application.service.dto.CompanyManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.HubManagerInfo;
 import com.shoonglogitics.companyservice.application.service.dto.ProductCategoryInfo;
+import com.shoonglogitics.companyservice.application.service.dto.StockInfo;
 import com.shoonglogitics.companyservice.domain.common.vo.AuthUser;
 import com.shoonglogitics.companyservice.domain.common.vo.GeoLocation;
 import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.domain.company.entity.Company;
 import com.shoonglogitics.companyservice.domain.company.entity.Product;
 import com.shoonglogitics.companyservice.domain.company.repository.CompanyRepository;
+import com.shoonglogitics.companyservice.domain.company.repository.ProductRepository;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyAddress;
 import com.shoonglogitics.companyservice.domain.company.vo.CompanyType;
 import com.shoonglogitics.companyservice.domain.company.vo.ProductInfo;
@@ -43,8 +46,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class CompanyService {
 	private final CompanyRepository companyRepository;
+	private final ProductRepository productRepository;
 	private final UserClient userClient;
 	private final ProductCategoryClient productCategoryClient;
+	private final StockClient stockClient;
 
 	@Transactional
 	public UUID createCompany(CreateCompanyCommand command) {
@@ -107,9 +112,13 @@ public class CompanyService {
 		validateHubManager(command.authUser(), company.getHubId());
 
 		ProductInfo productInfo = ProductInfo.of(command.name(), command.price(), command.description());
-		Product product = company.createProduct(command.authUser().getUserId(), command.productCategoryId(),
-			productInfo);
-		companyRepository.flush();
+		Product product= Product.create(command.productCategoryId(), productInfo);
+		//Product 생성
+		product = productRepository.createProduct(product);
+		//이벤트 발행 및 연관관계 설정
+		company.createProduct(command.authUser().getUserId(), product);
+		companyRepository.save(company);
+
 		return product.getId();
 	}
 
@@ -118,8 +127,9 @@ public class CompanyService {
 		Company company = getCompanyById(command.companyId());
 		validateHubManager(command.authUser(), company.getHubId());
 		validateCompanyManager(command.authUser(), command.companyId());
-
-		company.deleteProduct(command.authUser().getUserId(), command.productId());
+		StockInfo stock = stockClient.getStock(command.productId(), command.authUser().getUserId());
+		company.deleteProduct(command.authUser().getUserId(), command.productId(), stock.id());
+		companyRepository.save(company);
 	}
 
 	@Transactional

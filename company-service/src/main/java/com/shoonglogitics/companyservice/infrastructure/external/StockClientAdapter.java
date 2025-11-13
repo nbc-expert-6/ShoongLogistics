@@ -5,9 +5,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.companyservice.application.service.StockClient;
+import com.shoonglogitics.companyservice.application.service.dto.StockInfo;
 import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.CreateStockFeignClientRequest;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.CreateStockFeignClientResponse;
+import com.shoonglogitics.companyservice.infrastructure.external.dto.StockInfoFeignClientResponse;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -37,5 +39,20 @@ public class StockClientAdapter implements StockClient {
 			log.warn("상품 재고 삭제 실패 - message: {}", response.message());
 			throw new IllegalArgumentException(response.message());
 		}
+	}
+
+	@Override
+	public StockInfo getStock(UUID productId, Long userId) {
+		ApiResponse<StockInfoFeignClientResponse> response = stockFeignClient.getStockByProductId(productId, userId, UserRoleType.MASTER);
+
+		if (!response.success() || response.data() == null) {
+			log.warn("상품 재고 조회 실패 - message: {}", response.message());
+			throw new IllegalArgumentException(response.message());
+		}
+		return toStockInfo(response.data());
+	}
+
+	private StockInfo toStockInfo(StockInfoFeignClientResponse response) {
+		return new StockInfo(response.id());
 	}
 }
