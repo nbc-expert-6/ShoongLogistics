@@ -22,8 +22,7 @@ public class StockClientAdapter implements StockClient {
 	@Override
 	public void createStock(UUID productId, Long userId) {
 		CreateStockFeignClientRequest request = new CreateStockFeignClientRequest(productId, 0);
-		ApiResponse<CreateStockFeignClientResponse> response = stockFeignClient.createStock(request, userId, UserRoleType.Authority.MASTER);
-
+		ApiResponse<CreateStockFeignClientResponse> response = stockFeignClient.createStock(request, userId, UserRoleType.MASTER);
 		if (!response.success()) {
 			log.warn("상품 재고 생성 실패 - message: {}", response.message());
 			throw new IllegalArgumentException(response.message());
@@ -32,7 +31,7 @@ public class StockClientAdapter implements StockClient {
 
 	@Override
 	public void deleteStock(UUID productId, Long userId) {
-		ApiResponse<Void> response = stockFeignClient.deleteStock(productId, userId, UserRoleType.Authority.MASTER);
+		ApiResponse<Void> response = stockFeignClient.deleteStock(productId, userId, UserRoleType.MASTER);
 
 		if (!response.success()) {
 			log.warn("상품 재고 삭제 실패 - message: {}", response.message());

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.UserInfoFeignClientResponse;
 import com.shoonglogitics.companyservice.infrastructure.security.HeaderType;
 import com.shoonglogitics.companyservice.presentation.common.dto.ApiResponse;
@@ -29,5 +30,5 @@ public interface UserFeignClient {
 	@DeleteMapping("/api/v1/users/{userId}")
 	ApiResponse<String> deleteUser(@PathVariable("userId") Long userId,
 		@RequestHeader(HeaderType.USER_ID) Long currentUserId,
-		@RequestHeader(HeaderType.USER_ROLE) String currentUserRole);
+		@RequestHeader(HeaderType.USER_ROLE) UserRoleType role);
 }

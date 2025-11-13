@@ -23,7 +23,7 @@ public class ProductCategoryClientAdapter implements ProductCategoryClient {
 	@Override
 	public ProductCategoryInfo getProductCategoryInfo(UUID producatCategoryId, Long userId) {
 		ApiResponse<ProductCategoryInfoFeignClientResponse> response = productCategoryFeignClient.getProductCategory(producatCategoryId, userId,
-			UserRoleType.MASTER.getAuthority());
+			UserRoleType.MASTER);
 
 		if (!response.success() || response.data() == null) {
 			log.warn("카테고리 정보 조회 실패 - message: {}", response.message());
@@ -34,6 +34,6 @@ public class ProductCategoryClientAdapter implements ProductCategoryClient {
 	}
 
 	private ProductCategoryInfo toProductCategoryInfo(ProductCategoryInfoFeignClientResponse response) {
-		return new ProductCategoryInfo(response.productCategoryId(), response.name());
+		return new ProductCategoryInfo(response.id(), response.name());
 	}
 }

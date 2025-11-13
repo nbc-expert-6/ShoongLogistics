@@ -50,4 +50,9 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 		return jpaCompanyRepository.findProductsByCompanyId(companyId, productCategoryIds, pageable);
 	}
 
+	@Override
+	public void flush() {
+		jpaCompanyRepository.flush();
+	}
+
 }

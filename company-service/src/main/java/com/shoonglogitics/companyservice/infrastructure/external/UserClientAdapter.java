@@ -53,7 +53,7 @@ public class UserClientAdapter implements UserClient {
 	 */
 	@Override
 	public boolean deleteCompanyManager(Long userId) {
-		return userFeignClient.deleteUser(userId, userId, UserRoleType.MASTER.getAuthority()).success();
+		return userFeignClient.deleteUser(userId, userId, UserRoleType.MASTER).success();
 	}
 
 	private HubManagerInfo toHubManagerInfo(UserInfoFeignClientResponse response) {

@@ -21,8 +21,4 @@ public enum UserRoleType {
 		public static final String SHIPPER = "ROLE_SHIPPER";
 		public static final String COMPANY_MANAGER = "ROLE_COMPANY_MANAGER";
 	}
-
-	public boolean isHubManager() {
-		return this == HUB_MANAGER;
-	}
 }

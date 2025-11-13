@@ -113,8 +113,8 @@ public class Company extends BaseAggregateRoot<Company> {
 	public Product createProduct(Long createdBy, UUID productCategoryId, ProductInfo productInfo) {
 		Product product = Product.create(productCategoryId, productInfo);
 		this.products.add(product);
+		this.registerEvent(new ProductCreatedEvent(createdBy, product.getId()));
 
-		this.registerEvent(new ProductCreatedEvent(createdBy, this.id));
 		return product;
 	}
 

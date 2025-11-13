@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import com.shoonglogitics.companyservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.CreateStockFeignClientRequest;
 import com.shoonglogitics.companyservice.infrastructure.external.dto.CreateStockFeignClientResponse;
 import com.shoonglogitics.companyservice.infrastructure.security.HeaderType;
@@ -26,10 +27,10 @@ public interface StockFeignClient {
 	@PostMapping("/api/v1/stocks")
 	ApiResponse<CreateStockFeignClientResponse> createStock(@RequestBody CreateStockFeignClientRequest createStockRequest,
 		@RequestHeader(HeaderType.USER_ID) Long currentUserId,
-		@RequestHeader(HeaderType.USER_ROLE) String currentUserRole);
+		@RequestHeader(HeaderType.USER_ROLE) UserRoleType role);
 
 	@DeleteMapping("/api/v1/stocks/{stockId}")
 	ApiResponse<Void> deleteStock(@PathVariable UUID stockId,
 		@RequestHeader(HeaderType.USER_ID) Long currentUserId,
-		@RequestHeader(HeaderType.USER_ROLE) String currentUserRole);
+		@RequestHeader(HeaderType.USER_ROLE) UserRoleType role);
 }
