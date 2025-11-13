@@ -30,3 +30,15 @@ user-service:
   url: http://prod-user-service:8081
 company-service:
   url: http://localhost:8082
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+user-service:
+  url: http://user-service:8081
+company-service:
+  url: http://company-service:8082

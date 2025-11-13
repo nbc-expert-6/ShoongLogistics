@@ -9,3 +9,12 @@ spring:
   cloud:
     config:
       fail-fast: false
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import:
+      optional:configserver:http://configure-service:8888

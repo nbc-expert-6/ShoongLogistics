@@ -1,16 +1,12 @@
 spring:
   application:
     name: api-gateway
-
+  main:
+    web-application-type: reactive
   config:
     import:
       optional:configserver:http://localhost:8888
-  main:
-    web-application-type: reactive
   cloud:
-    config:
-      fail-fast: false
-
     gateway:
       server:
         webflux:
@@ -19,56 +15,35 @@ spring:
               uri: lb://user-service
               predicates:
                 - Path=/api/v1/users/**
-
-            - id: user-swagger
-              uri: lb://user-service
-              predicates:
-                - Path=/v3/api-docs/user-service
-              filters:
-                - RewritePath=/v3/api-docs/user-service, /v3/api-docs
-
             - id: company-service
               uri: lb://company-service
               predicates:
                 - Path=/api/v1/companies/**,/api/v1/product-categories/**,/api/v1/stocks/**,/api/v1/products/**
-
-            - id: company-swagger
-              uri: lb://company-service
-              predicates:
-                - Path=/v3/api-docs/company-service
-              filters:
-                - RewritePath=/v3/api-docs/company-service, /v3/api-docs
-
-            - id: notification-service
-              uri:
-                http://localhost:8089
-              predicates:
-                - Path=/api/v1/ai-delivery/**
-
-
             - id: hub-service
               uri: lb://hub-service
               predicates:
                 - Path=/api/v1/hubs/**,/api/v1/hub-routes/**
-
-            - id: hub-swagger
-              uri: lb://hub-service
-              predicates:
-                - Path=/v3/api-docs/hub-service
-              filters:
-                - RewritePath=/v3/api-docs/hub-service, /v3/api-docs
-
             - id: order-service
               uri: lb://order-service
               predicates:
                 - Path=/api/v1/orders/**,/api/v1/deliveries/**
-
-            - id: order-swagger
-              uri: lb://order-service
+            - id: notification-service
+              uri: http://localhost:8089
               predicates:
-                - Path=/v3/api-docs/order-service
-              filters:
-                - RewritePath=/v3/api-docs/order-service, /v3/api-docs
+                - Path=/api/v1/ai-delivery/**
+
+server:
+  port: 8000
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 
 springdoc:
   swagger-ui:
@@ -83,16 +58,15 @@ springdoc:
       - name: order-service
         url: /v3/api-docs/order-service
 
-server:
-  port: 8000
+---
+
+spring:
+  config:
+    activate.on-profile: docker
+    import:
+      optional:configserver:http://configure-service:8888
 
 eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    prefer-ip-address: true
-
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+      defaultZone: http://service-discovery:8761/eureka

@@ -19,3 +19,27 @@ spring:
       - zipkin
       - swagger
     active: test
+---
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+
+  config:
+    import:
+      optional:configserver:http://configure-service:8888  # 도커 내 config 서버 컨테이너 이름
+
+  cloud:
+    config:
+      fail-fast: false
+
+  profiles:
+    include:
+      - datasource
+      - eureka
+      - actuator
+      - zipkin
+      - swagger
+    active: docker
