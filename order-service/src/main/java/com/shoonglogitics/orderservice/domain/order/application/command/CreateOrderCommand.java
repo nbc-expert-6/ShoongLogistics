@@ -26,7 +26,7 @@ public record CreateOrderCommand(
 ) {
 	public static CreateOrderCommand from(CreateOrderRequest request, Long userId, UserRoleType role) {
 		List<CreateOrderItemCommand> items = request.orderItems().stream()
-			.map(i -> new CreateOrderItemCommand(i.productId(), i.quantity()))
+			.map(i -> new CreateOrderItemCommand(i.productId(), i.price(), i.quantity()))
 			.toList();
 
 		return new CreateOrderCommand(

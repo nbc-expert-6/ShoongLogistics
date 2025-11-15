@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import org.hibernate.annotations.Where;
 
-import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
-import com.shoonglogitics.orderservice.domain.order.domain.event.OrderPaidEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
@@ -95,9 +93,9 @@ public class Order extends BaseAggregateRoot<Order> {
 		//불변식 검증
 		order.validateInvariants();
 
-		order.registerEvent(new OrderCreatedEvent(
-			order.id
-		));
+		// order.registerEvent(new OrderCreatedEvent(
+		// 	order.id
+		// ));
 		return order;
 	}
 
@@ -158,6 +156,6 @@ public class Order extends BaseAggregateRoot<Order> {
 		this.paidAt = LocalDateTime.now();
 		this.status = OrderStatus.SHIPPED;
 
-		this.registerEvent(new OrderPaidEvent(this.id));
+		// this.registerEvent(new OrderPaidEvent(this.id));
 	}
 }

@@ -53,11 +53,18 @@ public class OrderService {
 
 	@Transactional
 	public UUID createOrder(CreateOrderCommand command) {
-		//주문 상품 정보 받아오기
-		List<OrderItemInfo> orderItemInfos = getOrderItemInfos(command, command.userId(), command.role());
+		//주문 상품 정보 생성
+		List<OrderItemInfo> orderItemInfos = command.orderItems().stream()
+			.map(req -> OrderItemInfo.from(req.productId(), req.price()))
+			.toList();
 
 		//주문상품 엔티티 생성
-		List<OrderItem> orderItems = createItems(command.orderItems(), orderItemInfos);
+		List<OrderItem> orderItems = command.orderItems().stream()
+			.map(item -> OrderItem.create(
+				ProductInfo.of(item.productId(), Money.of(item.price())),
+				Quantity.of(item.quantity())
+			))
+			.toList();
 
 		//총 주문 금액 vo 생성
 		Money totalPrice = Money.of(command.totalPrice());
@@ -88,6 +95,8 @@ public class OrderService {
 
 		//응답
 		Order createdOrder = orderRepository.save(order);
+
+		//주문 생성 이벤트 발행
 
 		return createdOrder.getId();
 	}
