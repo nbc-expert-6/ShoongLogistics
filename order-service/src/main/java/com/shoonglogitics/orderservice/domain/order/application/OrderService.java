@@ -24,6 +24,7 @@ import com.shoonglogitics.orderservice.domain.order.application.service.UserClie
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCancledEvent;
+import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
 import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;
@@ -97,7 +98,7 @@ public class OrderService {
 		Order createdOrder = orderRepository.save(order);
 
 		//주문 생성 이벤트 발행
-
+		publisher.publishEvent(new OrderCreatedEvent(createdOrder));
 		return createdOrder.getId();
 	}
 

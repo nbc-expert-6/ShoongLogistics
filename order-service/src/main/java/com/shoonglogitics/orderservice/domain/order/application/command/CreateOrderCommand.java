@@ -7,6 +7,9 @@ import java.util.UUID;
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderRequest;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
+import lombok.Builder;
+
+@Builder
 public record CreateOrderCommand(
 	Long userId,
 	UserRoleType role,
