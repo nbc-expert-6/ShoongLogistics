@@ -12,7 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "OrderEventListner")
 @Component
 @RequiredArgsConstructor
-public class OrderEventListner {
+public class OrderEventListener {
+
 	private final OrderService orderService;
 
 	@EventListener
@@ -23,5 +24,4 @@ public class OrderEventListner {
 			event.getQuantity()
 		);
 	}
-
 }

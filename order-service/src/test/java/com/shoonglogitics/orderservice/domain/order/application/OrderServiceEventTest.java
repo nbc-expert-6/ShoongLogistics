@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
-import com.shoonglogitics.orderservice.domain.order.application.event.OrderEventListner;
+import com.shoonglogitics.orderservice.domain.order.application.event.OrderEventListener;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
 import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
@@ -28,7 +28,7 @@ class OrderServiceEventTest {
 	private OrderService orderService;
 
 	@MockBean
-	private OrderEventListner orderEventListener;
+	private OrderEventListener orderEventListener;
 
 	@DisplayName("주문 생성 시 OrderCreatedEvent가 발행 된다.")
 	@Test

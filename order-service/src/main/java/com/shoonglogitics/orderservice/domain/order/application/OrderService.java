@@ -54,6 +54,7 @@ public class OrderService {
 
 	@Transactional
 	public UUID createOrder(CreateOrderCommand command) {
+		log.info("주문 생성 처리 시작");
 		//주문 상품 정보 생성
 		List<OrderItemInfo> orderItemInfos = command.orderItems().stream()
 			.map(req -> OrderItemInfo.from(req.productId(), req.price()))
@@ -96,9 +97,13 @@ public class OrderService {
 
 		//응답
 		Order createdOrder = orderRepository.save(order);
+		log.info("주문 생성 완료");
 
 		//주문 생성 이벤트 발행
+		log.info("주문 생성 이벤트 발행");
 		publisher.publishEvent(new OrderCreatedEvent(createdOrder));
+
+		log.info("주문 생성 성공. 성공한 주문 id 응답 : {}", createdOrder.getId());
 		return createdOrder.getId();
 	}
 
