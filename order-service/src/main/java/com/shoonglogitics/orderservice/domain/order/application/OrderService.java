@@ -59,7 +59,7 @@ public class OrderService {
 		Thread current = Thread.currentThread();
 		log.info("현재 스레드 이름: {}, ID: {}, 데몬 여부: {}",
 			current.getName(), current.getId(), current.isDaemon());
-		
+
 		//주문 상품 정보 생성
 		List<OrderItemInfo> orderItemInfos = command.orderItems().stream()
 			.map(req -> OrderItemInfo.from(req.productId(), req.price()))
@@ -213,13 +213,11 @@ public class OrderService {
 	//결제 처리
 	//상품 재고 걈소 요청
 	@Transactional
-	public UUID pay(UUID orderId, AuthUser authUser) {
+	public void pay(UUID orderId) {
+		log.info("주문 상태 변경 시작");
 		Order order = getOrderById(orderId);
 		order.pay();
-
-		//재고 차감 요청
-		decreaseStock(order.getOrderItems(), authUser);
-		return order.getId();
+		log.info("주문 상태 변경 완료");
 	}
 
 	/*

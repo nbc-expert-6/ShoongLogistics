@@ -126,9 +126,8 @@ public class OrderController {
 		@PathVariable("orderId") UUID orderId,
 		@AuthenticationPrincipal AuthUser authUser
 	) {
-		UUID updatedOrderId = orderService.pay(orderId, authUser);
-		UpdateOrderResponse response = UpdateOrderResponse.from(updatedOrderId);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response, "결제에 성공했습니다."));
+		orderService.pay(orderId);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("결제에 성공했습니다."));
 	}
 
 }
