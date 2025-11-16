@@ -24,8 +24,6 @@ public class PaymentService {
 
 	@Transactional
 	public void processPayment(UUID orderId, UUID productId, BigDecimal price, Integer quantity) {
-
-		log.info("결제 처리 시작");
 		//금액 계산
 		BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 		log.info("결제 금액: {}", amount.longValue());
@@ -37,8 +35,6 @@ public class PaymentService {
 		payment.complete();
 
 		Payment savedPayment = paymentRepository.save(payment);
-		log.info("결제 처리 완료");
-
 		//이벤트 발행
 		eventPublisher.publishEvent(new PaymentCompletedEvent(savedPayment, productId, quantity));
 		log.info("결제 성공 이벤트 발행");

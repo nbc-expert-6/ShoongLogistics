@@ -55,10 +55,6 @@ public class OrderService {
 	@Transactional
 	public UUID createOrder(CreateOrderCommand command) {
 		log.info("주문 생성 처리 시작");
-		// 현재 스레드 정보 출력
-		Thread current = Thread.currentThread();
-		log.info("현재 스레드 이름: {}, ID: {}, 데몬 여부: {}",
-			current.getName(), current.getId(), current.isDaemon());
 
 		//주문 상품 정보 생성
 		List<OrderItemInfo> orderItemInfos = command.orderItems().stream()
@@ -100,7 +96,7 @@ public class OrderService {
 			orderItems
 		);
 
-		//응답
+		//주문 저장
 		Order createdOrder = orderRepository.save(order);
 		log.info("주문 생성 완료");
 
@@ -108,7 +104,6 @@ public class OrderService {
 		log.info("주문 생성 이벤트 발행");
 		publisher.publishEvent(new OrderCreatedEvent(createdOrder));
 
-		log.info("주문 생성 성공. 성공한 주문 id 응답 : {}", createdOrder.getId());
 		return createdOrder.getId();
 	}
 
@@ -211,13 +206,10 @@ public class OrderService {
 	}
 
 	//결제 처리
-	//상품 재고 걈소 요청
 	@Transactional
 	public void pay(UUID orderId) {
-		log.info("주문 상태 변경 시작");
 		Order order = getOrderById(orderId);
 		order.pay();
-		log.info("주문 상태 변경 완료");
 	}
 
 	/*

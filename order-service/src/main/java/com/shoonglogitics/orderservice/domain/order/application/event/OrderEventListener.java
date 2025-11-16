@@ -22,23 +22,21 @@ public class OrderEventListener {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleOrderCreatedAfterCommit(OrderCreatedEvent event) {
-		log.info("Commit 이후 동작하는 주문 생성 이벤트 수신");
-		Thread current = Thread.currentThread();
-		log.info("현재 스레드 이름: {}, ID: {}", current.getName(), current.getId());
+		log.info("주문 생성 이벤트 수신 - AFTER_COMMIT 시점 테스트용");
+
 	}
 
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
 	public void handleOrderCreatedAfterRollBack(OrderCreatedEvent event) {
-		log.info("RollBack 이후 동작하는 주문 생성 이벤트 수신");
-		Thread current = Thread.currentThread();
-		log.info("현재 스레드 이름: {}, ID: {}", current.getName(), current.getId());
+		log.info("주문 생성 이벤트 수신 - ROLLBACK 시점 테스트용");
 	}
 
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void paymentCompleted(PaymentCompletedEvent event) {
-		log.info("결제 완료 이벤트 수신");
+		log.info("결제 완료 이벤트 수신 - 주문 상태 변경 시작");
 		orderService.pay(event.getOrderId());
+		log.info("주문 상태 변경 완료");
 	}
 }

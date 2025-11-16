@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
@@ -23,7 +22,6 @@ import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
 class OrderServiceEventTest {
 
 	@Autowired

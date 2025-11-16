@@ -22,11 +22,9 @@ public class StockService {
 
 	@Transactional
 	public void decreaseStock(UUID productId, Integer amount) {
-		log.info("재고 감소 처리 시작");
 		Stock stock = stockRepository.findByProductId(productId).orElseThrow(
-			() -> new IllegalArgumentException("해당 상품의 제고 정보를 찾을 수 없습니다.")
+			() -> new IllegalArgumentException("해당 상품의 재고 정보를 찾을 수 없습니다.")
 		);
 		stock.decreaseStock(amount);
-		log.info("재고 감소 처리 완료");
 	}
 }
