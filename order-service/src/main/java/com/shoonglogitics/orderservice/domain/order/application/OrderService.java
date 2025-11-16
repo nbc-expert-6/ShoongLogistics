@@ -55,6 +55,11 @@ public class OrderService {
 	@Transactional
 	public UUID createOrder(CreateOrderCommand command) {
 		log.info("주문 생성 처리 시작");
+		// 현재 스레드 정보 출력
+		Thread current = Thread.currentThread();
+		log.info("현재 스레드 이름: {}, ID: {}, 데몬 여부: {}",
+			current.getName(), current.getId(), current.isDaemon());
+		
 		//주문 상품 정보 생성
 		List<OrderItemInfo> orderItemInfos = command.orderItems().stream()
 			.map(req -> OrderItemInfo.from(req.productId(), req.price()))

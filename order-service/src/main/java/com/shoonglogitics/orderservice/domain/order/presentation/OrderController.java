@@ -61,6 +61,7 @@ public class OrderController {
 			orderId,
 			"주문이 생성에 성공했습니다."
 		);
+		log.info("주문 생성 완료 응답: {} ", response);
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response, "요청 성공"));
 	}
 
