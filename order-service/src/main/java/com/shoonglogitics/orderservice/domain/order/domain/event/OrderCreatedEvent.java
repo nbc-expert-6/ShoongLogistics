@@ -4,13 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.shoonglogitics.orderservice.domain.common.event.DomainEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 
 import lombok.Getter;
 
 @Getter
-public class OrderCreatedEvent {
+public class OrderCreatedEvent implements DomainEvent {
 
 	private final UUID orderId;
 	private final UUID productId;
@@ -27,5 +28,10 @@ public class OrderCreatedEvent {
 		this.price = productInfo.getPrice().getAmount();
 		this.quantity = order.getOrderItems().get(0).getQuantity().getValue();
 		this.occurredAt = LocalDateTime.now();
+	}
+
+	@Override
+	public UUID getAggregateId() {
+		return this.orderId;
 	}
 }

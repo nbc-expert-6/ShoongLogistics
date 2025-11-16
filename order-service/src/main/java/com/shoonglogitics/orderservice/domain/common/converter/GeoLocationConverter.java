@@ -1,4 +1,4 @@
-package com.shoonglogitics.orderservice.global.converter;
+package com.shoonglogitics.orderservice.domain.common.converter;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

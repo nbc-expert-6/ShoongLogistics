@@ -6,7 +6,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.Where;
 
 import com.shoonglogitics.orderservice.domain.product.domain.vo.Quantity;
-import com.shoonglogitics.orderservice.global.common.entity.BaseAggregateRoot;
+import com.shoonglogitics.orderservice.domain.common.entity.BaseAggregateRoot;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

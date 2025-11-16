@@ -8,7 +8,7 @@ import org.hibernate.annotations.Where;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
-import com.shoonglogitics.orderservice.global.common.entity.BaseEntity;
+import com.shoonglogitics.orderservice.domain.common.entity.BaseEntity;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;

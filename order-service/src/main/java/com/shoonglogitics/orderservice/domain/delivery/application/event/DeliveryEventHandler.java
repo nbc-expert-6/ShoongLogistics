@@ -9,8 +9,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.delivery.domain.event.DeliveryCreatedEvent;
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

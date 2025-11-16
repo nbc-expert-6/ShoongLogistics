@@ -2,7 +2,7 @@ package com.shoonglogitics.orderservice.domain.delivery.application.command;
 
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
 
 public record ProcessDeliveryCommand(
 	UUID deliveryId,

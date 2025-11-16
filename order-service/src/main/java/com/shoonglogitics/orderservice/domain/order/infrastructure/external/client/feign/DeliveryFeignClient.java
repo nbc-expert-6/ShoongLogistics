@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignCreateDeliveryRequest;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignDeliveryResponse;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignUpdateDeliveryRequest;
-import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.exception.ApiResponse;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 @FeignClient(name = "delivery-service", url = "${delivery-service.url}")
 public interface DeliveryFeignClient {

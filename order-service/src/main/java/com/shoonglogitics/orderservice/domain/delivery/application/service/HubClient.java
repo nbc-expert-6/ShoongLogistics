@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.RoutesInfo;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 public interface HubClient {
 	List<RoutesInfo> getDeliveryRoutesInfo(

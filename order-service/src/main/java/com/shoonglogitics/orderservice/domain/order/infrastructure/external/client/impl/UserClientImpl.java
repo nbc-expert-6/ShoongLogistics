@@ -3,7 +3,7 @@ package com.shoonglogitics.orderservice.domain.order.infrastructure.external.cli
 import org.springframework.stereotype.Component;
 
 import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 @Component
 public class UserClientImpl implements UserClient {

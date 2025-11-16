@@ -24,7 +24,7 @@ import com.shoonglogitics.orderservice.domain.payment.domain.vo.PaymentStatus;
 import com.shoonglogitics.orderservice.domain.product.domain.entity.Stock;
 import com.shoonglogitics.orderservice.domain.product.domain.repository.StockRepository;
 import com.shoonglogitics.orderservice.domain.product.domain.vo.Quantity;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 @SpringBootTest
 @ActiveProfiles("test")

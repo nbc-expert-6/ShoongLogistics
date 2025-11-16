@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignRouteResponse;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 @FeignClient(
 	name = "hub-service",

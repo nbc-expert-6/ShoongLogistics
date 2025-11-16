@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

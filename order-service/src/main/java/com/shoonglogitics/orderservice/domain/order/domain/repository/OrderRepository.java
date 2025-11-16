@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
 
 public interface OrderRepository {
 	Order save(Order order);

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.shoonglogitics.orderservice.domain.order.presentation.dto.CreateOrderRequest;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 import lombok.Builder;
 

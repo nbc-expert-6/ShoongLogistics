@@ -5,27 +5,25 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.event.EventPublisher;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
-import com.shoonglogitics.orderservice.domain.order.application.command.DeleteOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.dto.FindOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.ListOrderResult;
 import com.shoonglogitics.orderservice.domain.order.application.dto.OrderItemInfo;
 import com.shoonglogitics.orderservice.domain.order.application.dto.StockInfo;
-import com.shoonglogitics.orderservice.domain.order.application.dto.UpdateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.query.ListOrderQuery;
 import com.shoonglogitics.orderservice.domain.order.application.service.CompanyClient;
-import com.shoonglogitics.orderservice.domain.order.application.service.UserClient;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
 import com.shoonglogitics.orderservice.domain.order.domain.entity.OrderItem;
-import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCancledEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
-import com.shoonglogitics.orderservice.domain.order.domain.event.OrderUpdatedEvent;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
 import com.shoonglogitics.orderservice.domain.order.domain.service.OrderDomainService;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
@@ -34,9 +32,6 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.ProductInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Quantity;
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderDomainService orderDomainService;
-	private final ApplicationEventPublisher publisher;
+	private final EventPublisher eventPublisher;
 
-	private final UserClient userClient;
 	private final CompanyClient companyClient;
 
 	@Transactional
@@ -101,8 +95,7 @@ public class OrderService {
 		log.info("주문 생성 완료");
 
 		//주문 생성 이벤트 발행
-		log.info("주문 생성 이벤트 발행");
-		publisher.publishEvent(new OrderCreatedEvent(createdOrder));
+		eventPublisher.publish(new OrderCreatedEvent(createdOrder));
 
 		return createdOrder.getId();
 	}
@@ -156,7 +149,7 @@ public class OrderService {
 
 		//주문 생성 이벤트 발행
 		log.info("주문 생성 이벤트 발행");
-		publisher.publishEvent(new OrderCreatedEvent(createdOrder));
+		eventPublisher.publish(new OrderCreatedEvent(createdOrder));
 
 		log.warn("save 호출 이후 예외 발생!! 트랜잭션 롤백됨");
 		throw new IllegalArgumentException("강제 예외");
@@ -182,28 +175,28 @@ public class OrderService {
 		}
 	}
 
-	//주문 수정(요청사항, 배송요청사항)
-	@Transactional
-	public UUID updateOrder(UpdateOrderCommand command) {
-		Order order = getOrderById(command.orderId());
-		order.update(command.request(), command.deliveryRequest());
-		//배송 수정 이벤트 발행
-		publisher.publishEvent(new OrderUpdatedEvent(order.getId(), order.getDeliveryRequest()));
-		return order.getId();
-	}
-
-	//주문 삭제
-	@Transactional
-	public UUID cancleOrder(DeleteOrderCommand command) {
-		Order order = getOrderById(command.orderId());
-		order.delete(
-			command.userId()
-		);
-
-		//배송 삭제 이벤트 발행
-		publisher.publishEvent(new OrderCancledEvent(order.getId()));
-		return order.getId();
-	}
+	// //주문 수정(요청사항, 배송요청사항)
+	// @Transactional
+	// public UUID updateOrder(UpdateOrderCommand command) {
+	// 	Order order = getOrderById(command.orderId());
+	// 	order.update(command.request(), command.deliveryRequest());
+	// 	//배송 수정 이벤트 발행
+	// 	eventPublisher.publishEvent(new OrderUpdatedEvent(order.getId(), order.getDeliveryRequest()));
+	// 	return order.getId();
+	// }
+	//
+	// //주문 삭제
+	// @Transactional
+	// public UUID cancleOrder(DeleteOrderCommand command) {
+	// 	Order order = getOrderById(command.orderId());
+	// 	order.delete(
+	// 		command.userId()
+	// 	);
+	//
+	// 	//배송 삭제 이벤트 발행
+	// 	publisher.publishEvent(new OrderCancledEvent(order.getId()));
+	// 	return order.getId();
+	// }
 
 	//결제 처리
 	@Transactional

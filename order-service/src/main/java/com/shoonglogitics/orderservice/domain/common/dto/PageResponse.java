@@ -1,4 +1,4 @@
-package com.shoonglogitics.orderservice.global.common.dto;
+package com.shoonglogitics.orderservice.domain.common.dto;
 
 import java.util.List;
 

@@ -10,8 +10,8 @@ import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.C
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.client.feign.CompanyFeignClient;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignCompanyResponse;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper.CompanyMapper;
-import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.exception.ApiResponse;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
 

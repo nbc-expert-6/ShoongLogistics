@@ -11,7 +11,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.CompanyInfo;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.Money;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.OrderStatus;
-import com.shoonglogitics.orderservice.global.common.entity.BaseAggregateRoot;
+import com.shoonglogitics.orderservice.domain.common.entity.BaseAggregateRoot;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;

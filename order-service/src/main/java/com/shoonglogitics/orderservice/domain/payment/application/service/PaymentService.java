@@ -3,10 +3,10 @@ package com.shoonglogitics.orderservice.domain.payment.application.service;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shoonglogitics.orderservice.domain.common.event.EventPublisher;
 import com.shoonglogitics.orderservice.domain.payment.domain.entity.Payment;
 import com.shoonglogitics.orderservice.domain.payment.domain.event.PaymentCompletedEvent;
 import com.shoonglogitics.orderservice.domain.payment.domain.repository.PaymentRepository;
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentService {
 
 	private final PaymentRepository paymentRepository;
-	private final ApplicationEventPublisher eventPublisher;
+	private final EventPublisher eventPublisher;
 
 	@Transactional
 	public void processPayment(UUID orderId, UUID productId, BigDecimal totalPrice, BigDecimal price,
@@ -40,8 +40,7 @@ public class PaymentService {
 
 		Payment savedPayment = paymentRepository.save(payment);
 		//이벤트 발행
-		eventPublisher.publishEvent(new PaymentCompletedEvent(savedPayment, productId, quantity));
-		log.info("결제 성공 이벤트 발행");
+		eventPublisher.publish(new PaymentCompletedEvent(savedPayment, productId, quantity));
 	}
 
 }

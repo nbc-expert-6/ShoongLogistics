@@ -20,7 +20,7 @@ import com.shoonglogitics.orderservice.domain.order.application.OrderService;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderCommand;
 import com.shoonglogitics.orderservice.domain.order.application.command.CreateOrderItemCommand;
 import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEvent;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 @SpringBootTest
 @ActiveProfiles("test")

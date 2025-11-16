@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 import com.shoonglogitics.orderservice.domain.delivery.domain.entity.Delivery;
 import com.shoonglogitics.orderservice.domain.delivery.domain.entity.DeliveryRoute;
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
 
 public interface DeliveryRepository {
 	Delivery save(Delivery delivery);

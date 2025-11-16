@@ -1,4 +1,4 @@
-package com.shoonglogitics.orderservice.global.common.vo;
+package com.shoonglogitics.orderservice.domain.common.vo;
 
 import lombok.Getter;
 

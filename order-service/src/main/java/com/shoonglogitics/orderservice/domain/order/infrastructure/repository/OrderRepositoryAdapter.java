@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
 
 import lombok.RequiredArgsConstructor;
 

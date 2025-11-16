@@ -1,9 +1,9 @@
-package com.shoonglogitics.orderservice.global.common.dto;
+package com.shoonglogitics.orderservice.domain.common.dto;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.shoonglogitics.orderservice.global.common.vo.PageSizeType;
+import com.shoonglogitics.orderservice.domain.common.vo.PageSizeType;
 
 public record PageRequest(
 	Integer page,

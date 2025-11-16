@@ -38,8 +38,8 @@ import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.HubInfo;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessHubShippingCommand;
 import com.shoonglogitics.orderservice.domain.order.domain.vo.GeoLocation;
-import com.shoonglogitics.orderservice.global.common.vo.ShipperType;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.ShipperType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

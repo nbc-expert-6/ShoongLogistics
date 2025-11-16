@@ -1,7 +1,7 @@
 package com.shoonglogitics.orderservice.domain.order.application.query;
 
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 public record ListOrderQuery(
 	Long userId,
