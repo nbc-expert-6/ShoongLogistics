@@ -1,5 +1,8 @@
 package com.shoonglogitics.orderservice.domain.payment.infrastructure.repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.orderservice.domain.payment.domain.entity.Payment;
@@ -18,5 +21,10 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
 	public Payment save(Payment payment) {
 		jpaPaymentRepository.save(payment);
 		return payment;
+	}
+
+	@Override
+	public Optional<Payment> findByOrderId(UUID orderId) {
+		return jpaPaymentRepository.findByOrderId(orderId);
 	}
 }

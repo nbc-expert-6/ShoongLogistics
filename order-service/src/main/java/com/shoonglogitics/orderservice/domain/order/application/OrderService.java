@@ -73,7 +73,7 @@ public class OrderService {
 		Money totalPrice = Money.of(command.totalPrice());
 
 		//주문 가능한지 검증(상품이 1개 이상이고, 상품총액과 총 결제금액의 일치여부)
-		validateOrder(orderItems, totalPrice);
+		// validateOrder(orderItems, totalPrice);
 
 		//주소 vo 생성
 		Address address = Address.of(

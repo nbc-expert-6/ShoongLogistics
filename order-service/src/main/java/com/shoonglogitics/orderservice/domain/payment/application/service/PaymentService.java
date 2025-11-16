@@ -23,11 +23,15 @@ public class PaymentService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
-	public void processPayment(UUID orderId, UUID productId, BigDecimal price, Integer quantity) {
+	public void processPayment(UUID orderId, UUID productId, BigDecimal totalPrice, BigDecimal price,
+		Integer quantity) {
 		//금액 계산
 		BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 		log.info("결제 금액: {}", amount.longValue());
 
+		if (totalPrice.compareTo(BigDecimal.ZERO) < 0 || !totalPrice.equals(amount)) {
+			throw new IllegalArgumentException("주문 금액이 유효하지 않습니다.");
+		}
 		//PENDING 상태로 생성
 		Payment payment = Payment.create(orderId, amount);
 

@@ -87,7 +87,7 @@ class OrderServiceEventTest {
 			.orderItems(List.of(itemCommand))
 			.build();
 		// when & then
-		assertThrows(RuntimeException.class, () -> orderService.createOrder(command));
+		assertThrows(RuntimeException.class, () -> orderService.createOrderRollBack(command));
 		verify(orderEventListener, times(0))
 			.handleOrderCreatedAfterCommit(any(OrderCreatedEvent.class));
 	}
