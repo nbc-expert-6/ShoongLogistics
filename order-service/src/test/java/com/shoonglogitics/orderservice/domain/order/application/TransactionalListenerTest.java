@@ -40,16 +40,15 @@ class TransactionalListenerTest {
 		orderRepository.deleteAll();
 	}
 
-	@Test
-	@DisplayName("트랜잭션 롤백 시 After RollBack 시점 리스너가 동작한다.")
-	void whenTransactionRollback_AfterRollBackListenerShouldBeCalled() {
-		// given
+	//요청에 쓸 공용 객체
+	private CreateOrderCommand createCommand() {
 		CreateOrderItemCommand itemCommand = CreateOrderItemCommand.builder()
 			.productId(UUID.randomUUID())
 			.price(BigDecimal.valueOf(1000))
 			.quantity(10)
 			.build();
-		CreateOrderCommand command = CreateOrderCommand.builder()
+
+		return CreateOrderCommand.builder()
 			.userId(1L)
 			.role(UserRoleType.MASTER)
 			.receiverCompanyId(UUID.randomUUID())
@@ -64,6 +63,13 @@ class TransactionalListenerTest {
 			.totalPrice(BigDecimal.valueOf(10000))
 			.orderItems(List.of(itemCommand))
 			.build();
+	}
+
+	@Test
+	@DisplayName("트랜잭션 롤백 시 After RollBack 시점 리스너가 동작한다.")
+	void whenTransactionRollback_AfterRollBackListenerShouldBeCalled() {
+		// given
+		CreateOrderCommand command = createCommand();
 
 		// when & then
 		// 주문 save호출 후 예외가 발생하여 commit되지 않고 rollback 됨
@@ -76,7 +82,7 @@ class TransactionalListenerTest {
 		// 커밋 시점 이벤트 리스너가 실행되지 않고
 		verify(orderEventListener, never())
 			.handleOrderCreatedAfterCommit(any(OrderCreatedEvent.class));
-		// 롤백 시점 이벤트가 동작
+		// 롤백 시점 이벤트 리스너가 동작
 		verify(orderEventListener, times(1))
 			.handleOrderCreatedAfterRollBack(any(OrderCreatedEvent.class));
 	}
@@ -85,26 +91,7 @@ class TransactionalListenerTest {
 	@DisplayName("트랜잭션 커밋 성공 시 After Commit 시점 리스너가 동작한다.")
 	void whenTransactionRollback_AfterCommitListenerShouldBeCalled() {
 		// given
-		CreateOrderItemCommand itemCommand = CreateOrderItemCommand.builder()
-			.productId(UUID.randomUUID())
-			.price(BigDecimal.valueOf(1000))
-			.quantity(10)
-			.build();
-		CreateOrderCommand command = CreateOrderCommand.builder()
-			.userId(1L)
-			.role(UserRoleType.MASTER)
-			.receiverCompanyId(UUID.randomUUID())
-			.receiverCompanyName("수령업체")
-			.supplierCompanyId(UUID.randomUUID())
-			.supplierCompanyName("공급업체")
-			.address("address")
-			.addressDetail("addressDetail")
-			.zipCode("zipCode")
-			.latitude(35.1587)
-			.longitude(129.1604)
-			.totalPrice(BigDecimal.valueOf(10000))
-			.orderItems(List.of(itemCommand))
-			.build();
+		CreateOrderCommand command = createCommand();
 
 		// when
 		// 트랜잭션이 커밋되므로 주문 저장
@@ -112,10 +99,10 @@ class TransactionalListenerTest {
 		// then
 		// 주문이 1개 저장되어있고
 		assertThat(orderRepository.getAllOrders().size()).isEqualTo(1);
-		// 커밋 이후 시점 이벤트 리스너는 동작
+		// 커밋 이후 시점 이벤트 리스너가 동작
 		verify(orderEventListener, times(1))
 			.handleOrderCreatedAfterCommit(any(OrderCreatedEvent.class));
-		// 롤백 시점 이벤트는 동작하지 않음
+		// 롤백 시점 이벤트 리스너는 동작하지 않음
 		verify(orderEventListener, never())
 			.handleOrderCreatedAfterRollBack(any(OrderCreatedEvent.class));
 	}
