@@ -43,6 +43,9 @@ public class Stock extends BaseAggregateRoot<Stock> {
 	}
 
 	public void decreaseStock(Integer amount) {
-		this.quantity.subtract(amount);
+		if (this.quantity.getQuantity() < amount) {
+			throw new IllegalArgumentException("재고가 부족합니다.");
+		}
+		this.quantity = this.quantity.subtract(amount);
 	}
 }

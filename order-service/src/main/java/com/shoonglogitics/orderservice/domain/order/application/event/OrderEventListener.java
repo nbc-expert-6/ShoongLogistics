@@ -11,7 +11,7 @@ import com.shoonglogitics.orderservice.domain.order.domain.event.OrderCreatedEve
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j(topic = "OrderEventListner")
+@Slf4j(topic = "OrderEventListener")
 @Component
 @RequiredArgsConstructor
 public class OrderEventListener {
