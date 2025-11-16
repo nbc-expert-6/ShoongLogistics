@@ -1,5 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,8 @@ public interface OrderRepository {
 	Page<Order> getOrdersByMaster(PageRequest pageRequest);
 
 	Page<Order> getOrdersByUserId(Long userId, PageRequest pageRequest);
+
+	List<Order> getAllOrders();
+
+	void deleteAll();
 }

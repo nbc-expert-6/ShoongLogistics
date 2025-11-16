@@ -107,6 +107,61 @@ public class OrderService {
 		return createdOrder.getId();
 	}
 
+	@Transactional
+	public UUID createOrderRollBack(CreateOrderCommand command) {
+		log.info("주문 생성 처리 시작");
+		//주문 상품 정보 생성
+		List<OrderItemInfo> orderItemInfos = command.orderItems().stream()
+			.map(req -> OrderItemInfo.from(req.productId(), req.price()))
+			.toList();
+
+		//주문상품 엔티티 생성
+		List<OrderItem> orderItems = command.orderItems().stream()
+			.map(item -> OrderItem.create(
+				ProductInfo.of(item.productId(), Money.of(item.price())),
+				Quantity.of(item.quantity())
+			))
+			.toList();
+
+		//총 주문 금액 vo 생성
+		Money totalPrice = Money.of(command.totalPrice());
+
+		//주문 가능한지 검증(상품이 1개 이상이고, 상품총액과 총 결제금액의 일치여부)
+		validateOrder(orderItems, totalPrice);
+
+		//주소 vo 생성
+		Address address = Address.of(
+			command.address(), command.addressDetail(), command.zipCode(),
+			GeoLocation.of(command.latitude(), command.longitude()));
+
+		//수령업체, 공급업체 정보 vo 생성
+		CompanyInfo receiverInfo = CompanyInfo.of(command.receiverCompanyId(), command.receiverCompanyName());
+		CompanyInfo supplierInfo = CompanyInfo.of(command.supplierCompanyId(), command.supplierCompanyName());
+
+		//정보 조합하여 order 엔티티 생성
+		Order order = Order.create(
+			command.userId(),
+			receiverInfo,
+			supplierInfo,
+			command.request(),
+			command.deliveryRequest(),
+			totalPrice,
+			address,
+			orderItems
+		);
+
+		//응답
+		Order createdOrder = orderRepository.save(order);
+		log.info("주문 생성 완료");
+
+		//주문 생성 이벤트 발행
+		log.info("주문 생성 이벤트 발행");
+		publisher.publishEvent(new OrderCreatedEvent(createdOrder));
+
+		log.warn("save 호출 이후 예외 발생!! 트랜잭션 롤백됨");
+		throw new IllegalArgumentException("강제 예외");
+	}
+
 	//orderid로 상세조회
 	public FindOrderResult getOrder(UUID orderId) {
 		Order order = getOrderById(orderId);
