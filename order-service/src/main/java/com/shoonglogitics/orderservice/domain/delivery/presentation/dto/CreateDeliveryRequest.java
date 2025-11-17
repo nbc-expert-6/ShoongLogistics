@@ -2,7 +2,7 @@ package com.shoonglogitics.orderservice.domain.delivery.presentation.dto;
 
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 import jakarta.validation.constraints.NotNull;
 

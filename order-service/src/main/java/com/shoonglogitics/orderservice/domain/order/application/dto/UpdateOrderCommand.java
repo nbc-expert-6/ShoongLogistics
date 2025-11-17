@@ -2,8 +2,8 @@ package com.shoonglogitics.orderservice.domain.order.application.dto;
 
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 public record UpdateOrderCommand(
 	String request,

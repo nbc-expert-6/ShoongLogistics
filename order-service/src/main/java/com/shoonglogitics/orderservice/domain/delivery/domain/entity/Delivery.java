@@ -12,7 +12,7 @@ import com.shoonglogitics.orderservice.domain.delivery.domain.vo.Address;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.DeliveryStatus;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.HubInfo;
 import com.shoonglogitics.orderservice.domain.delivery.domain.vo.ShipperInfo;
-import com.shoonglogitics.orderservice.global.common.entity.BaseAggregateRoot;
+import com.shoonglogitics.orderservice.domain.common.entity.BaseAggregateRoot;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;

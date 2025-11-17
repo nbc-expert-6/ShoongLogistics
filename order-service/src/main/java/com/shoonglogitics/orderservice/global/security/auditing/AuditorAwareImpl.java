@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
 
 @Component
 public class AuditorAwareImpl implements AuditorAware<Long> {

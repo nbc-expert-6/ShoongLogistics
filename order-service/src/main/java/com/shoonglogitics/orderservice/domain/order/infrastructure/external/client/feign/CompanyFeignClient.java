@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeginStockDecreaseRequest;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignProductResponse;
 import com.shoonglogitics.orderservice.domain.order.infrastructure.external.dto.FeignStockInfoResponse;
-import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.exception.ApiResponse;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 @FeignClient(
 	name = "order-company-service",

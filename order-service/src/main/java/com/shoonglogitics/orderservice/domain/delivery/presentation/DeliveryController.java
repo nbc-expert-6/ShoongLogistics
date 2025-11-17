@@ -38,10 +38,10 @@ import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessH
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.ProcessHubShippingResponse;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.UpdateDeliveryRequest;
 import com.shoonglogitics.orderservice.domain.delivery.presentation.dto.UpdateDeliveryResponse;
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
-import com.shoonglogitics.orderservice.global.common.dto.PageResponse;
-import com.shoonglogitics.orderservice.global.common.exception.ApiResponse;
-import com.shoonglogitics.orderservice.global.common.vo.AuthUser;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.dto.PageResponse;
+import com.shoonglogitics.orderservice.domain.common.exception.ApiResponse;
+import com.shoonglogitics.orderservice.domain.common.vo.AuthUser;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

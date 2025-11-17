@@ -1,6 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.domain.vo;
 
-import com.shoonglogitics.orderservice.global.converter.GeoLocationConverter;
+import com.shoonglogitics.orderservice.domain.common.converter.GeoLocationConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

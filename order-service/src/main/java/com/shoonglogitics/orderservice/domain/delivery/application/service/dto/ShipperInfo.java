@@ -2,7 +2,7 @@ package com.shoonglogitics.orderservice.domain.delivery.application.service.dto;
 
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.global.common.vo.ShipperType;
+import com.shoonglogitics.orderservice.domain.common.vo.ShipperType;
 
 public record ShipperInfo(
 	Long shipperId,

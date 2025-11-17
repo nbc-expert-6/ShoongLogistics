@@ -2,7 +2,7 @@ package com.shoonglogitics.orderservice.domain.delivery.application.query;
 
 import java.util.UUID;
 
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
 
 public record ListDeliveryRouteQuery(
 	UUID deliveryId,

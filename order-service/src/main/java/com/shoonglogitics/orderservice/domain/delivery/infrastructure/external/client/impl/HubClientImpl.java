@@ -11,7 +11,7 @@ import com.shoonglogitics.orderservice.domain.delivery.application.service.dto.R
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.client.feign.HubFeignClient;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.dto.FeignRouteResponse;
 import com.shoonglogitics.orderservice.domain.delivery.infrastructure.external.mapper.HubMapper;
-import com.shoonglogitics.orderservice.global.common.vo.UserRoleType;
+import com.shoonglogitics.orderservice.domain.common.vo.UserRoleType;
 
 import lombok.RequiredArgsConstructor;
 

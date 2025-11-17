@@ -1,5 +1,6 @@
 package com.shoonglogitics.orderservice.domain.order.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.shoonglogitics.orderservice.domain.order.domain.entity.Order;
 import com.shoonglogitics.orderservice.domain.order.domain.repository.OrderRepository;
-import com.shoonglogitics.orderservice.global.common.dto.PageRequest;
+import com.shoonglogitics.orderservice.domain.common.dto.PageRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,5 +37,15 @@ public class OrderRepositoryAdapter implements OrderRepository {
 	@Override
 	public Page<Order> getOrdersByUserId(Long userId, PageRequest pageRequest) {
 		return jpaOrderRepository.findAllByUserId(userId, pageRequest.toPageable());
+	}
+
+	@Override
+	public List<Order> getAllOrders() {
+		return jpaOrderRepository.findAll();
+	}
+
+	@Override
+	public void deleteAll() {
+		jpaOrderRepository.deleteAll();
 	}
 }
