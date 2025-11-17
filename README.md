@@ -12,7 +12,7 @@
 
 프로젝트 루트 디렉터리에서 Docker Compose를 실행하여 필요한 인프라를 시작합니다.
 ```bash
-# Docker Compose로 인프라 실행 (PostgreSQL)
+# Docker Compose로 인프라 실행 - Postgres 설정 및 데이터 베이스 생성
 docker-compose up -d
 
 # 컨테이너 상태 확인
