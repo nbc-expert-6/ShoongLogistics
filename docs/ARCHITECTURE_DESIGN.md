@@ -60,14 +60,15 @@
 #### AWS Calculator
 
 - ALB비용
-  > 1 로드 밸런서 x 1 LCU x 0.008 시간당 LCU 가격 x 730 월별 시간 = **22.27 USD**<br>
+  > 1 로드 밸런서 x 1 LCU x 0.008 시간당 LCU 가격 x 730 월별 시간 = **18.67 USD**<br>
   > 2 로드 밸런서 x 1 LCU x 0.008 시간당 LCU 가격 x 730 월별 시간 = **38.92 USD**
 
 - ECS Task(24시간, 태스크당 0.25 vCPU, 0.5 mem, 임시 스토리지20)
   > 1개당 월간 **10.35 USD**
 
 - RDS (예약 인스턴스 기준)
-  > t3.small (Multi AZ) = 월간 **59.3 USD** <br>
+  > t3.small (Multi AZ), 전부 선결제 = 월간 **59.3 USD** <br>
+  t3.small (Multi AZ) 예약 인스턴스지만 매달 결제 = 월간 **91.11 USD** <br>
   t3.micro (Multi AZ) = 월간 **29.6 USD** <br>
   t3.small (Single) = 월간 **13.1 USD**
 
@@ -87,33 +88,33 @@
 
 - Bastion EC2()
   > t3a.small 예약 인스턴스 = 월간 **11.9 USD**<br>
-  50% 부분 선결제 시 = 월간 **5.66 USD**
+  t2.nano = 월간 **5.26 USD**
 
 - 절감 방안, 계획 <br><br>
   ![img.png](images/img.png)
 
 
 - 최종 제안 <br><br>
-  **플랜 1** (높은 고가용성, 안정적 성능, 급증 트래픽 대비)
+  **플랜 1** (높은 고가용성, 안정적 성능, 급증 트래픽 대비) [468,767원]
   > - ALB 2개
   > - Bastion t2.micro 온디맨드
   > - 태스크 서비스당 2개 유지(14개)
   > - RDS t3.small (Multi-AZ) 온디맨드
-  > - NAT 2개
+  > - NAT 2개()
   > - 클라우드 와치
-  > - Elastic Cache t2.micro
+  > - Elastic Cache t2.micro 온디맨드
 
-  **플랜 2** (일부 고가용성, 다소 안정적 성능, 급증 트래픽 일부 대비, 일부 요금 1년치 선결제)
+  **플랜 2** (일부 고가용성, 다소 안정적 성능, 급증 트래픽 일부 대비, 일부 요금 1년치 선결제) [369,0966원]
   > - ALB 2개
-  > - Bastion t2.micro 온디맨드
+  > - Bastion t2.micro 예약 인스턴스 (1년)
   > - Config 서버 삭제
   > - 태스크 서비스당 2개 유지(12개)
   > - RDS t3.small (Multi-AZ) 예약 인스턴스 (1년)
   > - NAT 1개
   > - 클라우드 와치
-  > - Elastic Cache t2.micro
+  > - Elastic Cache t2.micro 예약 인스턴스 (1년)
 
-  **플랜 3** (고가용성 미확보, 불안정한 성능, 급증 트래픽 대비 거의불가, 일부 요금 1년치 선결제)
+  **플랜 3** (고가용성 미확보, 불안정한 성능, 급증 트래픽 대비 거의불가, 일부 요금 1년치 선결제) [₩263,718]
   > - ALB 1개
   > - Bastion t2.nano 예약 인스턴스(1년)
   > - Config 서버 삭제
@@ -121,10 +122,24 @@
   > - RDS t3.small (Multi-AZ) 예약 인스턴스 (1년)
   > - NAT 1개
   > - 클라우드 와치
-  > - Elastic Cache t2.micro
+  > - Elastic Cache t2.micro 예약 인스턴스 (1년)
+
+  **최종안** (높은 고가용성, 안정적 성능, 급증 트래픽 대비) [425,750원]
+  > - ALB 1개 (18.67 USD)
+  > - Bastion t2.nano 온디맨드 (5.26 USD)
+  > - 태스크 서비스당 2개 유지(12개) (124.35 USD)
+  > - RDS t3.small (Multi-AZ) 온디맨드 (109.36 USD)
+  > - NAT 1개 (43.13 USD)
+  > - 클라우드 와치 (7.65 USD)
+  > - Elastic Cache t2.micro 온디맨드 (18.98 USD)
 
 -> 설득을 어떻게 할거냐 위험대비, 단계적인 투자, 업계 평균 비교
 -> 얼마로 ~~것들을 구현할 수 잇음
+
+![img.png](img.png)
+
+초반에는 NAT 1개로 일부 가용성 포기, Config 인스턴스별 관리로 비용을 감축하고
+고객사 확장 시 수익성이 개선됨에 따라 NAT 고가용성 확보 및 Config 중앙화 진행 예정
 
 CTO(SLA준수 - API응답속도 확보)
 > API 응답 지연 최소화
@@ -136,3 +151,5 @@ CTO(SLA준수 - API응답속도 확보)
 
 - 전체 요청 흐름을 표로 정리해서 시간 계산
 - 게이트웨이 - 유저 서비스 띄워서 테스트해보고 단계별 시간 계산
+
+
