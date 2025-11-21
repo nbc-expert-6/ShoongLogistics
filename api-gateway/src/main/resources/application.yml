@@ -1,3 +1,6 @@
+jwt:
+  secret: "sdfu2893rwefsd8f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832fsd9f7sdf9832f"
+  expiration: 3600000
 spring:
   profiles:
     include: actuator
@@ -5,9 +8,6 @@ spring:
     name: api-gateway
   main:
     web-application-type: reactive
-  config:
-    import:
-      optional:configserver:http://localhost:8888
   cloud:
     gateway:
       server:
@@ -88,12 +88,6 @@ springdoc:
       - name: order-service
         url: /v3/api-docs/order-service
 ---
-
-spring:
-  config:
-    activate.on-profile: docker
-    import:
-      optional:configserver:http://configure-service:8888
 
 eureka:
   instance:

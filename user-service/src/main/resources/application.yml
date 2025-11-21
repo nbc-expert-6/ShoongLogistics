@@ -4,12 +4,6 @@ server:
 spring:
   application:
     name: user-service
-  config:
-    import:
-      optional:configserver:http://localhost:8888
-  cloud:
-    config:
-      fail-fast: false
 
   profiles:
     include:
@@ -26,14 +20,6 @@ server:
 spring:
   application:
     name: user-service
-
-  config:
-    import:
-      optional:configserver:http://configure-service:8888  # 도커 내 config 서버 컨테이너 이름
-
-  cloud:
-    config:
-      fail-fast: false
 
   profiles:
     include:
