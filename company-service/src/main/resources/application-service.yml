@@ -27,9 +27,9 @@ spring:
       on-profile: prod
 
 user-service:
-  url: http://prod-user-service:8081
+  url: http://user-service:8081
 company-service:
-  url: http://localhost:8082
+  url: http://company-service:8082
 
 ---
 

@@ -10,7 +10,7 @@ user-service:
 spring:
   config:
     activate:
-      on-profile: docker
+      on-profile: docker, prod
 
 user-service:
   url: http://user-service:8081

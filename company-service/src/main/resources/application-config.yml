@@ -6,6 +6,10 @@ swagger:
     url: http://localhost:8000
 
 ---
+spring:
+  config:
+    activate:
+      on-profile: prod
 swagger:
   server:
     url: http://api-gateway:8000

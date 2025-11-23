@@ -73,7 +73,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://service-discovery:8761/eureka
 
 springdoc:
   swagger-ui:
@@ -87,11 +87,3 @@ springdoc:
         url: /v3/api-docs/hub-service
       - name: order-service
         url: /v3/api-docs/order-service
----
-
-eureka:
-  instance:
-    prefer-ip-address: false
-  client:
-    service-url:
-      defaultZone: http://service-discovery:8761/eureka

@@ -14,7 +14,7 @@ eureka:
 spring:
   config:
     activate:
-      on-profile: docker
+      on-profile: docker, prod
 
 eureka:
   instance:

@@ -28,4 +28,4 @@ spring:
       - actuator
       - zipkin
       - swagger
-    active: docker
+    active: docker, prod
