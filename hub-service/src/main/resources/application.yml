@@ -7,7 +7,6 @@ spring:
       - actuator
       - eureka
       - zipkin
-      - config
       - swagger
 
   jpa:

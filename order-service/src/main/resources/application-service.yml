@@ -39,26 +39,7 @@ notification-service:
 spring:
   config:
     activate:
-      on-profile: prod
-
-user-service:
-  url: http://prod-user-service:8081
-order-service:
-  url: http://prod-order-service:8080
-company-service:
-  url: http://prod-company-service:8082
-hub-service:
-  url: http://prod-hub-service:19092
-delivery-service:
-  url: http://prod-delivery-service:8080
-notification-service:
-  url: http://prod-notification-service:8084
-
----
-spring:
-  config:
-    activate:
-      on-profile: docker
+      on-profile: docker, prod
 
 user-service:
   url: http://user-service:8081

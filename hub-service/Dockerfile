@@ -1,19 +1,21 @@
-FROM eclipse-temurin:17-jdk
+# -- Build --
+FROM --platform=linux/amd64 gradle:8.5-jdk17 AS builder
+WORKDIR /build
 
-WORKDIR /app
+COPY build.gradle settings.gradle ./
+COPY gradle ./gradle
 
-# 앱과 초기화 파일 복사
-COPY build/libs/hub-service-*.jar app.jar
-COPY hubinit.http /app/hubinit.http
+RUN gradle dependencies --no-daemon
 
-# httpie 설치
-RUN apt-get update && apt-get install -y httpie netcat && rm -rf /var/lib/apt/lists/*
+COPY . .
+RUN gradle clean build -x test --no-daemon
 
-# 엔트리포인트 스크립트 복사
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+# -- Runtime --
+FROM amazoncorretto:17-alpine
+
+COPY --from=builder /build/build/libs/*.jar /app/service.jar
+
+ENV JAVA_OPTS="-Xms256m -Xmx512m"
 
 EXPOSE 19092
-
-# 앱과 초기화 실행을 entrypoint.sh에서 처리
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/service.jar"]
